@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">SOSCHAT</string>
+    <string name="app_name">SOS Chat</string>
     <string name="ERROR">Error</string>
     <string name="TARDE">Intente nuevamente más tarde</string>
     <string name="VERIFY">Verificando</string>
