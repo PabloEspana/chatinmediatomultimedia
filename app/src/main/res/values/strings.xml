@@ -116,6 +116,11 @@
     <string name="search">Búsqueda</string>
     <string name="reload">Recargar</string>
 
+    <!-- Bluetooth -->
+    <string name="none_paired">No se han vinculado dispositivos</string>
+    <string name="none_found">No se han encontrado dispositivos</string>
+
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 

@@ -15,6 +15,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.UUID;
 
+import com.android.wondercom.Bluetooth.Activities.*;
+
+
 public class ChatController {
 
     private static final String APP_NAME = "BluetoothChatApp";
@@ -27,10 +30,10 @@ public class ChatController {
     private ReadWriteThread connectedThread;
     private int state;
 
-    static final int STATE_NONE = 0;
-    static final int STATE_LISTEN = 1;
-    static final int STATE_CONNECTING = 2;
-    static final int STATE_CONNECTED = 3;
+    public static final int STATE_NONE = 0;
+    public static final int STATE_LISTEN = 1;
+    public static final int STATE_CONNECTING = 2;
+    public static final int STATE_CONNECTED = 3;
 
     String tipo_envio = "";
 
@@ -45,7 +48,7 @@ public class ChatController {
     private synchronized void setState(int state) {
         this.state = state;
 
-        handler.obtainMessage(MainActivity.MESSAGE_STATE_CHANGE, state, -1).sendToTarget();
+        handler.obtainMessage(activityAntiguaBluetooth.MESSAGE_STATE_CHANGE, state, -1).sendToTarget();
     }
 
     // get current connection state
@@ -120,9 +123,9 @@ public class ChatController {
         connectedThread.start();
 
         // Send the name of the connected device back to the UI Activity
-        Message msg = handler.obtainMessage(MainActivity.MESSAGE_DEVICE_OBJECT);
+        Message msg = handler.obtainMessage(activityAntiguaBluetooth.MESSAGE_DEVICE_OBJECT);
         Bundle bundle = new Bundle();
-        bundle.putParcelable(MainActivity.DEVICE_OBJECT, device);
+        bundle.putParcelable(activityAntiguaBluetooth.DEVICE_OBJECT, device);
         msg.setData(bundle);
         handler.sendMessage(msg);
 
@@ -161,7 +164,7 @@ public class ChatController {
     }
 
     private void connectionFailed() {
-        Message msg = handler.obtainMessage(MainActivity.MESSAGE_TOAST);
+        Message msg = handler.obtainMessage(activityAntiguaBluetooth.MESSAGE_TOAST);
         Bundle bundle = new Bundle();
         bundle.putString("toast", "No se puede conectar al dispositivo");
         msg.setData(bundle);
@@ -172,7 +175,7 @@ public class ChatController {
     }
 
     private void connectionLost() {
-        Message msg = handler.obtainMessage(MainActivity.MESSAGE_TOAST);
+        Message msg = handler.obtainMessage(activityAntiguaBluetooth.MESSAGE_TOAST);
         Bundle bundle = new Bundle();
         bundle.putString("toast", "Conexión perdida con el dispositivo");
         msg.setData(bundle);
@@ -356,7 +359,7 @@ public class ChatController {
                         System.arraycopy(data, 0, buffer, index, numbers);
                         index = index + numbers;
                         if (index == numberOfBytes){
-                            handler.obtainMessage(MainActivity.MESSAGE_READ, numberOfBytes, -1, buffer).sendToTarget();
+                            handler.obtainMessage(activityAntiguaBluetooth.MESSAGE_READ, numberOfBytes, -1, buffer).sendToTarget();
                             flag = true;
                         }
                     }catch (IOException e){
@@ -374,7 +377,7 @@ public class ChatController {
             if (tipo_mensaje.equals("texto")){
                 try {
                     outputStream.write(buffer);
-                    handler.obtainMessage(MainActivity.MESSAGE_WRITE, -1, -1,
+                    handler.obtainMessage(activityAntiguaBluetooth.MESSAGE_WRITE, -1, -1,
                             buffer).sendToTarget();
                 } catch (IOException e) {
                 }
