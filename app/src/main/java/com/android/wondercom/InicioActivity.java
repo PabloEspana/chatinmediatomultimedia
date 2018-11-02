@@ -70,11 +70,11 @@ public class InicioActivity extends Activity {
         String nickname= ET_Main_Nickname.getText().toString();
         if(vacio(new EditText[]{ET_Main_Nickname})){
             GuardarPreferencia();
-            Intent bt = new Intent(getApplicationContext(), prueba.class);
+            /*Intent bt = new Intent(getApplicationContext(), prueba.class);
             bt.putExtra("tipo", valor);
             bt.putExtra("nickname", nickname );
             System.setProperty("net.hostname", nickname);
-            startActivity(bt);
+            startActivity(bt);*/
         }else{
             mostrarMensaje(R.string.ERROR, R.string.NONAME, this);
         }
