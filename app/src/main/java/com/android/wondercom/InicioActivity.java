@@ -10,15 +10,12 @@ import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.android.wondercom.NEGOCIO.Dispositivo;
 
 import static com.android.wondercom.NEGOCIO.Mensajes.cargando;
 import static com.android.wondercom.NEGOCIO.Mensajes.mostrarMensaje;
 import static com.android.wondercom.NEGOCIO.Validaciones.vacio;
-
-//import com.android.wondercom.Bluetooth.Activities.prueba;
 
 public class InicioActivity extends Activity {
     EditText ET_Main_Nickname;
@@ -73,11 +70,11 @@ public class InicioActivity extends Activity {
         String nickname= ET_Main_Nickname.getText().toString();
         if(vacio(new EditText[]{ET_Main_Nickname})){
             GuardarPreferencia();
-            /*Intent bt = new Intent(getApplicationContext(), prueba.class);
+            Intent bt = new Intent(getApplicationContext(), prueba.class);
             bt.putExtra("tipo", valor);
             bt.putExtra("nickname", nickname );
             System.setProperty("net.hostname", nickname);
-            startActivity(bt);*/
+            startActivity(bt);
         }else{
             mostrarMensaje(R.string.ERROR, R.string.NONAME, this);
         }

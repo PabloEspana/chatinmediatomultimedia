@@ -86,9 +86,7 @@
         <activity
             android:name=".DrawingActivity"
             android:label="@string/title_activity_drawing" />
-        <activity android:name=".Bluetooth.Activities.principalBluetoothActivity" />
-        <activity android:name=".Bluetooth.Activities.activityAntiguaBluetooth" />
-        <activity android:name=".Bluetooth.Activities.prueba"></activity>
+
     </application>
 
 </manifest>
