@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.android.wondercom.BLUETOOTH.MainActivityBT;
 import com.android.wondercom.NEGOCIO.Dispositivo;
 
 import static com.android.wondercom.NEGOCIO.Mensajes.cargando;
@@ -68,7 +69,7 @@ public class InicioActivity extends Activity {
 
     public void abrirBluetooth(){
         Toast.makeText(this, "Funciona", Toast.LENGTH_SHORT).show();
-        Intent bt = new Intent(InicioActivity.this, prueba.class);
+        Intent bt = new Intent(InicioActivity.this, MainActivityBT.class);
         startActivity(bt);
     }
 

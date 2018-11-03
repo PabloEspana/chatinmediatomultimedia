@@ -91,7 +91,7 @@
             android:name=".ActivityBluetooth" />
 
         <activity
-            android:name=".prueba"
+            android:name=".BLUETOOTH.MainActivityBT"
             android:label="Bluetooth">
         </activity>
 
