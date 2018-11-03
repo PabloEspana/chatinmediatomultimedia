@@ -10,6 +10,7 @@ import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.android.wondercom.NEGOCIO.Dispositivo;
 
@@ -36,8 +37,8 @@ public class InicioActivity extends Activity {
         ET_Main_Nickname.setText(sharedPref.getString("nickname", Dispositivo.getDeviceName()));
     }
 
-    public void bluethoot (View v){
-        abrirBluetooth(0);
+    public void bluetooth (View v){
+        abrirBluetooth();
     }
 
     public void wifi (View v){
@@ -65,19 +66,10 @@ public class InicioActivity extends Activity {
         }
     }
 
-    public void abrirBluetooth(int valor){
-        cargando(R.string.VERIFY, pDialog, this);
-        String nickname= ET_Main_Nickname.getText().toString();
-        if(vacio(new EditText[]{ET_Main_Nickname})){
-            GuardarPreferencia();
-            /*Intent bt = new Intent(getApplicationContext(), prueba.class);
-            bt.putExtra("tipo", valor);
-            bt.putExtra("nickname", nickname );
-            System.setProperty("net.hostname", nickname);
-            startActivity(bt);*/
-        }else{
-            mostrarMensaje(R.string.ERROR, R.string.NONAME, this);
-        }
+    public void abrirBluetooth(){
+        Toast.makeText(this, "Funciona", Toast.LENGTH_SHORT).show();
+        Intent bt = new Intent(InicioActivity.this, prueba.class);
+        startActivity(bt);
     }
 
     public void GuardarPreferencia(){
@@ -86,6 +78,7 @@ public class InicioActivity extends Activity {
         editor.putString("nickname", ET_Main_Nickname.getText().toString());
         editor.commit();
     }
+
     @Override
     protected void onResume() {
         super.onResume();

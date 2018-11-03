@@ -87,6 +87,14 @@
             android:name=".DrawingActivity"
             android:label="@string/title_activity_drawing" />
 
+        <activity
+            android:name=".ActivityBluetooth" />
+
+        <activity
+            android:name=".prueba"
+            android:label="Bluetooth">
+        </activity>
+
     </application>
 
 </manifest>

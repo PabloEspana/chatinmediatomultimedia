@@ -47,7 +47,7 @@
             android:text="@string/Bluetooth"
             android:textColor="@color/Texto_boton"
             android:gravity="center_vertical"
-            android:onClick="bluethoot"
+            android:onClick="bluetooth"
             />
 
         <Button
