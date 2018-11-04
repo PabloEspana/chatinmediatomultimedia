@@ -21,13 +21,14 @@ import android.view.ViewGroup;
 
 import android.widget.SearchView;
 
-import com.android.wondercom.Fragments.FM_encontrados;
-import com.android.wondercom.Fragments.FM_historico;
+import com.android.wondercom.BLUETOOTH.Fragments.*;
+
 import com.android.wondercom.R;
 
-public class MainActivityBT extends Activity implements ActionBar.TabListener {
+public class MainActivityBT extends Activity{
+    //public class MainActivityBT extends Activity implements ActionBar.TabListener {
 
-    private SectionsPagerAdapter mSectionsPagerAdapter;
+        //private SectionsPagerAdapter mSectionsPagerAdapter;
 
     private ViewPager mViewPager;
 
@@ -36,12 +37,11 @@ public class MainActivityBT extends Activity implements ActionBar.TabListener {
     private SearchView.OnQueryTextListener queryTextListener;
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main_bt);
-        mSectionsPagerAdapter = new SectionsPagerAdapter(getFragmentManager());
+        setContentView(R.layout.bt_activity_main);
+        /*mSectionsPagerAdapter = new SectionsPagerAdapter(getFragmentManager());
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
@@ -63,10 +63,12 @@ public class MainActivityBT extends Activity implements ActionBar.TabListener {
                             .setTabListener(this));
             actionBar.setTitle(getResources().getString(R.string.app_name));
         }
+        */
 
     }
 
 
+    /*
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_principal, menu);
@@ -83,26 +85,6 @@ public class MainActivityBT extends Activity implements ActionBar.TabListener {
                 @Override
                 public boolean onQueryTextChange(String newText) {
                     Log.i("onQueryTextChange", newText);
-                    /*Log.i("CantidadConectado",String.valueOf(conectados.size()));
-                    String s="";
-
-                    if(newText!=null && !newText.isEmpty()){
-                        newText = newText.toLowerCase();
-                        encontrados= new ArrayList<>();
-                        for (Host items: conectados2 ){
-                            String nombre = items.getName().toLowerCase();
-                            if (nombre.contains(newText)){
-                                encontrados.add(items);
-                            }
-                        }
-                        Log.i("QueryEncontrados", encontrados.toString());
-                        mParticipantsAdapter.actualizar(encontrados);
-                    }else{
-                        if (a!=null && !a.isEmpty()){
-                            mParticipantsAdapter.setData(a);
-                        }
-                        Log.i("NoSeEncontro", "No se encontro el "+ newText.toString());
-                    }*/
                     return true;
                 }
                 @Override
@@ -127,7 +109,9 @@ public class MainActivityBT extends Activity implements ActionBar.TabListener {
         }
 
         return super.onOptionsItemSelected(item);
-    }
+    }*/
+
+    /*
 
     @Override
     public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
@@ -142,6 +126,7 @@ public class MainActivityBT extends Activity implements ActionBar.TabListener {
     public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
     }
 
+
     public static class PlaceholderFragment extends Fragment {
 
         private static final String ARG_SECTION_NUMBER = "section_number";
@@ -149,10 +134,6 @@ public class MainActivityBT extends Activity implements ActionBar.TabListener {
         public PlaceholderFragment() {
         }
 
-        /**
-         * Returns a new instance of this fragment for the given section
-         * number.
-         */
         public static PlaceholderFragment newInstance(int sectionNumber) {
             PlaceholderFragment fragment = new PlaceholderFragment();
             Bundle args = new Bundle();
@@ -168,6 +149,7 @@ public class MainActivityBT extends Activity implements ActionBar.TabListener {
             return rootView;
         }
     }
+
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
         public SectionsPagerAdapter(FragmentManager fm) {
@@ -179,13 +161,13 @@ public class MainActivityBT extends Activity implements ActionBar.TabListener {
             Fragment fm= null;
             switch (position){
                 case 0:
-                    fm=new FM_encontrados();
+                    fm = new FragmentCercanos();
                     break;
                 case 1:
-                    fm= new FM_historico();
+                    fm = new FragmentCercanos();
                     break;
                 case 2:
-                    fm=new FM_historico();
+                    fm = new FragmentCercanos();
                     break;
             }
             return fm;
@@ -201,13 +183,14 @@ public class MainActivityBT extends Activity implements ActionBar.TabListener {
         public CharSequence getPageTitle(int position) {
             switch (position) {
                 case 0:
-                    return "CERCANOS";
+                    return "Cercanos";
                 case 1:
-                    return "MENSAJES";
+                    return "Mensajes";
                 case 2:
-                    return "HISTÓRICO";
+                    return "Histórico";
             }
             return null;
         }
     }
+    */
 }
