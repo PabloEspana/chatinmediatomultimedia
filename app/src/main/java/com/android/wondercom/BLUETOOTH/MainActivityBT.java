@@ -12,6 +12,7 @@ import android.content.Context;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -25,10 +26,9 @@ import com.android.wondercom.BLUETOOTH.Fragments.*;
 
 import com.android.wondercom.R;
 
-public class MainActivityBT extends Activity{
-    //public class MainActivityBT extends Activity implements ActionBar.TabListener {
+public class MainActivityBT extends Activity implements ActionBar.TabListener {
 
-        //private SectionsPagerAdapter mSectionsPagerAdapter;
+        private SectionsPagerAdapter mSectionsPagerAdapter;
 
     private ViewPager mViewPager;
 
@@ -41,7 +41,7 @@ public class MainActivityBT extends Activity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.bt_activity_main);
-        /*mSectionsPagerAdapter = new SectionsPagerAdapter(getFragmentManager());
+        mSectionsPagerAdapter = new SectionsPagerAdapter(getFragmentManager());
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
@@ -63,12 +63,11 @@ public class MainActivityBT extends Activity{
                             .setTabListener(this));
             actionBar.setTitle(getResources().getString(R.string.app_name));
         }
-        */
+
 
     }
 
 
-    /*
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_principal, menu);
@@ -109,9 +108,9 @@ public class MainActivityBT extends Activity{
         }
 
         return super.onOptionsItemSelected(item);
-    }*/
+    }
 
-    /*
+
 
     @Override
     public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
@@ -192,5 +191,5 @@ public class MainActivityBT extends Activity{
             return null;
         }
     }
-    */
+
 }
