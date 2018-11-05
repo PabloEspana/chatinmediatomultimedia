@@ -116,6 +116,8 @@
     <string name="search">Búsqueda</string>
     <string name="reload">Recargar</string>
 
+    <string name="CONECT">Conectando...</string>
+
     <!-- Bluetooth -->
     <string name="none_paired">No se han vinculado dispositivos</string>
     <string name="none_found">No se han encontrado dispositivos</string>
