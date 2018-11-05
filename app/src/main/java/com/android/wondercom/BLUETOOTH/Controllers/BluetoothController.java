@@ -1,5 +1,6 @@
-package com.android.wondercom;
+package com.android.wondercom.BLUETOOTH.Controllers;
 
+import com.android.wondercom.BLUETOOTH.MainActivityBT;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
@@ -8,15 +9,13 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.widget.Toast;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.UUID;
 
-public class ControladorBluetooth {
-    private static final String APP_NAME = "BluetoothChatApp";
+public class BluetoothController {
+    /*private static final String APP_NAME = "BluetoothChatApp";
     private static final UUID MY_UUID = UUID.fromString("8ce255c0-200a-11e0-ac64-0800200c9a66");
 
     private final BluetoothAdapter bluetoothAdapter;
@@ -31,10 +30,9 @@ public class ControladorBluetooth {
     static final int STATE_CONNECTING = 2;
     static final int STATE_CONNECTED = 3;
 
-
     String tipo_envio = "";
 
-    public ControladorBluetooth(Context context, Handler handler) {
+    public BluetoothController(Context context, Handler handler) {
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         state = STATE_NONE;
 
@@ -45,7 +43,7 @@ public class ControladorBluetooth {
     private synchronized void setState(int state) {
         this.state = state;
 
-        handler.obtainMessage(ActivityBluetooth.MESSAGE_STATE_CHANGE, state, -1).sendToTarget();
+        handler.obtainMessage(MainActivityBT.MESSAGE_STATE_CHANGE, state, -1).sendToTarget();
     }
 
     // get current connection state
@@ -96,6 +94,7 @@ public class ControladorBluetooth {
         setState(STATE_CONNECTING);
     }
 
+
     // manage Bluetooth connection
     public synchronized void connected(BluetoothSocket socket, BluetoothDevice device) {
         // Cancel the thread
@@ -120,9 +119,9 @@ public class ControladorBluetooth {
         connectedThread.start();
 
         // Send the name of the connected device back to the UI Activity
-        Message msg = handler.obtainMessage(ActivityBluetooth.MESSAGE_DEVICE_OBJECT);
+        Message msg = handler.obtainMessage(MainActivityBT.MESSAGE_DEVICE_OBJECT);
         Bundle bundle = new Bundle();
-        bundle.putParcelable(ActivityBluetooth.DEVICE_OBJECT, device);
+        bundle.putParcelable(MainActivityBT.DEVICE_OBJECT, device);
         msg.setData(bundle);
         handler.sendMessage(msg);
 
@@ -161,27 +160,26 @@ public class ControladorBluetooth {
     }
 
     private void connectionFailed() {
-        Message msg = handler.obtainMessage(ActivityBluetooth.MESSAGE_TOAST);
+        Message msg = handler.obtainMessage(MainActivityBT.MESSAGE_TOAST);
         Bundle bundle = new Bundle();
         bundle.putString("toast", "No se puede conectar al dispositivo");
         msg.setData(bundle);
         handler.sendMessage(msg);
 
         // Start the service over to restart listening mode
-        ControladorBluetooth.this.start();
+        BluetoothController.this.start();
     }
 
     private void connectionLost() {
-        Message msg = handler.obtainMessage(ActivityBluetooth.MESSAGE_TOAST);
+        Message msg = handler.obtainMessage(MainActivityBT.MESSAGE_TOAST);
         Bundle bundle = new Bundle();
         bundle.putString("toast", "Conexión perdida con el dispositivo");
         msg.setData(bundle);
         handler.sendMessage(msg);
 
         // Start the service over to restart listening mode
-        ControladorBluetooth.this.start();
+        BluetoothController.this.start();
     }
-
 
     // runs while listening for incoming connections
     private class AcceptThread extends Thread {
@@ -209,7 +207,7 @@ public class ControladorBluetooth {
 
                 // If a connection was accepted
                 if (socket != null) {
-                    synchronized (ControladorBluetooth.this) {
+                    synchronized (BluetoothController.this) {
                         switch (state) {
                             case STATE_LISTEN:
                             case STATE_CONNECTING:
@@ -274,7 +272,7 @@ public class ControladorBluetooth {
             }
 
             // Reset the ConnectThread because we're done
-            synchronized (ControladorBluetooth.this) {
+            synchronized (BluetoothController.this) {
                 connectThread = null;
             }
 
@@ -312,24 +310,24 @@ public class ControladorBluetooth {
         }
 
         public void run() {
-            /* Esto es para envío de texto, no funciona para imagen
-            byte[] buffer = new byte[1024];
-            int bytes;
+            // Esto es para envío de texto, no funciona para imagen
+            //byte[] buffer = new byte[1024];
+            //int bytes;
             // Keep listening to the InputStream
-            while (true) {
-                try {
+            //while (true) {
+            //    try {
                     // Read from the InputStream
-                    bytes = inputStream.read(buffer);
-                    // Send the obtained bytes to the UI Activity
-                    handler.obtainMessage(MainActivity.MESSAGE_READ, bytes, -1,
-                            buffer).sendToTarget();
-                } catch (IOException e) {
-                    connectionLost();
+            //        bytes = inputStream.read(buffer);
+            //        // Send the obtained bytes to the UI Activity
+            //        handler.obtainMessage(MainActivity.MESSAGE_READ, bytes, -1,
+            //                buffer).sendToTarget();
+            //    } catch (IOException e) {
+            //        connectionLost();
                     // Start the service over to restart listening mode
-                    ChatController.this.start();
-                    break;
-                }
-            }*/
+            //        ChatController.this.start();
+            //       break;
+            //    }
+            //}
             byte[] buffer = null;
             int numberOfBytes = 0;
             int index = 0;
@@ -347,7 +345,7 @@ public class ControladorBluetooth {
 
                     } catch (IOException e) {
                         connectionLost();
-                        ControladorBluetooth.this.start();
+                        BluetoothController.this.start();
                         break;
                     }
                 }else {
@@ -357,12 +355,12 @@ public class ControladorBluetooth {
                         System.arraycopy(data, 0, buffer, index, numbers);
                         index = index + numbers;
                         if (index == numberOfBytes){
-                            handler.obtainMessage(ActivityBluetooth.MESSAGE_READ, numberOfBytes, -1, buffer).sendToTarget();
+                            handler.obtainMessage(MainActivityBT.MESSAGE_READ, numberOfBytes, -1, buffer).sendToTarget();
                             flag = true;
                         }
                     }catch (IOException e){
                         connectionLost();
-                        ControladorBluetooth.this.start();
+                        BluetoothController.this.start();
                         break;
                     }
                 }
@@ -374,7 +372,7 @@ public class ControladorBluetooth {
             if (tipo_mensaje.equals("texto")){
                 try {
                     outputStream.write(buffer);
-                    handler.obtainMessage(ActivityBluetooth.MESSAGE_WRITE, -1, -1,
+                    handler.obtainMessage(MainActivityBT.MESSAGE_WRITE, -1, -1,
                             buffer).sendToTarget();
                 } catch (IOException e) {
                 }
@@ -395,5 +393,5 @@ public class ControladorBluetooth {
                 e.printStackTrace();
             }
         }
-    }
+    }*/
 }
