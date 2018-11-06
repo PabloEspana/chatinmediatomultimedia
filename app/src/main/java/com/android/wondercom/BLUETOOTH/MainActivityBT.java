@@ -12,14 +12,12 @@ import android.content.Context;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import android.widget.SearchView;
 
@@ -28,21 +26,16 @@ import com.android.wondercom.BLUETOOTH.Fragments.*;
 import com.android.wondercom.R;
 
 //import com.android.wondercom.BLUETOOTH.Controllers.BluetoothController;
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
-
 
 public class MainActivityBT extends Activity implements ActionBar.TabListener {
 
+    BluetoothConnect bluetoothConnect = new BluetoothConnect();
+
     private SectionsPagerAdapter mSectionsPagerAdapter;
-
     private ViewPager mViewPager;
-
     private MenuItem myActionMenuItem;
     private SearchView searchView = null;
     private SearchView.OnQueryTextListener queryTextListener;
-
-    private BluetoothAdapter bluetoothAdapter;  // adaptador bluetooth
 
 
 
@@ -51,14 +44,8 @@ public class MainActivityBT extends Activity implements ActionBar.TabListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.bt_activity_main);
 
-        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        if (bluetoothAdapter == null) {
-            Toast.makeText(this, "Bluetooth no disponible!", Toast.LENGTH_SHORT).show();
-            finish();
-        }
-        if (!bluetoothAdapter.isEnabled()) {
-            bluetoothAdapter.enable();
-        }
+        bluetoothConnect.comprobarBluetooth();
+        bluetoothConnect.habilitarBluetooth();
 
         mSectionsPagerAdapter = new SectionsPagerAdapter(getFragmentManager());
         mViewPager = (ViewPager) findViewById(R.id.container);
