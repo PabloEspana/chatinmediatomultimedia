@@ -42,7 +42,7 @@ public class InicioActivity extends Activity {
     }
 
     public void bluetooth (View v){
-        abrirBluetooth();
+        abrirBluetooth(0);
     }
 
     public void wifi (View v){
@@ -71,10 +71,19 @@ public class InicioActivity extends Activity {
         }
     }
 
-    public void abrirBluetooth(){
-        Toast.makeText(this, "Funciona", Toast.LENGTH_SHORT).show();
-        Intent bt = new Intent(InicioActivity.this, MainActivityBT.class);
-        startActivity(bt);
+    public void abrirBluetooth(int valor){
+        cargando(R.string.VERIFY, pDialog, this);
+        String nickname = ET_Main_Nickname.getText().toString();
+        if(vacio(new EditText[]{ET_Main_Nickname})){
+            GuardarPreferencia();
+            Intent bt = new Intent(InicioActivity.this, MainActivityBT.class);
+            bt.putExtra("tipo", valor);
+            bt.putExtra("nickname", nickname );
+            System.setProperty("net.hostname", nickname);
+            startActivity(bt);
+        }else{
+            mostrarMensaje(R.string.ERROR, R.string.NONAME, this);
+        }
     }
 
     public void GuardarPreferencia(){

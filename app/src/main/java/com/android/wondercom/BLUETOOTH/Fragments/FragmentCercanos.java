@@ -33,11 +33,7 @@ public class FragmentCercanos extends Fragment{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.bt_fragment_cercanos, container, false);
-        try {
-            listarDatos();
-        }catch (Exception e){
-            Toast.makeText(getActivity(), e.toString(), Toast.LENGTH_SHORT).show();
-        }
+        listarDatos();
         adaptarDatos(view);
         return view;
     }
@@ -50,11 +46,10 @@ public class FragmentCercanos extends Fragment{
         ListadoDispositivos = new String [ cont ];
         cont = 0;
         for (BluetoothDevice device : Dispositivos){
-            ListadoDispositivos[cont] = device.getName().toString() +" - " + device.getAddress();
+            ListadoDispositivos[cont] = device.getName().toString() + device.getAddress().toString();
             cont++;
         }
         cont = 0;
-        //Toast.makeText(getActivity(), ListadoDispositivos[0].toString(), Toast.LENGTH_SHORT).show();
     }
 
     public void adaptarDatos(View view){
@@ -65,5 +60,4 @@ public class FragmentCercanos extends Fragment{
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
         rv.setLayoutManager(llm);
     }
-
 }
