@@ -27,16 +27,43 @@ public class FragmentCercanos extends Fragment{
     BluetoothConnect bluetoothConnect = new BluetoothConnect();
 
     Set<BluetoothDevice> Dispositivos;
+    String ListadoDispositivos[];
+    int cont = 0;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.bt_fragment_cercanos, container, false);
+        try {
+            listarDatos();
+        }catch (Exception e){
+            Toast.makeText(getActivity(), e.toString(), Toast.LENGTH_SHORT).show();
+        }
+        adaptarDatos(view);
+        return view;
+    }
+
+    public void listarDatos(){
+        Dispositivos = new BluetoothConnect().getListContactBluetooth();
+        for (BluetoothDevice device : Dispositivos){
+            cont++;
+        }
+        ListadoDispositivos = new String [ cont ];
+        cont = 0;
+        for (BluetoothDevice device : Dispositivos){
+            ListadoDispositivos[cont] = device.getName().toString() +" - " + device.getAddress();
+            cont++;
+        }
+        cont = 0;
+        //Toast.makeText(getActivity(), ListadoDispositivos[0].toString(), Toast.LENGTH_SHORT).show();
+    }
+
+    public void adaptarDatos(View view){
         RecyclerView rv = (RecyclerView) view.findViewById(R.id.rv_cercanos);
         //rv.setHasFixedSize(true);
-        AdapterCercanos adapter = new AdapterCercanos(new String[]{"test one", "test two", "test three", "test four", "test five" , "test six" , "test seven"});
+        AdapterCercanos adapter = new AdapterCercanos(ListadoDispositivos);
         rv.setAdapter(adapter);
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
         rv.setLayoutManager(llm);
-        return view;
     }
+
 }
