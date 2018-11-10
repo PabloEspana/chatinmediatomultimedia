@@ -14,7 +14,6 @@ import android.media.MediaPlayer.OnCompletionListener;
 import android.media.ThumbnailUtils;
 import android.provider.MediaStore.Images.Thumbnails;
 import android.text.util.Linkify;
-import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,7 +28,6 @@ import android.widget.TextView;
 import com.android.wondercom.ChatActivity;
 import com.android.wondercom.DB.DB_SOSCHAT;
 import com.android.wondercom.NEGOCIO.DireccionMAC;
-import com.android.wondercom.NEGOCIO.eliminarDuplicados;
 import com.android.wondercom.PlayVideoActivity;
 import com.android.wondercom.R;
 import com.android.wondercom.ViewImageActivity;
@@ -37,7 +35,6 @@ import com.android.wondercom.Entities.Message;
 import com.android.wondercom.util.FileUtilities;
 
 import static com.android.wondercom.NEGOCIO.Mensajes.getMacAddr;
-import com.android.wondercom.NEGOCIO.eliminarDuplicados;
 
 public class ChatAdapter extends BaseAdapter {
 	private Activity activity;
@@ -72,12 +69,12 @@ public class ChatAdapter extends BaseAdapter {
 	public long getItemId(int position) {
 		return position;
 	}
-	Message mes;
+
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		View view = convertView;
 		int layoutResource = 0; // determined by view type
-		mes = listMessage.get(position);
+		Message mes = listMessage.get(position);
 		int type = mes.getmType();
 		if(view == null){
 			CacheView cache = new CacheView();
@@ -112,10 +109,6 @@ public class ChatAdapter extends BaseAdapter {
         //Colourise differently own message
 		//if((Boolean) listMessage.get(position).isMine()){
 
-		if(mes.getActivador()){
-			mes.setActivador(false);
-		}
-
 
 		if(mes.getMacOrigen().equals(getMacAddr())){
         	params.removeRule(RelativeLayout.ALIGN_PARENT_LEFT);
@@ -124,8 +117,11 @@ public class ChatAdapter extends BaseAdapter {
 			cache.chatName.setTextColor(Color.BLACK);
 			cache.text.setTextColor(Color.BLACK);
 			cache.chatName.setText("Yo");
-			if(mes.getMacDestino().equals(""))
+			if(mes.getMacDestino().equals("")){
 				mes.setMacDestino(DireccionMAC.direccion);
+				db.actualizarMacDestino(mes.tiempoEnvio(), DireccionMAC.direccion);
+			}
+
 		}
         else{
 			params.removeRule(RelativeLayout.ALIGN_PARENT_RIGHT);
@@ -134,11 +130,13 @@ public class ChatAdapter extends BaseAdapter {
 			cache.chatName.setTextColor(Color.WHITE);
 			cache.text.setTextColor(Color.WHITE);
 			DireccionMAC.direccion=mes.getMacOrigen();
-			if(mes.getMacDestino().equals(""))
+			if(mes.getMacDestino().equals("")){
 				mes.setMacDestino(getMacAddr());
+				db.actualizarMacDestino(mes.tiempoEnvio(), getMacAddr());
+			}
+
         }
-        if(db.validarRegistro(mes))
-	        db.guardarMensaje(mes);
+
 
         //We disable all the views and enable certain views depending on the message's type
         disableAllMediaViews(cache);

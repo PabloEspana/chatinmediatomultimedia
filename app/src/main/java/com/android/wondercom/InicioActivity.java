@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.android.wondercom.NEGOCIO.DireccionMAC;
 import com.android.wondercom.BLUETOOTH.MainActivityBT;
 import com.android.wondercom.NEGOCIO.Dispositivo;
 
@@ -56,6 +57,7 @@ public class InicioActivity extends Activity {
     public void abrirChat(int valor){
         cargando(R.string.VERIFY, pDialog, this);
         String nickname= ET_Main_Nickname.getText().toString();
+        DireccionMAC.nombre=nickname;
 
         if(vacio(new EditText[]{ET_Main_Nickname})){
             GuardarPreferencia();
