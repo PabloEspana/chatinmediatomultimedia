@@ -3,6 +3,7 @@ package com.android.wondercom.BLUETOOTH.Fragments;
 import android.app.Fragment;
 
 import android.bluetooth.BluetoothDevice;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -55,7 +56,7 @@ public class FragmentCercanos extends Fragment{
     public void adaptarDatos(View view){
         RecyclerView rv = (RecyclerView) view.findViewById(R.id.rv_cercanos);
         //rv.setHasFixedSize(true);
-        AdapterCercanos adapter = new AdapterCercanos(ListadoDispositivos);
+        AdapterCercanos adapter = new AdapterCercanos(getActivity(), ListadoDispositivos);
         rv.setAdapter(adapter);
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
         rv.setLayoutManager(llm);

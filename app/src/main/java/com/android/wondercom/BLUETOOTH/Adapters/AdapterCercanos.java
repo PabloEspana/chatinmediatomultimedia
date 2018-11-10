@@ -1,6 +1,9 @@
 package com.android.wondercom.BLUETOOTH.Adapters;
 
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -9,10 +12,15 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.wondercom.BLUETOOTH.Activities.ChatActivity;
+import com.android.wondercom.BLUETOOTH.MainActivityBT;
+import com.android.wondercom.InicioActivity;
+import com.android.wondercom.MainActivity;
 import com.android.wondercom.R;
 
 public class AdapterCercanos extends RecyclerView.Adapter<AdapterCercanos.MyViewHolder> {
 
+    private Context context;
     private String[] mDataset;
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
@@ -27,7 +35,8 @@ public class AdapterCercanos extends RecyclerView.Adapter<AdapterCercanos.MyView
         }
     }
 
-    public AdapterCercanos(String[] myDataset) {
+    public AdapterCercanos(Context c, String[] myDataset) {
+        context = c;
         mDataset = myDataset;
     }
 
@@ -50,7 +59,8 @@ public class AdapterCercanos extends RecyclerView.Adapter<AdapterCercanos.MyView
         holder.mCardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                Intent bt = new Intent(context, ChatActivity.class);
+                context.startActivity(bt);
             }
         });
     }
