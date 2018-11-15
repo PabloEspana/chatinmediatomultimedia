@@ -21,6 +21,7 @@ public class MainDB extends SQLiteOpenHelper {
         List<String> sentencias = new ArrayList<String>();
         sentencias.add(UsuarioDB.ElementEntry.CREATE_TABLE);
         sentencias.add(GrupoDB.ElementEntry.CREATE_TABLE);
+        sentencias.add(MiembroDB.ElementEntry.CREATE_TABLE);
 
         for (int i=0; i< sentencias.size();i++){
             db.execSQL(sentencias.get(i));
@@ -32,6 +33,7 @@ public class MainDB extends SQLiteOpenHelper {
         List<String> sentencias = new ArrayList<String>();
         sentencias.add(UsuarioDB.ElementEntry.DELETE_TABLE);
         sentencias.add(GrupoDB.ElementEntry.DELETE_TABLE);
+        sentencias.add(MiembroDB.ElementEntry.DELETE_TABLE);
 
         for (int i=0; i< sentencias.size();i++){
             db.execSQL(sentencias.get(i));

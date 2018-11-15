@@ -104,7 +104,7 @@ public class GrupoDB {
         database.getReadableDatabase().close();
         return list;
     }
-
+    /// esto devolverá una lista de mensajes cuando la entidad mensajes está terminada
     public List<Usuario> getAllMessageFromGroup(Grupo grupo){
         List<Usuario> list = new ArrayList<Usuario>();
         String Query = "Select * From ((Mensajes INNER JOIN Grupos ON Mensaje.Group_ID like Grupos.Group_ID) " +
