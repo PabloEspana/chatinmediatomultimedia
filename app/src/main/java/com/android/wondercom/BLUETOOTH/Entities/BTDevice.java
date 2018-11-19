@@ -1,4 +1,4 @@
-package com.android.wondercom.BLUETOOTH.Models;
+package com.android.wondercom.BLUETOOTH.Entities;
 
 import android.bluetooth.BluetoothDevice;
 
