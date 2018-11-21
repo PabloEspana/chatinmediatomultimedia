@@ -25,6 +25,7 @@ import android.widget.Toast;
 
 import com.android.wondercom.InitThreads.ClientInit;
 import com.android.wondercom.InitThreads.ServerInit;
+import com.android.wondercom.NEGOCIO.Dispositivo;
 import com.android.wondercom.Receivers.WifiDirectBroadcastReceiver;
 import com.android.wondercom.util.ActivityUtilities;
 
