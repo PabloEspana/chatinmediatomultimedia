@@ -78,10 +78,10 @@ public class InicioActivity extends Activity {
     }
 
     public void abrirBluetooth(int valor){
-        if (ET_Main_Nickname.getText().toString().matches("")) {
-            Toast.makeText(this, "Debe ingresar un nombre", Toast.LENGTH_SHORT).show();
-            return;
-        }
+//        if (ET_Main_Nickname.getText().toString().matches("")) {
+//            Toast.makeText(this, "Debe ingresar un nombre", Toast.LENGTH_SHORT).show();
+//            return;
+//        }
         cargando(R.string.VERIFY, pDialog, this);
         String nickname = ET_Main_Nickname.getText().toString();
         if(vacio(new EditText[]{ET_Main_Nickname})){
