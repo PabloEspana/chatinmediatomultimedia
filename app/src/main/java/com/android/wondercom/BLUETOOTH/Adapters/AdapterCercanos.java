@@ -1,6 +1,8 @@
 package com.android.wondercom.BLUETOOTH.Adapters;
 
 
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -13,12 +15,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.wondercom.BLUETOOTH.Activities.ChatActivity;
+import com.android.wondercom.BLUETOOTH.Entities.BTDevice;
 import com.android.wondercom.BLUETOOTH.MainActivityBT;
 import com.android.wondercom.InicioActivity;
 import com.android.wondercom.MainActivity;
 import com.android.wondercom.R;
 
 public class AdapterCercanos extends RecyclerView.Adapter<AdapterCercanos.MyViewHolder> {
+
+    BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+    private BluetoothDevice connectingDevice;
 
     private Context context;
     private String[] mDataset;
@@ -50,16 +56,16 @@ public class AdapterCercanos extends RecyclerView.Adapter<AdapterCercanos.MyView
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, final int position) {
-        holder.nombre.setText(
-                mDataset[position].substring(0, mDataset[position].length() - 17)
-        );
-        holder.direccion.setText(
-                mDataset[position].substring(mDataset[position].length() - 17, mDataset[position].length())
-        );
+        final String nombre_destino =  mDataset[position].substring(0, mDataset[position].length() - 17);
+        final String direccion_destino = mDataset[position].substring(mDataset[position].length() - 17, mDataset[position].length());
+        holder.nombre.setText(nombre_destino);
+        holder.direccion.setText(direccion_destino);
         holder.mCardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent bt = new Intent(context, ChatActivity.class);
+                bt.putExtra("nombre_destino", nombre_destino);
+                bt.putExtra("direccion_destino", direccion_destino);
                 context.startActivity(bt);
             }
         });

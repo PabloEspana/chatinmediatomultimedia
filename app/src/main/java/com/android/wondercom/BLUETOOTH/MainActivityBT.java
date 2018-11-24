@@ -69,8 +69,6 @@ public class MainActivityBT extends Activity implements ActionBar.TabListener {
                             .setTabListener(this));
             actionBar.setTitle(getResources().getString(R.string.app_name));
         }
-
-
     }
 
 
