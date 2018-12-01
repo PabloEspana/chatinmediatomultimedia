@@ -34,6 +34,7 @@
         <service
             android:name=".Servicios.MessageService"
             android:enabled="true" />
+
         <activity android:name=".InicioActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -45,28 +46,32 @@
             android:name=".FuncionActivity"
             android:label="@string/title_activity_funcion"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".ChatActivity"
+        <activity
+            android:name=".ChatActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:label="@string/title_activity_chat"/>
+            android:label="@string/title_activity_chat" />
         <activity android:name=".DrawingActivity" />
-        <activity android:name=".FilePickerActivity"
-            android:label="@string/title_activity_file_picker"
-            android:configChanges="orientation|keyboardHidden|screenSize"/>
+        <activity
+            android:name=".FilePickerActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_file_picker" />
         <activity
             android:name=".PlayVideoActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_play_video"
             android:theme="@style/FullscreenTheme" />
-        <activity android:name=".RecordAudioActivity"
+        <activity
+            android:name=".RecordAudioActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:label="@string/title_activity_record_audio"/>
+            android:label="@string/title_activity_record_audio" />
         <activity
             android:name=".ViewImageActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_view_image"
-            android:parentActivityName= ".ChatActivity"
+            android:parentActivityName=".ChatActivity"
             android:theme="@style/FullscreenTheme" />
-        <activity android:name=".WebViewActivity"
+        <activity
+            android:name=".WebViewActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_web_view">
             <intent-filter>
@@ -78,11 +83,7 @@
                 <data android:scheme="myweburl" />
             </intent-filter>
         </activity>
- 
-        <activity
-            android:name=".BLUETOOTH.MainActivityBT"
-            android:label="Bluetooth"></activity>
-        <activity android:name=".BLUETOOTH.Activities.ChatActivity"></activity>
+        <activity android:name=".BLUETOOTH.main"></activity>
     </application>
 
 </manifest>

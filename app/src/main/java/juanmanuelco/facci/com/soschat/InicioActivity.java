@@ -21,6 +21,10 @@ import juanmanuelco.facci.com.soschat.NEGOCIO.Dispositivo;
 import juanmanuelco.facci.com.soschat.NEGOCIO.Mensajes;
 import juanmanuelco.facci.com.soschat.NEGOCIO.Validaciones;
 
+import static juanmanuelco.facci.com.soschat.NEGOCIO.Mensajes.cargando;
+import static juanmanuelco.facci.com.soschat.NEGOCIO.Mensajes.mostrarMensaje;
+import static juanmanuelco.facci.com.soschat.NEGOCIO.Validaciones.vacio;
+
 public class InicioActivity extends AppCompatActivity {
     EditText ET_Main_Nickname;
     ProgressDialog pDialog;
@@ -58,11 +62,11 @@ public class InicioActivity extends AppCompatActivity {
             Toast.makeText(this, "Debe ingresar un nombre", Toast.LENGTH_SHORT).show();
             return;
         }
-        Mensajes.cargando(R.string.VERIFY, pDialog, this);
+        cargando(R.string.VERIFY, pDialog, this);
         String nickname= ET_Main_Nickname.getText().toString();
         DireccionMAC.nombre=nickname;
 
-        if(Validaciones.vacio(new EditText[]{ET_Main_Nickname})){
+        if(vacio(new EditText[]{ET_Main_Nickname})){
             GuardarPreferencia();
             Intent act_chat= null;
             act_chat= new Intent(InicioActivity.this, FuncionActivity.class);
@@ -72,7 +76,7 @@ public class InicioActivity extends AppCompatActivity {
 
             startActivity(act_chat);
         }else{
-            Mensajes.mostrarMensaje(R.string.ERROR, R.string.NONAME, this);
+            mostrarMensaje(R.string.ERROR, R.string.NONAME, this);
         }
     }
 
