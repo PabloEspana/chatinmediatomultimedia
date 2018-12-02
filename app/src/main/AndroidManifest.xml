@@ -83,7 +83,11 @@
                 <data android:scheme="myweburl" />
             </intent-filter>
         </activity>
-        <activity android:name=".BLUETOOTH.main"></activity>
+        <activity
+            android:name=".BLUETOOTH.MainActivityBT"
+            android:label="SosChat Bluetooth"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".BLUETOOTH.Activities.ChatActivity"></activity>
     </application>
 
 </manifest>

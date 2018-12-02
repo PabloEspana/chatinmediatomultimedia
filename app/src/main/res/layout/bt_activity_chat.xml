@@ -1,9 +1,14 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<!--<android.support.constraint.ConstraintLayout-->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#efefef"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:context=".BLUETOOTH.Activities.ChatActivity">
 
     <ListView
         android:id="@+id/listViewMsg"
@@ -32,9 +37,12 @@
             android:layout_width="0dp"
             android:layout_height="fill_parent"
             android:layout_weight="1"
-            android:text="Send"
+            android:text="Enviar"
             android:textColor="@color/Texto_boton"
             android:background="@color/button_background"/>
 
     </LinearLayout>
+
 </LinearLayout>
+
+<!--</android.support.constraint.ConstraintLayout>-->
