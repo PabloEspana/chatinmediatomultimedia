@@ -1,9 +1,11 @@
 package juanmanuelco.facci.com.soschat.BLUETOOTH.Activities;
 
+import android.app.Notification;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.database.DataSetObserver;
+import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
@@ -110,6 +112,7 @@ public class ChatActivity extends AppCompatActivity {
         }
     }
 
+
     private Handler handler = new Handler(new Handler.Callback() {
 
         @Override
@@ -133,13 +136,15 @@ public class ChatActivity extends AppCompatActivity {
                 case MESSAGE_WRITE:    // Si es mensaje escrito
                     byte[] writeBuf = (byte[]) msg.obj;
                     String writeMessage = new String(writeBuf);  // Se almacena el mensaje a mostrar
-                    Toast.makeText(ChatActivity.this, "Yo: " + writeMessage, Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(ChatActivity.this, "Yo: " + writeMessage, Toast.LENGTH_SHORT).show();
+                    mostrarMensaje(writeMessage, true);
                     break;
                 case MESSAGE_READ:      // Si es mensaje lectura
                     byte[] readBuf = (byte[]) msg.obj;
                     String readMessage = new String(readBuf, 0, msg.arg1);
-                    Toast.makeText(ChatActivity.this, connectingDevice.getName() + ":  " + readMessage,
-                            Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(ChatActivity.this, connectingDevice.getName() + ":  " + readMessage,
+                            //Toast.LENGTH_SHORT).show();
+                    mostrarMensaje(readMessage, false);
                     break;
 
                 case MESSAGE_DEVICE_OBJECT:     // Si es mensaje del objeto del dispositivo
@@ -161,14 +166,23 @@ public class ChatActivity extends AppCompatActivity {
         Toast.makeText(this, s, Toast.LENGTH_SHORT).show();
     }
 
+
+
     private void connectToDevice(String MAC) {
         if (bluetoothAdapter == null) {
             Log.i("Error", "Bluetooth not supported");
         } else {
             BluetoothDevice dispositivo = bluetoothAdapter.getRemoteDevice(MAC);
-            Toast.makeText(this, MAC, Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, MAC, Toast.LENGTH_SHORT).show();
             chatController.connect(dispositivo);
         }
+    }
+
+    public boolean mostrarMensaje(String mensaje, boolean tipo){
+        chatArrayAdapter.add(new ChatMessage(tipo, mensaje));
+        textoMensaje.setText("");
+        //lado = !lado;
+        return true;
     }
 
     private void sendChatMessage(String mensaje){
