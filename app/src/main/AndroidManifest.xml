@@ -87,7 +87,8 @@
             android:name=".BLUETOOTH.MainActivityBT"
             android:label="SosChat Bluetooth"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".BLUETOOTH.Activities.ChatActivity"></activity>
+        <activity android:name=".BLUETOOTH.Activities.ChatActivity"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

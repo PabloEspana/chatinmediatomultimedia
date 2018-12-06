@@ -5,6 +5,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.database.DataSetObserver;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
@@ -17,6 +18,7 @@ import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import juanmanuelco.facci.com.soschat.BLUETOOTH.Controllers.ChatController;
@@ -26,6 +28,7 @@ import juanmanuelco.facci.com.soschat.BLUETOOTH.Adapters.ChatArrayAdapter;
 
 public class ChatActivity extends AppCompatActivity {
 
+    private TextView nombreDispositivo, estadoConexion, color;
     private EditText edit;
     private ChatArrayAdapter chatArrayAdapter;
     private ListView listView;
@@ -121,15 +124,18 @@ public class ChatActivity extends AppCompatActivity {
                 case MESSAGE_STATE_CHANGE:  // Si es mensaje de cambio de estado
                     switch (msg.arg1) {
                         case ChatController.STATE_CONNECTED:  // Si es estado conectado
-                            setStatus("Conectado a: " + connectingDevice.getName());  // Se envía el mensaje como parámetro
+                            //setStatus("Conectado a: " + connectingDevice.getName());  // Se envía el mensaje como parámetro
+                            setStatus(2);
                             break;
                         case ChatController.STATE_CONNECTING:  // Si es estado conectando
-                            setStatus("Conectando...");  // Se envía el mensaje como parámetro
+                            //setStatus("Conectando...");  // Se envía el mensaje como parámetro
+                            setStatus(1);  // Se envía el mensaje como parámetro
                             break;
                         case ChatController.STATE_LISTEN:
                             //setStatus("Escuchando");
                         case ChatController.STATE_NONE:
-                            setStatus("No conectado");
+                            //setStatus("No conectado");
+                            setStatus(3);
                             break;
                     }
                     break;
@@ -162,8 +168,20 @@ public class ChatActivity extends AppCompatActivity {
     });
 
 
-    private void setStatus(String s) {
-        Toast.makeText(this, s, Toast.LENGTH_SHORT).show();
+    private void setStatus(int s) {
+        //Toast.makeText(this, s, Toast.LENGTH_SHORT).show();
+        String texto = "";
+        if (s == 1){
+            texto = "Conectando...";
+            estadoConexion.setTextColor(Color.YELLOW);
+        }else if (s == 2){
+            texto = "Conectado";
+            estadoConexion.setTextColor(Color.GREEN);
+        }else if (s == 3){
+            texto = "Sin conexión";
+            estadoConexion.setTextColor(Color.RED);
+        }
+        estadoConexion.setText(texto);
     }
 
 
@@ -207,7 +225,7 @@ public class ChatActivity extends AppCompatActivity {
         i = getIntent();
         nombre_destino = i.getStringExtra("nombre_destino");
         direccion_destino = i.getStringExtra("direccion_destino");
-        this.setTitle(nombre_destino);
+        nombreDispositivo.setText(nombre_destino);
         // Cambiar foto
         // Obtener  mensajes de BD y listarlos
     }
@@ -216,6 +234,9 @@ public class ChatActivity extends AppCompatActivity {
         botonEnviar = (Button) findViewById(R.id.btnSend);
         listView = (ListView) findViewById(R.id.listViewMsg);
         textoMensaje = (EditText) findViewById(R.id.txtMsg);
+        nombreDispositivo = (TextView) findViewById(R.id.nombre);
+        estadoConexion = (TextView) findViewById(R.id.estadoConexion);
+        color = (TextView) findViewById(R.id.color);
     }
 
 }
