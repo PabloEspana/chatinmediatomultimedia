@@ -97,7 +97,7 @@ public class GrupoDB {
         );
 
         while (!cursor.moveToNext()) {
-            Usuario user = new Usuario(cursor.getString(0), cursor.getString(1));
+            Usuario user = new Usuario(cursor.getLong(0), cursor.getString(1), cursor.getString(2));
             list.add(user);
         }
         cursor.close();
@@ -112,7 +112,7 @@ public class GrupoDB {
 
         Cursor cursor = database.getReadableDatabase().rawQuery(Query,null);
         while (!cursor.moveToNext()) {
-            Usuario user = new Usuario(cursor.getString(0), cursor.getString(1));
+            Usuario user = new Usuario(cursor.getLong(0), cursor.getString(1), cursor.getString(2));
             list.add(user);
         }
         cursor.close();

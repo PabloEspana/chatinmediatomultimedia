@@ -9,38 +9,36 @@ import android.provider.BaseColumns;
 import java.util.ArrayList;
 import java.util.List;
 
+import juanmanuelco.facci.com.soschat.BLUETOOTH.Entidades.Chat;
 import juanmanuelco.facci.com.soschat.BLUETOOTH.Entidades.Usuario;
 
-public class UsuarioDB {
+public class ChatDB {
     private MainDB database;
 
-    public static final String TABLE_NAME = "Usuario";
+    public static final String TABLE_NAME = "Chat";
     public static final String ID = "ID";
-    public static final String MAC_BT = "MAC_BT";
-    public static final String USERNAME = "USERNAME";
+    public static final String FECHA = "FECHA";
+    public static final String ESTADO = "USERNAME";
 
-    public UsuarioDB(Context context) {
-        this.database = new MainDB(context);
-    }
+    public ChatDB(Context context) { this.database = new MainDB(context); }
 
-    public UsuarioDB(MainDB db) {
-        this.database = db;
-    }
+    public ChatDB(MainDB db) { this.database = db; }
 
     /* Inner class that defines the table contents */
     public static abstract class ElementEntry implements BaseColumns {
         public static final String CREATE_TABLE = "Create table if not exists "+TABLE_NAME+
-                " ("+ID+" int primary key autoincrement, "+MAC_BT+" text not null, "+USERNAME+" text not null);";
+                " ("+ID+" TEXT primary key, "+FECHA+" text not null, "+ESTADO+" int not null);";
 
         public static final String DELETE_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME;
     }
 
-    public boolean Insert(Usuario usuario){
+    public boolean Insert(Chat chat){
         try{
             SQLiteDatabase db = database.getWritableDatabase();
             ContentValues values = new ContentValues();
-            values.put(MAC_BT, usuario.getMac());
-            values.put(USERNAME, usuario.getUserName());
+            values.put(ID, chat.getID());
+            values.put(FECHA, chat.getDate());
+            values.put(ESTADO, chat.getEstado());
             db.insert(TABLE_NAME,null,values);
             db.close();
             return true;
@@ -54,7 +52,7 @@ public class UsuarioDB {
     public boolean Delete(Usuario usuario){
         try{
             SQLiteDatabase db = database.getWritableDatabase();
-            String Where  = MAC_BT+" Like " + usuario.getMac();
+            String Where  = ID+" Like " + usuario.getMac();
             db.delete(TABLE_NAME,Where,null);
             db.close();
         }
@@ -64,28 +62,9 @@ public class UsuarioDB {
         return false;
     }
 
-    public Usuario GetUserByMacBT(String MAC){
-        Usuario user = null;
-        String[] allColumns = {ID,MAC_BT,USERNAME};
-        Cursor cursor = database.getReadableDatabase().query(
-                TABLE_NAME,
-                allColumns,
-                MAC_BT +" Like '"+MAC+"'",
-                null,
-                null,
-                null,
-                null
-        );
-        while (!cursor.moveToNext()) {
-            user = new Usuario(cursor.getLong(0), cursor.getString(1), cursor.getString(2));
-            break;
-        }
-        return user;
-    }
-
-    public List<Usuario> getAll(){
-        List<Usuario> list = new ArrayList<Usuario>();
-        String[] allColumns = {ID,MAC_BT,USERNAME};
+    public List<Chat>  getAllChat(){
+        List<Chat> list = new ArrayList<Chat>();
+        String[] allColumns = {ID,FECHA,ESTADO};
         Cursor cursor = database.getReadableDatabase().query(
                 TABLE_NAME,
                 allColumns,
@@ -97,12 +76,12 @@ public class UsuarioDB {
         );
 
         while (!cursor.moveToNext()) {
-            Usuario user = new Usuario(cursor.getLong(0), cursor.getString(1), cursor.getString(2));
-            list.add(user);
+            Chat chat = new Chat(cursor.getString(0),cursor.getString(1),cursor.getInt(2));
+            list.add(chat);
         }
         cursor.close();
         database.getReadableDatabase().close();
         return list;
     }
-}
 
+}
