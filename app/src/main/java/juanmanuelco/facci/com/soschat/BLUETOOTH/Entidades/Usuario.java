@@ -1,11 +1,11 @@
 package juanmanuelco.facci.com.soschat.BLUETOOTH.Entidades;
 
 public class Usuario {
-    private Long ID;
+    private Integer ID;
     private String MAC;
     private String User_Name;
 
-    public Usuario(Long ID, String mac, String nickname) {
+    public Usuario(Integer ID, String mac, String nickname) {
         this.ID = ID;
         this.MAC = mac;
         this.User_Name = nickname;
@@ -15,7 +15,7 @@ public class Usuario {
         return this.MAC;
     }
 
-    public Long getID(){
+    public Integer getID(){
         return this.ID;
     }
 

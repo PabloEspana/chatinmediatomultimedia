@@ -3,7 +3,7 @@ package juanmanuelco.facci.com.soschat.BLUETOOTH.Entidades;
 public class Chat {
     private String id;
     private String fecha;
-    private int estado;
+    private Integer estado;
 
     public Chat(String id, String fecha, int estado) {
         this.id = id;
@@ -11,7 +11,7 @@ public class Chat {
         this.estado = estado;
     }
 
-    public void setEstado(int estado){
+    public void setEstado(Integer estado){
         this.estado = estado;
     }
 
@@ -27,7 +27,7 @@ public class Chat {
         return this.fecha;
     }
 
-    public int getEstado(){
+    public Integer getEstado(){
         return this.estado;
     }
 

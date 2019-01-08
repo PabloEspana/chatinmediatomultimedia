@@ -21,6 +21,7 @@ public class MiChatDB {
     public static final String ID_USER = "ID_USER";
 
     public MiChatDB(Context context) { this.database = new MainDB(context); }
+    public MiChatDB(MainDB db) { this.database = db; }
 
     public static abstract class ElementEntry implements BaseColumns {
         public static final String CREATE_TABLE = "Create table if not exists "+TABLE_NAME+

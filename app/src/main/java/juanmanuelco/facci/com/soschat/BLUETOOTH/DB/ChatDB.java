@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import juanmanuelco.facci.com.soschat.BLUETOOTH.Entidades.Chat;
-import juanmanuelco.facci.com.soschat.BLUETOOTH.Entidades.Usuario;
 
 public class ChatDB {
     private MainDB database;
@@ -49,10 +48,10 @@ public class ChatDB {
         return false;
     }
 
-    public boolean Delete(Usuario usuario){
+    public boolean Delete(Chat chat){
         try{
             SQLiteDatabase db = database.getWritableDatabase();
-            String Where  = ID+" Like " + usuario.getMac();
+            String Where  = ID+" Like " + chat.getID();
             db.delete(TABLE_NAME,Where,null);
             db.close();
         }

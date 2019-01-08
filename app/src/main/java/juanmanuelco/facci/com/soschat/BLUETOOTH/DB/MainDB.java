@@ -20,8 +20,10 @@ public class MainDB extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         List<String> sentencias = new ArrayList<String>();
         sentencias.add(UsuarioDB.ElementEntry.CREATE_TABLE);
-        sentencias.add(GrupoDB.ElementEntry.CREATE_TABLE);
-        sentencias.add(MiembroDB.ElementEntry.CREATE_TABLE);
+        sentencias.add(ContactosDB.ElementEntry.CREATE_TABLE);
+        sentencias.add(ChatDB.ElementEntry.CREATE_TABLE);
+        sentencias.add(MensajeDB.ElementEntry.CREATE_TABLE);
+        sentencias.add(MiChatDB.ElementEntry.CREATE_TABLE);
 
         for (int i=0; i< sentencias.size();i++){
             db.execSQL(sentencias.get(i));
@@ -30,13 +32,17 @@ public class MainDB extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        List<String> sentencias = new ArrayList<String>();
-        sentencias.add(UsuarioDB.ElementEntry.DELETE_TABLE);
-        sentencias.add(GrupoDB.ElementEntry.DELETE_TABLE);
-        sentencias.add(MiembroDB.ElementEntry.DELETE_TABLE);
+        if(newVersion>oldVersion) {
+            List<String> sentencias = new ArrayList<String>();
+            sentencias.add(UsuarioDB.ElementEntry.DELETE_TABLE);
+            sentencias.add(ContactosDB.ElementEntry.DELETE_TABLE);
+            sentencias.add(ChatDB.ElementEntry.DELETE_TABLE);
+            sentencias.add(MensajeDB.ElementEntry.DELETE_TABLE);
+            sentencias.add(MiChatDB.ElementEntry.DELETE_TABLE);
 
-        for (int i=0; i< sentencias.size();i++){
-            db.execSQL(sentencias.get(i));
+            for (int i = 0; i < sentencias.size(); i++) {
+                db.execSQL(sentencias.get(i));
+            }
         }
     }
 }

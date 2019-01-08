@@ -1,9 +1,13 @@
 package juanmanuelco.facci.com.soschat.BLUETOOTH.DB;
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 import android.provider.BaseColumns;
 
 import juanmanuelco.facci.com.soschat.BLUETOOTH.Entidades.Chat;
+import juanmanuelco.facci.com.soschat.BLUETOOTH.Entidades.Mensaje;
+import juanmanuelco.facci.com.soschat.BLUETOOTH.Entidades.Usuario;
 
 public class MensajeDB {
 
@@ -19,9 +23,9 @@ public class MensajeDB {
     public static final String EENVIO = "ESTADO_ENVIO";
     public static final String MAC = "MAC";
 
-    public MensajeDB(Context context) {
-        this.database = new MainDB(context);
-    }
+    public MensajeDB(Context context) { this.database = new MainDB(context); }
+
+    public MensajeDB(MainDB db) { this.database = db; }
 
     public static abstract class ElementEntry implements BaseColumns {
         public static final String CREATE_TABLE = "Create table if not exists "+TABLE_NAME+
@@ -33,5 +37,40 @@ public class MensajeDB {
         public static final String DELETE_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME;
     }
 
+    public boolean Insert(Mensaje mensaje){
+        try{
+            SQLiteDatabase db = database.getWritableDatabase();
+            ContentValues values = new ContentValues();
+            values.put(ID, mensaje.getID());
+            values.put(ID_CHAT, mensaje.getID_CHAT());
+            values.put(FECHA, mensaje.getDate());
+            values.put(TIPO, mensaje.getType());
+            values.put(CONTENT, mensaje.getContent());
+            values.put(TEMPO, mensaje.getTime());
+            values.put(ELECTURA, mensaje.EstaoLectura());
+            values.put(EENVIO, mensaje.EstaoLectura());
+            values.put(MAC, mensaje.getMAC());
+            db.insert(TABLE_NAME,null,values);
+            db.close();
+            return true;
+        }
+        catch (Exception ex){
+
+        }
+        return false;
+    }
+
+    public boolean Delete(Mensaje mensaje){
+        try{
+            SQLiteDatabase db = database.getWritableDatabase();
+            String Where  = ID+" = " + mensaje.getID();
+            db.delete(TABLE_NAME,Where,null);
+            db.close();
+        }
+        catch (Exception ex){
+
+        }
+        return false;
+    }
 
 }
