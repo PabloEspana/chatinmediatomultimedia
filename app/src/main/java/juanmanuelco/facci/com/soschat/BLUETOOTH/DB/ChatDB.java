@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import juanmanuelco.facci.com.soschat.BLUETOOTH.Entidades.Chat;
-
+//comment
 public class ChatDB {
     private MainDB database;
 
