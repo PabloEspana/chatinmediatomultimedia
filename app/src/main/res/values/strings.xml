@@ -13,7 +13,7 @@
 
     <string name="encabezado_principal">Bienvenido</string>
     <string name="hing_principal">Esciba un nombre</string>
-    <string name="pregunta_principal">¿Como desea conectarse?</string>
+    <string name="pregunta_principal">¿Cómo desea conectarse?</string>
     <string name="Bluetooth">Chat por Bluetooth</string>
     <string name="lan">Chat por Lan</string>
     <string name="wifi">Chat por Wifi Direct</string>
@@ -21,13 +21,13 @@
     <string name="title_activity_tabbed">TabbedActivity</string>
     <string name="tab_text_1">Encontrados</string>
     <string name="tab_text_2">Mensaje</string>
-    <string name="tab_text_3">Historico</string>
+    <string name="tab_text_3">Histórico</string>
     <string name="action_settings">Settings</string>
     <string name="section_format">Hello World from section: %1$d</string>
 
 
     <!-- App and Activities -->
-    <string name="title_activity_view_image">Ver imágen</string>
+    <string name="title_activity_view_image">Ver imagen</string>
     <string name="title_activity_chat">Sala de chat</string>
     <string name="title_activity_record_audio">Grabar audio</string>
     <string name="title_activity_play_video">Reroducir video</string>
