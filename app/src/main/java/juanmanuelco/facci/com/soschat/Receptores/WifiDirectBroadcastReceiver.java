@@ -1,4 +1,4 @@
-package juanmanuelco.facci.com.soschat.Receivers;
+package juanmanuelco.facci.com.soschat.Receptores;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -15,18 +15,17 @@ import android.net.wifi.p2p.WifiP2pManager;
 import android.net.wifi.p2p.WifiP2pManager.Channel;
 import android.net.wifi.p2p.WifiP2pManager.ConnectionInfoListener;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
 import juanmanuelco.facci.com.soschat.ChatActivity;
-import juanmanuelco.facci.com.soschat.CustomAdapters.AdaptadorDispositivos;
+import juanmanuelco.facci.com.soschat.Adaptadores.AdaptadorDispositivos;
 import juanmanuelco.facci.com.soschat.DB.DB_SOSCHAT;
-import juanmanuelco.facci.com.soschat.Entities.ENCONTRADO;
+import juanmanuelco.facci.com.soschat.Entidades.ENCONTRADO;
 import juanmanuelco.facci.com.soschat.Fragments.FM_encontrados;
 import juanmanuelco.facci.com.soschat.FuncionActivity;
-import juanmanuelco.facci.com.soschat.InitThreads.ClientInit;
-import juanmanuelco.facci.com.soschat.InitThreads.ServerInit;
+import juanmanuelco.facci.com.soschat.Hilos.ClientInit;
+import juanmanuelco.facci.com.soschat.Hilos.ServerInit;
 import juanmanuelco.facci.com.soschat.NEGOCIO.DireccionMAC;
 import juanmanuelco.facci.com.soschat.R;
 
@@ -45,8 +44,6 @@ public class WifiDirectBroadcastReceiver extends BroadcastReceiver{
 
 	WifiManager wifiManager;
 	static DB_SOSCHAT db;
-
-
 
 	public static final int IS_OWNER = 1;
 	public static final int IS_CLIENT = 2;
@@ -72,15 +69,9 @@ public class WifiDirectBroadcastReceiver extends BroadcastReceiver{
 	}
 	
 	public static WifiDirectBroadcastReceiver createInstance(){
-
-		if(instance == null){
-			instance = new WifiDirectBroadcastReceiver();
-		}
+		if(instance == null) instance = new WifiDirectBroadcastReceiver();
 		return instance;
 	}
-	
-	public List<String> getPeersName() { return peersName; }
-	public List<WifiP2pDevice> getPeers() { return peers; }
 	public int isGroupeOwner() { return isGroupeOwner; }
 	public InetAddress getOwnerAddr() { return ownerAddr; }
 	public void setmManager(WifiP2pManager mManager) { this.mManager = mManager; }
@@ -88,7 +79,6 @@ public class WifiDirectBroadcastReceiver extends BroadcastReceiver{
 	public void setmActivity(Activity mActivity) { this.mActivity = mActivity; }
 	public void setFragment(FM_encontrados FM){ this.fm= FM;}
 	public void setRecycler(RecyclerView  recycler){ this.RV=recycler;}
-
 	public void setDialogo(ProgressDialog dialogo){this.pDialog=dialogo;}
 
 	@Override
@@ -104,10 +94,8 @@ public class WifiDirectBroadcastReceiver extends BroadcastReceiver{
 
 		if(action.equals(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION)){
 			int state = intent.getIntExtra(WifiP2pManager.EXTRA_WIFI_STATE, -1);
-			if(state != WifiP2pManager.WIFI_P2P_STATE_ENABLED){
-				if(!wifiManager.isWifiEnabled())
-					wifiManager.setWifiEnabled(true);
-			}
+			if(state != WifiP2pManager.WIFI_P2P_STATE_ENABLED)
+				if(!wifiManager.isWifiEnabled()) wifiManager.setWifiEnabled(true);
 			return;
 		}
 
@@ -123,15 +111,16 @@ public class WifiDirectBroadcastReceiver extends BroadcastReceiver{
 							deviceArray= new WifiP2pDevice[peerList.getDeviceList().size()];
 							int index=0;
 							for(WifiP2pDevice device : peerList.getDeviceList()){
-                                listado.add(new String[]{device.deviceName, device.deviceAddress});
-                                listado2.add(device.deviceName+","+device.deviceAddress);
-								db.insertar_Encontrados(device.deviceAddress,device.deviceName);
+							    if(device.primaryDeviceType.equals("10-0050F204-5")){
+                                    listado.add(new String[]{device.deviceName, device.deviceAddress});
+                                    listado2.add(device.deviceName+","+device.deviceAddress);
+                                    db.insertarUsuario(device.deviceAddress, device.deviceName);
+                                }
 								deviceArray[index]= device;
 								index++;
 							}
-							Log.i("ListaEncontrados",String.valueOf(db.encontradosListaHisoricos()));
 
-							AdaptadorDispositivos adapter= new AdaptadorDispositivos(listado);
+							AdaptadorDispositivos adapter= new AdaptadorDispositivos(listado, context);
 							adapter.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
@@ -163,12 +152,8 @@ public class WifiDirectBroadcastReceiver extends BroadcastReceiver{
 		}
 
 		if(action.equals(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION)){
-			
-			if(mManager == null){
-				return;
-			}
+			if(mManager == null) return;
 			NetworkInfo networkInfo = (NetworkInfo) intent.getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO);
-
 			if(networkInfo.isConnected() && conteo){
 				mManager.requestConnectionInfo(mChannel, new ConnectionInfoListener() {
 					
