@@ -52,7 +52,7 @@ public class InicioActivity extends AppCompatActivity {
     }
 
     public void bluetooth (View v){
-        abrirBluetooth(0);
+        abrirChat(0);
     }
 
     public void wifi (View v){
@@ -64,7 +64,13 @@ public class InicioActivity extends AppCompatActivity {
         if(Validaciones.vacio(new EditText[]{ET_Main_Nickname})){
             GuardarPreferencia(nickname);
             Intent act_chat= null;
-            if(valor==1) act_chat= new Intent(InicioActivity.this, FuncionActivity.class);
+            if(valor == 0) {
+                act_chat= new Intent(InicioActivity.this, MainActivityBT.class);
+                //act_chat.putExtra("nickname", nickname );
+            }
+            else if(valor==1) {
+                act_chat= new Intent(InicioActivity.this, FuncionActivity.class);
+            }
             DireccionMAC.wifiNombre=ET_Main_Nickname.getText().toString();
             startActivity(act_chat);
         }else Mensajes.mostrarMensaje(R.string.ERROR, R.string.NONAME, this);
