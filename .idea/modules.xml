@@ -2,10 +2,14 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/SOSchat.iml" filepath="$PROJECT_DIR$/SOSchat.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+<<<<<<< HEAD
       <module fileurl="file://D:/proyectos/Tesis/SOSCHATV8/chatinmediatomultimedia/app/app.iml" filepath="D:/proyectos/Tesis/SOSCHATV8/chatinmediatomultimedia/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/chatinmediatomultimedia.iml" filepath="$PROJECT_DIR$/chatinmediatomultimedia.iml" />
       <module fileurl="file://D:/proyectos/Tesis/SOSCHATV8/chatinmediatomultimedia/chatinmediatomultimedia.iml" filepath="D:/proyectos/Tesis/SOSCHATV8/chatinmediatomultimedia/chatinmediatomultimedia.iml" />
+=======
+>>>>>>> 2538dcb2ae4eb0b080781e0aba2a8cdb4b19f95c
     </modules>
   </component>
 </project>
