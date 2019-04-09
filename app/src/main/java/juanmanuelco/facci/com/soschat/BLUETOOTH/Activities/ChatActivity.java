@@ -21,10 +21,19 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import juanmanuelco.facci.com.soschat.BLUETOOTH.Controllers.ChatController;
+import juanmanuelco.facci.com.soschat.BLUETOOTH.DB.ChatDB;
+import juanmanuelco.facci.com.soschat.BLUETOOTH.DB.MensajeDB;
+import juanmanuelco.facci.com.soschat.BLUETOOTH.Entidades.Chat;
 import juanmanuelco.facci.com.soschat.BLUETOOTH.Entities.ChatMessage;
 import juanmanuelco.facci.com.soschat.R;
 import juanmanuelco.facci.com.soschat.BLUETOOTH.Adapters.ChatArrayAdapter;
+
+import juanmanuelco.facci.com.soschat.BLUETOOTH.Entidades.Mensaje;
+
 
 public class ChatActivity extends AppCompatActivity {
 
@@ -52,7 +61,9 @@ public class ChatActivity extends AppCompatActivity {
     private static final int REQUEST_ENABLE_BLUETOOTH = 1;
     private ChatController chatController;
     private BluetoothDevice connectingDevice;
-    
+
+    Mensaje entidad_mensaje;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -144,6 +155,7 @@ public class ChatActivity extends AppCompatActivity {
                     String writeMessage = new String(writeBuf);  // Se almacena el mensaje a mostrar
                     //Toast.makeText(ChatActivity.this, "Yo: " + writeMessage, Toast.LENGTH_SHORT).show();
                     mostrarMensaje(writeMessage, true);
+                    guardarMensaje(writeMessage);
                     break;
                 case MESSAGE_READ:      // Si es mensaje lectura
                     byte[] readBuf = (byte[]) msg.obj;
@@ -225,9 +237,19 @@ public class ChatActivity extends AppCompatActivity {
         i = getIntent();
         nombre_destino = i.getStringExtra("nombre_destino");
         direccion_destino = i.getStringExtra("direccion_destino");
-        nombreDispositivo.setText(nombre_destino);
+        nombreDispositivo.setText(nombre_destino + " " + direccion_destino);
         // Cambiar foto
         // Obtener  mensajes de BD y listarlos
+    }
+
+
+    public void guardarMensaje(String msg){
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+        String fecha = simpleDateFormat.format(new Date());
+        String id_chat = nombre_destino + " " + direccion_destino;
+        int estado = 0;
+        entidad_mensaje = new Mensaje(id_chat, fecha, "texto", msg, 1, 0, 0, direccion_destino);
+        MensajeDB.Insert(getApplicationContext(), entidad_mensaje);
     }
 
     public void findByIds(){

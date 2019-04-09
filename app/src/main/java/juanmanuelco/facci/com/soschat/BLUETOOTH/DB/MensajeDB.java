@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.provider.BaseColumns;
+import android.util.Log;
 
 import juanmanuelco.facci.com.soschat.BLUETOOTH.Entidades.Chat;
 import juanmanuelco.facci.com.soschat.BLUETOOTH.Entidades.Mensaje;
@@ -11,7 +12,8 @@ import juanmanuelco.facci.com.soschat.BLUETOOTH.Entidades.Usuario;
 
 public class MensajeDB {
 
-    private MainDB database;
+    private static MainDB database;
+
     public static final String TABLE_NAME = "MensajeI";
     public static final String ID = "ID";
     public static final String ID_CHAT = "ID_CHAT";
@@ -32,8 +34,9 @@ public class MensajeDB {
                     ID+ " integer primary key autoincrement, " +
                     ID_CHAT+ " text not null, " +
                     FECHA+ " text not null, " +
-                    TEMPO+ " integer not null, " +
+                    TIPO+ " text not null, " +
                     CONTENT+ " blob not null, " +
+                    TEMPO+ " integer not null, " +
                     ELECTURA+ " integer not null, " +
                     EENVIO+ " integer not null, " +
                     MAC+ " text not null, " +
@@ -43,11 +46,12 @@ public class MensajeDB {
         public static final String DELETE_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME;
     }
 
-    public boolean Insert(Mensaje mensaje){
+    public static boolean Insert(Context context, Mensaje mensaje){
         try{
+            database = new MainDB(context);
             SQLiteDatabase db = database.getWritableDatabase();
             ContentValues values = new ContentValues();
-            values.put(ID, mensaje.getID());
+            //values.put(ID, mensaje.getID());
             values.put(ID_CHAT, mensaje.getID_CHAT());
             values.put(FECHA, mensaje.getDate());
             values.put(TIPO, mensaje.getType());
@@ -58,10 +62,11 @@ public class MensajeDB {
             values.put(MAC, mensaje.getMAC());
             db.insert(TABLE_NAME,null,values);
             db.close();
+            Log.i("Registrado", "Mensaje Guardado");
             return true;
         }
         catch (Exception ex){
-
+            Log.e("Error", ex.toString());
         }
         return false;
     }
