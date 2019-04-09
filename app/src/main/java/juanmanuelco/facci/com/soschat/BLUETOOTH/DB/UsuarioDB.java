@@ -30,7 +30,7 @@ public class UsuarioDB {
     /* Inner class that defines the table contents */
     public static abstract class ElementEntry implements BaseColumns {
         public static final String CREATE_TABLE = "Create table if not exists "+TABLE_NAME+
-                " ("+ID+" int primary key autoincrement, "+MAC_BT+" text not null, "+USERNAME+" text not null);";
+                " ("+ID+" integer primary key autoincrement, "+MAC_BT+" text not null, "+USERNAME+" text not null);";
 
         public static final String DELETE_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME;
     }

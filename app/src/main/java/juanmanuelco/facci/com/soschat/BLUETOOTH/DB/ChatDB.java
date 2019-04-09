@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.provider.BaseColumns;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,27 +13,29 @@ import java.util.List;
 import juanmanuelco.facci.com.soschat.BLUETOOTH.Entidades.Chat;
 
 public class ChatDB {
-    private MainDB database;
+
+    private static MainDB database;
 
     public static final String TABLE_NAME = "Chat";
     public static final String ID = "ID";
     public static final String FECHA = "FECHA";
-    public static final String ESTADO = "USERNAME";
+    public static final String ESTADO = "ESTADO";
 
-    public ChatDB(Context context) { this.database = new MainDB(context); }
-
-    public ChatDB(MainDB db) { this.database = db; }
+    public ChatDB(Context context) {
+        database = new MainDB(context);
+    }
 
     /* Inner class that defines the table contents */
     public static abstract class ElementEntry implements BaseColumns {
         public static final String CREATE_TABLE = "Create table if not exists "+TABLE_NAME+
-                " ("+ID+" TEXT primary key, "+FECHA+" text not null, "+ESTADO+" int not null);";
+                " ("+ID+" TEXT primary key, "+FECHA+" text not null, "+ESTADO+" integer not null);";
 
         public static final String DELETE_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME;
     }
 
-    public boolean Insert(Chat chat){
+    public static boolean Insert(Context context, Chat chat){
         try{
+            database = new MainDB(context);
             SQLiteDatabase db = database.getWritableDatabase();
             ContentValues values = new ContentValues();
             values.put(ID, chat.getID());
@@ -40,10 +43,11 @@ public class ChatDB {
             values.put(ESTADO, chat.getEstado());
             db.insert(TABLE_NAME,null,values);
             db.close();
+            Log.i("Registro", "Chat creado: "+chat.getID());
             return true;
         }
         catch (Exception ex){
-
+            Log.d("Error",  ex.toString());
         }
         return false;
     }

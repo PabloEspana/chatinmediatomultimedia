@@ -3,6 +3,7 @@ package juanmanuelco.facci.com.soschat.BLUETOOTH.DB;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,18 +15,19 @@ public class MainDB extends SQLiteOpenHelper {
 
     public MainDB(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        SQLiteDatabase db = this.getWritableDatabase();
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
         List<String> sentencias = new ArrayList<String>();
         sentencias.add(UsuarioDB.ElementEntry.CREATE_TABLE);
-        sentencias.add(ContactosDB.ElementEntry.CREATE_TABLE);
+        //sentencias.add(ContactosDB.ElementEntry.CREATE_TABLE);
         sentencias.add(ChatDB.ElementEntry.CREATE_TABLE);
         sentencias.add(MensajeDB.ElementEntry.CREATE_TABLE);
         sentencias.add(MiChatDB.ElementEntry.CREATE_TABLE);
 
-        for (int i=0; i< sentencias.size();i++){
+        for (int i = 0; i < sentencias.size(); i++){
             db.execSQL(sentencias.get(i));
         }
     }
@@ -35,7 +37,7 @@ public class MainDB extends SQLiteOpenHelper {
         if(newVersion>oldVersion) {
             List<String> sentencias = new ArrayList<String>();
             sentencias.add(UsuarioDB.ElementEntry.DELETE_TABLE);
-            sentencias.add(ContactosDB.ElementEntry.DELETE_TABLE);
+            //sentencias.add(ContactosDB.ElementEntry.DELETE_TABLE);
             sentencias.add(ChatDB.ElementEntry.DELETE_TABLE);
             sentencias.add(MensajeDB.ElementEntry.DELETE_TABLE);
             sentencias.add(MiChatDB.ElementEntry.DELETE_TABLE);

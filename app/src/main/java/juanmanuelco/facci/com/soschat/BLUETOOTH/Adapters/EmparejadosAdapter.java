@@ -6,22 +6,33 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import juanmanuelco.facci.com.soschat.BLUETOOTH.DB.MainDB;
 import juanmanuelco.facci.com.soschat.R;
 import juanmanuelco.facci.com.soschat.BLUETOOTH.Activities.ChatActivity;
 
-public class EmparejadosAdapter extends RecyclerView.Adapter<EmparejadosAdapter.MyViewHolder>{
+import juanmanuelco.facci.com.soschat.BLUETOOTH.Entidades.Chat;
+import juanmanuelco.facci.com.soschat.BLUETOOTH.DB.ChatDB;
 
+
+public class EmparejadosAdapter extends RecyclerView.Adapter<EmparejadosAdapter.MyViewHolder>{
     BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
     private BluetoothDevice connectingDevice;
     private Context context;
     private String[] mDataset;
+    Chat entidad_chat;
+
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
+
         public CardView mCardView;
         public TextView nombre;
         public TextView direccion;
@@ -58,6 +69,7 @@ public class EmparejadosAdapter extends RecyclerView.Adapter<EmparejadosAdapter.
                 Intent bt = new Intent(context, ChatActivity.class);
                 bt.putExtra("nombre_destino", nombre_destino);
                 bt.putExtra("direccion_destino", direccion_destino);
+                enviarDatosChat(nombre_destino, direccion_destino);
                 context.startActivity(bt);
             }
         });
@@ -68,4 +80,12 @@ public class EmparejadosAdapter extends RecyclerView.Adapter<EmparejadosAdapter.
         return mDataset.length;
     }
 
+    public void enviarDatosChat(String nombre_destino, String direccion_destino){
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        String fecha = simpleDateFormat.format(new Date());
+        String id = nombre_destino+" "+direccion_destino;
+        int estado = 0;
+        entidad_chat = new Chat(id, fecha, estado);
+        ChatDB.Insert(context, entidad_chat);
+    }
 }

@@ -1,5 +1,7 @@
 package juanmanuelco.facci.com.soschat.BLUETOOTH.Entidades;
 
+import android.util.Log;
+
 public class Chat {
     private String id;
     private String fecha;
@@ -9,6 +11,7 @@ public class Chat {
         this.id = id;
         this.fecha = fecha;
         this.estado = estado;
+        Log.i("Correcto", "Datos obtenidos: "+id+" "+fecha+" "+" "+estado);
     }
 
     public void setEstado(Integer estado){

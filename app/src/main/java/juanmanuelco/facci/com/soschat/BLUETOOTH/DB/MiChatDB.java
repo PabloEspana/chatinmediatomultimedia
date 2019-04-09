@@ -25,7 +25,7 @@ public class MiChatDB {
 
     public static abstract class ElementEntry implements BaseColumns {
         public static final String CREATE_TABLE = "Create table if not exists "+TABLE_NAME+
-                " ("+ID+" int primary key autoincrement, "+ID_CHAT+" text not null, "+ID_USER+" int not null);";
+                " ("+ID+" integer primary key autoincrement, "+ID_CHAT+" text not null, "+ID_USER+" integer not null);";
 
         public static final String DELETE_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME;
     }

@@ -27,7 +27,7 @@ public class ContactosDB {
 
     public static abstract class ElementEntry implements BaseColumns {
         public static final String CREATE_TABLE = "Create table if not exists "+TABLE_NAME+
-                " ("+ID+" int primary key autoincrement, "+ID_User+" int not null, "+USERNAME+" text not null, " +
+                " ("+ID+" integer primary key autoincrement, "+ID_User+" integer not null, "+USERNAME+" text not null, " +
                 MAC+" text not null, "+
                 "foreign key("+ID_User+") references "+UsuarioDB.TABLE_NAME +" ("+UsuarioDB.ID+");";
 

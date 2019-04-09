@@ -22,18 +22,18 @@ public class FragmentEmparejados extends Fragment {
     BluetoothConnect bluetoothConnect = new BluetoothConnect();
 
     CardView cv;
-    Set<BluetoothDevice> Dispositivos;
+    Set<BluetoothDevice> Dispositivos; // set de dispositivos bluetooth
     String ListadoDispositivos[];
     int cont = 0;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.bt_fragment_emparejados, container, false);
-        cv = (CardView) view.findViewById(R.id.cv);
+        View vista = inflater.inflate(R.layout.bt_fragment_emparejados, container, false);
+        cv = (CardView) vista.findViewById(R.id.cv);
         listarDispositivosCercanos();
-        adaptarListado(view);
-        return view;
+        adaptarListado(vista);
+        return vista;
     }
 
     public void listarDispositivosCercanos(){

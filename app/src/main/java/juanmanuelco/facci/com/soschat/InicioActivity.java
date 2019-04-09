@@ -16,6 +16,8 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import juanmanuelco.facci.com.soschat.BLUETOOTH.MainActivityBT;
+import juanmanuelco.facci.com.soschat.BLUETOOTH.DB.MainDB;
+
 
 import juanmanuelco.facci.com.soschat.DB.DB_SOSCHAT;
 import juanmanuelco.facci.com.soschat.NEGOCIO.DireccionMAC;
@@ -34,6 +36,7 @@ public class InicioActivity extends AppCompatActivity {
     SharedPreferences sharedPref;
     WifiManager wifiManager;
     static DB_SOSCHAT db;
+    static MainDB db_bluetooth;
 
 
     @Override
@@ -41,6 +44,7 @@ public class InicioActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inicio);
         db= new DB_SOSCHAT(this);
+        db_bluetooth = new MainDB(this);
         Dispositivo.requestPermissionFromDevice(this);
         wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         wifiManager.setWifiEnabled(true);

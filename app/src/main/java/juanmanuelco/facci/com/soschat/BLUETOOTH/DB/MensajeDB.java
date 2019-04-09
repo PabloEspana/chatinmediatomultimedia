@@ -18,7 +18,7 @@ public class MensajeDB {
     public static final String FECHA = "FECHA";
     public static final String TIPO = "TIPO";
     public static final String CONTENT = "CONTENT";
-    public static final String TEMPO = "CONTENT";
+    public static final String TEMPO = "TEMPO";
     public static final String ELECTURA = "ESTADO_LECTURA";
     public static final String EENVIO = "ESTADO_ENVIO";
     public static final String MAC = "MAC";
@@ -28,11 +28,17 @@ public class MensajeDB {
     public MensajeDB(MainDB db) { this.database = db; }
 
     public static abstract class ElementEntry implements BaseColumns {
-        public static final String CREATE_TABLE = "Create table if not exists "+TABLE_NAME+
-                " ("+ID+" int primary key autoincrement, "+ID_CHAT+" text not null, "+FECHA+" text not null, " +
-                TIPO+" int not null, "+TEMPO+" int not null, "+CONTENT+" blob not null, "+ELECTURA+" int not null, " +
-                EENVIO+" int not null, "+MAC+" text not null, "+
-                "foreign key("+ID_CHAT+") references "+ChatDB.TABLE_NAME +" ("+ChatDB.ID+");";
+        public static final String CREATE_TABLE= "Create table if not exists " +TABLE_NAME+ " (" +
+                    ID+ " integer primary key autoincrement, " +
+                    ID_CHAT+ " text not null, " +
+                    FECHA+ " text not null, " +
+                    TEMPO+ " integer not null, " +
+                    CONTENT+ " blob not null, " +
+                    ELECTURA+ " integer not null, " +
+                    EENVIO+ " integer not null, " +
+                    MAC+ " text not null, " +
+                    "foreign key("+ID_CHAT+") references "+ChatDB.TABLE_NAME+"("+ChatDB.ID+") " +
+                ")";
 
         public static final String DELETE_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME;
     }
