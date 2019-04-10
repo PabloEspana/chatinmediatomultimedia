@@ -3,7 +3,7 @@ package juanmanuelco.facci.com.soschat.BLUETOOTH.Entidades;
 import juanmanuelco.facci.com.soschat.BLUETOOTH.DB.ContactosDB;
 
 public class Mensaje {
-    private Integer ID, TEMPO, ELECTURA, EENVIO;
+    private Integer ID, TEMPO, ELECTURA, EENVIO, ESMIO;
     private String ID_CHAT, TIPO, FECHA, MAC, CONTENT;
 
     /*public Mensaje(Integer ID, String ID_CHAT, String FECHA, String TIPO, String CONTENT, Integer TEMPO, Integer ELECTURA, Integer EENVIO, String MAC) {
@@ -18,7 +18,7 @@ public class Mensaje {
         this.MAC = MAC;
     }*/
 
-    public Mensaje(String ID_CHAT, String FECHA, String TIPO, String CONTENT, Integer TEMPO, Integer ELECTURA, Integer EENVIO, String MAC) {
+    public Mensaje(String ID_CHAT, String FECHA, String TIPO, String CONTENT, Integer TEMPO, Integer ELECTURA, Integer EENVIO, String MAC, Integer ESMIO) {
         this.ID_CHAT = ID_CHAT;
         this.FECHA = FECHA;
         this.TIPO = TIPO;
@@ -27,6 +27,7 @@ public class Mensaje {
         this.ELECTURA = ELECTURA;
         this.EENVIO = EENVIO;
         this.MAC = MAC;
+        this.ESMIO = ESMIO;
     }
 
     public Integer getID(){ return this.ID; }
@@ -47,5 +48,6 @@ public class Mensaje {
 
     public Integer EstaoEnvio(){ return this.EENVIO; }
 
+    public Integer EsMio(){ return this.ESMIO; }
 
 }

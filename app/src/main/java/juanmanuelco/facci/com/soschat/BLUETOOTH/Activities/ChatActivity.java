@@ -4,6 +4,7 @@ import android.app.Notification;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.DataSetObserver;
 import android.graphics.Color;
 import android.net.Uri;
@@ -22,13 +23,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 
 import juanmanuelco.facci.com.soschat.BLUETOOTH.Controllers.ChatController;
 import juanmanuelco.facci.com.soschat.BLUETOOTH.DB.ChatDB;
 import juanmanuelco.facci.com.soschat.BLUETOOTH.DB.MensajeDB;
 import juanmanuelco.facci.com.soschat.BLUETOOTH.Entidades.Chat;
 import juanmanuelco.facci.com.soschat.BLUETOOTH.Entities.ChatMessage;
+import juanmanuelco.facci.com.soschat.Entidades.Item;
 import juanmanuelco.facci.com.soschat.R;
 import juanmanuelco.facci.com.soschat.BLUETOOTH.Adapters.ChatArrayAdapter;
 
@@ -81,6 +86,8 @@ public class ChatActivity extends AppCompatActivity {
         // Instancia clase chat adapter enviada a listado
         chatArrayAdapter = new ChatArrayAdapter(getApplicationContext(), R.layout.bt_element_right_msg);
         listView.setAdapter(chatArrayAdapter);
+
+        mostrarConversacion();
 
         /*textoMensaje.setOnKeyListener(new View.OnKeyListener() {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
@@ -155,7 +162,7 @@ public class ChatActivity extends AppCompatActivity {
                     String writeMessage = new String(writeBuf);  // Se almacena el mensaje a mostrar
                     //Toast.makeText(ChatActivity.this, "Yo: " + writeMessage, Toast.LENGTH_SHORT).show();
                     mostrarMensaje(writeMessage, true);
-                    guardarMensaje(writeMessage);
+                    guardarMensajeEnviado(writeMessage, 1);
                     break;
                 case MESSAGE_READ:      // Si es mensaje lectura
                     byte[] readBuf = (byte[]) msg.obj;
@@ -163,6 +170,7 @@ public class ChatActivity extends AppCompatActivity {
                     //Toast.makeText(ChatActivity.this, connectingDevice.getName() + ":  " + readMessage,
                             //Toast.LENGTH_SHORT).show();
                     mostrarMensaje(readMessage, false);
+                    guardarMensajeRecibido(readMessage, 0);
                     break;
 
                 case MESSAGE_DEVICE_OBJECT:     // Si es mensaje del objeto del dispositivo
@@ -243,13 +251,35 @@ public class ChatActivity extends AppCompatActivity {
     }
 
 
-    public void guardarMensaje(String msg){
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+    public void guardarMensajeEnviado(String msg, Integer esMio){
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss.SSS");
         String fecha = simpleDateFormat.format(new Date());
         String id_chat = nombre_destino + " " + direccion_destino;
-        int estado = 0;
-        entidad_mensaje = new Mensaje(id_chat, fecha, "texto", msg, 1, 0, 0, direccion_destino);
+        entidad_mensaje = new Mensaje(id_chat, fecha, "texto", msg, 1, 0, 0, direccion_destino, esMio);
         MensajeDB.Insert(getApplicationContext(), entidad_mensaje);
+    }
+
+    public void guardarMensajeRecibido(String msg, Integer esMio){
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss.SSS");
+        String fecha = simpleDateFormat.format(new Date());
+        String id_chat = nombre_destino + " " + direccion_destino;
+        entidad_mensaje = new Mensaje(id_chat, fecha, "texto", msg, 1, 0, 0, "Sin definir", esMio);
+        MensajeDB.Insert(getApplicationContext(), entidad_mensaje);
+    }
+
+    public void mostrarConversacion(){
+        String id_chat = nombre_destino + " " + direccion_destino;
+        List<Mensaje> mensajes = MensajeDB.getAllMessages(getApplicationContext(), id_chat);
+        Iterator<Mensaje> iterator = mensajes.iterator();
+        while(iterator.hasNext()){
+            Mensaje msg = iterator.next();
+            if (msg.EsMio() == 1){
+                mostrarMensaje(msg.getContent(), true);
+            }else{
+                mostrarMensaje(msg.getContent(), false);
+            }
+        }
+
     }
 
     public void findByIds(){

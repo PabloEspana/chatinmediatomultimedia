@@ -43,7 +43,6 @@ public class ChatDB {
             values.put(ESTADO, chat.getEstado());
             db.insert(TABLE_NAME,null,values);
             db.close();
-            Log.i("Registro", "Chat creado: "+chat.getID());
             return true;
         }
         catch (Exception ex){
@@ -67,7 +66,7 @@ public class ChatDB {
 
     public List<Chat>  getAllChat(){
         List<Chat> list = new ArrayList<Chat>();
-        String[] allColumns = {ID,FECHA,ESTADO};
+        String[] allColumns = {ID, FECHA, ESTADO};
         Cursor cursor = database.getReadableDatabase().query(
                 TABLE_NAME,
                 allColumns,
