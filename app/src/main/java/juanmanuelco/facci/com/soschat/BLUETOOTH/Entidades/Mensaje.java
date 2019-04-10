@@ -3,22 +3,12 @@ package juanmanuelco.facci.com.soschat.BLUETOOTH.Entidades;
 import juanmanuelco.facci.com.soschat.BLUETOOTH.DB.ContactosDB;
 
 public class Mensaje {
-    private Integer ID, TEMPO, ELECTURA, EENVIO, ESMIO;
-    private String ID_CHAT, TIPO, FECHA, MAC, CONTENT;
+    private Integer TEMPO, ELECTURA, EENVIO, ESMIO;
+    private String ID_MESSAGE, ID_CHAT, TIPO, FECHA, MAC, CONTENT;
 
-    /*public Mensaje(Integer ID, String ID_CHAT, String FECHA, String TIPO, String CONTENT, Integer TEMPO, Integer ELECTURA, Integer EENVIO, String MAC) {
-        this.ID = ID;
-        this.ID_CHAT = ID_CHAT;
-        this.FECHA = FECHA;
-        this.TIPO = TIPO;
-        this.CONTENT = CONTENT;
-        this.TEMPO = TEMPO;
-        this.ELECTURA = ELECTURA;
-        this.EENVIO = EENVIO;
-        this.MAC = MAC;
-    }*/
 
-    public Mensaje(String ID_CHAT, String FECHA, String TIPO, String CONTENT, Integer TEMPO, Integer ELECTURA, Integer EENVIO, String MAC, Integer ESMIO) {
+    public Mensaje(String ID_MESSAGE, String ID_CHAT, String FECHA, String TIPO, String CONTENT, Integer TEMPO, Integer ELECTURA, Integer EENVIO, String MAC, Integer ESMIO) {
+        this.ID_MESSAGE = ID_MESSAGE;
         this.ID_CHAT = ID_CHAT;
         this.FECHA = FECHA;
         this.TIPO = TIPO;
@@ -30,7 +20,7 @@ public class Mensaje {
         this.ESMIO = ESMIO;
     }
 
-    public Integer getID(){ return this.ID; }
+    public String getID_MESSAGE(){ return this.ID_MESSAGE; }
 
     public String getID_CHAT(){ return this.ID_CHAT; }
 

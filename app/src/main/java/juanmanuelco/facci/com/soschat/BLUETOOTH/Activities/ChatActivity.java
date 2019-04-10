@@ -61,6 +61,7 @@ public class ChatActivity extends AppCompatActivity {
     public static final int MESSAGE_WRITE = 3;
     public static final int MESSAGE_DEVICE_OBJECT = 4;
     public static final int MESSAGE_TOAST = 5;
+    public static final int MESSAGE_NOT_SEND = 6;
     public static final String DEVICE_OBJECT = "device_name";
 
     private static final int REQUEST_ENABLE_BLUETOOTH = 1;
@@ -144,6 +145,7 @@ public class ChatActivity extends AppCompatActivity {
                         case ChatController.STATE_CONNECTED:  // Si es estado conectado
                             //setStatus("Conectado a: " + connectingDevice.getName());  // Se envía el mensaje como parámetro
                             setStatus(2);
+                            reintentarEnviarMensajes();
                             break;
                         case ChatController.STATE_CONNECTING:  // Si es estado conectando
                             //setStatus("Conectando...");  // Se envía el mensaje como parámetro
@@ -153,6 +155,7 @@ public class ChatActivity extends AppCompatActivity {
                             //setStatus("Escuchando");
                         case ChatController.STATE_NONE:
                             //setStatus("No conectado");
+                            //guardarMensajeNoEnviado(textoMensaje.getText().toString(), 1, 0);
                             setStatus(3);
                             break;
                     }
@@ -224,13 +227,10 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private void sendChatMessage(String mensaje){
-    //private boolean sendChatMessage(){
-        /*chatArrayAdapter.add(new ChatMessage(lado, textoMensaje.getText().toString()));
-        textoMensaje.setText("");
-        lado = !lado;
-        return true;*/
         if (chatController.getState() != ChatController.STATE_CONNECTED) {
-            Toast.makeText(this, "¡Connexión perdida!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "¡Connexión perdida! Se enviará luego", Toast.LENGTH_SHORT).show();
+            guardarMensajeNoEnviado(textoMensaje.getText().toString(), 1, 0);
+            mostrarMensaje(textoMensaje.getText().toString(), true);
             return;
         }
         if (mensaje.length() > 0) {
@@ -255,7 +255,17 @@ public class ChatActivity extends AppCompatActivity {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss.SSS");
         String fecha = simpleDateFormat.format(new Date());
         String id_chat = nombre_destino + " " + direccion_destino;
-        entidad_mensaje = new Mensaje(id_chat, fecha, "texto", msg, 1, 0, 0, direccion_destino, esMio);
+        entidad_mensaje = new Mensaje("null", id_chat, fecha, "texto", msg, 1, 0, 1,
+                direccion_destino, esMio);
+        MensajeDB.Insert(getApplicationContext(), entidad_mensaje);
+    }
+
+    public void guardarMensajeNoEnviado(String msg, Integer esMio, Integer estado){
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss.SSS");
+        String fecha = simpleDateFormat.format(new Date());
+        String id_chat = nombre_destino + " " + direccion_destino;
+        entidad_mensaje = new Mensaje("null", id_chat, fecha, "texto", msg, 1, 0, 0,
+                direccion_destino, esMio);
         MensajeDB.Insert(getApplicationContext(), entidad_mensaje);
     }
 
@@ -263,7 +273,8 @@ public class ChatActivity extends AppCompatActivity {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss.SSS");
         String fecha = simpleDateFormat.format(new Date());
         String id_chat = nombre_destino + " " + direccion_destino;
-        entidad_mensaje = new Mensaje(id_chat, fecha, "texto", msg, 1, 0, 0, "Sin definir", esMio);
+        entidad_mensaje = new Mensaje("null", id_chat, fecha, "texto", msg, 1, 0, 1,
+                "Sin definir", esMio);
         MensajeDB.Insert(getApplicationContext(), entidad_mensaje);
     }
 
@@ -277,6 +288,27 @@ public class ChatActivity extends AppCompatActivity {
                 mostrarMensaje(msg.getContent(), true);
             }else{
                 mostrarMensaje(msg.getContent(), false);
+            }
+        }
+    }
+
+    public void reintentarEnviarMensajes(){
+        String id_chat = nombre_destino + " " + direccion_destino;
+        List<Mensaje> mensajes = MensajeDB.getAllNotSendMessages(getApplicationContext(), id_chat);
+        Iterator<Mensaje> iterator = mensajes.iterator();
+        while(iterator.hasNext()){
+            Mensaje msg = iterator.next();
+            if (chatController.getState() == ChatController.STATE_CONNECTED) {
+                if (msg.getContent().length() > 0) {
+                    byte[] send = msg.getContent().getBytes();
+                    try{
+                        MensajeDB.eliminarDuplicado(getApplicationContext(), msg.getID_MESSAGE());
+                        mostrarConversacion();
+                        chatController.write(send, "texto");
+                    }catch (Exception ex) {
+                        Log.e("Error al eliminar", ex.toString());
+                    }
+                }
             }
         }
 
