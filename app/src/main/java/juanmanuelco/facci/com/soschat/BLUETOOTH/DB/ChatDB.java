@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import juanmanuelco.facci.com.soschat.BLUETOOTH.Entidades.Chat;
+import juanmanuelco.facci.com.soschat.BLUETOOTH.Entidades.Mensaje;
 
 public class ChatDB {
 
@@ -85,5 +86,30 @@ public class ChatDB {
         database.getReadableDatabase().close();
         return list;
     }
+
+    public static List<Chat> obtenerConversacionesActivas(Context context){
+        List<Chat> list = new ArrayList<Chat>();
+        try{
+            MainDB database = new MainDB(context);
+            SQLiteDatabase db = database.getWritableDatabase();
+            Cursor cursor = db.rawQuery("SELECT * FROM Chat WHERE ESTADO = 1", null);
+            while (cursor.moveToNext()) {
+                Chat chats = new Chat(
+                        cursor.getString(0),
+                        cursor.getString(1),
+                        cursor.getInt(2));
+                Log.i("Conversaciones", cursor.toString());
+                list.add(chats);
+            }
+            cursor.close();
+            database.getReadableDatabase().close();
+            Log.i("Correcto", list.toString());
+            return list;
+        }catch (Exception ex){
+            Log.e("Error", ex.toString());
+            return list;
+        }
+    }
+
 
 }

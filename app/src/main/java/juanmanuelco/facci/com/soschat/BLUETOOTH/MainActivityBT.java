@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 
 import juanmanuelco.facci.com.soschat.BLUETOOTH.Adapters.SectionsPageAdapter;
+import juanmanuelco.facci.com.soschat.BLUETOOTH.Fragments.FragmentChats;
 import juanmanuelco.facci.com.soschat.BLUETOOTH.Fragments.FragmentEmparejados;
 import juanmanuelco.facci.com.soschat.R;
 
@@ -41,8 +42,8 @@ public class MainActivityBT extends AppCompatActivity {
     private void configurarViewPager(ViewPager viewPager){
         SectionsPageAdapter adapter = new SectionsPageAdapter(getSupportFragmentManager());
         adapter.addFragment(new FragmentEmparejados(), "Dispositivos");
-        adapter.addFragment(new FragmentEmparejados(), "Chats");
-        adapter.addFragment(new FragmentEmparejados(), "Històrico");
+        adapter.addFragment(new FragmentChats(), "Chats");
+        adapter.addFragment(new FragmentChats(), "Històrico");
         viewPager.setAdapter(adapter);
     }
 
