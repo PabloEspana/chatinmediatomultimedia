@@ -44,7 +44,8 @@ public class InicioActivity extends AppCompatActivity {
     WifiManager wifiManager;
     static DB_SOSCHAT db;
     static MainDB db_bluetooth;
-
+    private Locale locale;
+    private Configuration config = new Configuration();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,11 +112,18 @@ public class InicioActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
                 if (isChecked){
-                    setLocale("es");
-
-                }else{
                     setLocale("en");
+                    locale = new Locale("en");
+                    config.locale =locale;
+                }else{
+                    setLocale("es");
+                    locale = new Locale("es");
+                    config.locale =locale;
                 }
+                getResources().updateConfiguration(config, null);
+                Intent refresh = new Intent(InicioActivity.this, InicioActivity.class);
+                startActivity(refresh);
+                finish();
             }
         });
 
