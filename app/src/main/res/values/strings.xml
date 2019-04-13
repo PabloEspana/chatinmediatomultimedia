@@ -147,5 +147,8 @@
     <string name="TTL">Tiempo de vida de mensajes (Horas) </string>
     <string name="SAVE">Guardar</string>
     <string name="GUARD">Configuración ha sido guardada</string>
+    <string name="idioma_es">Español</string>
+    <string name="idioma_us">Inglés</string>
+    <string name="emergencia">EMERGENCIA</string>
 
 </resources>

@@ -28,7 +28,7 @@
     <!-- Generic colors -->
     <color name="black">#000000</color>
     <color name="white">#FFFFFF</color>
-    <color name="red">#F22613</color>
+    <color name="red">#f22613</color>
     <color name="purple">#8E44AD</color>
     <color name="yellow">#F4D03F</color>
     <color name="green">#26C281</color>
