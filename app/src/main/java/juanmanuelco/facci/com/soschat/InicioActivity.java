@@ -114,11 +114,11 @@ public class InicioActivity extends AppCompatActivity {
                 if (isChecked){
                     setLocale("en");
                     locale = new Locale("en");
-                    config.locale =locale;
+                    config.locale = locale;
                 }else{
                     setLocale("es");
                     locale = new Locale("es");
-                    config.locale =locale;
+                    config.locale = locale;
                 }
                 getResources().updateConfiguration(config, null);
                 Intent refresh = new Intent(InicioActivity.this, InicioActivity.class);
