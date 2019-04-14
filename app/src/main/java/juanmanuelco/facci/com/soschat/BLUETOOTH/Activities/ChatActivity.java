@@ -142,42 +142,33 @@ public class ChatActivity extends AppCompatActivity {
             switch (msg.what) {
                 case MESSAGE_STATE_CHANGE:  // Si es mensaje de cambio de estado
                     switch (msg.arg1) {
-                        case ChatController.STATE_CONNECTED:  // Si es estado conectado
-                            //setStatus("Conectado a: " + connectingDevice.getName());  // Se envía el mensaje como parámetro
+                        case ChatController.STATE_CONNECTED:  // Si es estado conectado  //connectingDevice.getName());
                             setStatus(2);
                             reintentarEnviarMensajes();
                             break;
-                        case ChatController.STATE_CONNECTING:  // Si es estado conectando
-                            //setStatus("Conectando...");  // Se envía el mensaje como parámetro
-                            setStatus(1);  // Se envía el mensaje como parámetro
+                        case ChatController.STATE_CONNECTING:
+                            setStatus(1);
                             break;
                         case ChatController.STATE_LISTEN:
-                            //setStatus("Escuchando");
                         case ChatController.STATE_NONE:
-                            //setStatus("No conectado");
-                            //guardarMensajeNoEnviado(textoMensaje.getText().toString(), 1, 0);
                             setStatus(3);
                             break;
                     }
                     break;
-                case MESSAGE_WRITE:    // Si es mensaje escrito
+                case MESSAGE_WRITE:
                     byte[] writeBuf = (byte[]) msg.obj;
-                    String writeMessage = new String(writeBuf);  // Se almacena el mensaje a mostrar
-                    //Toast.makeText(ChatActivity.this, "Yo: " + writeMessage, Toast.LENGTH_SHORT).show();
+                    String writeMessage = new String(writeBuf);
                     mostrarMensaje(writeMessage, true);
                     guardarMensajeEnviado(writeMessage, 1);
                     break;
-                case MESSAGE_READ:      // Si es mensaje lectura
+                case MESSAGE_READ:
                     byte[] readBuf = (byte[]) msg.obj;
                     String readMessage = new String(readBuf, 0, msg.arg1);
-                    //Toast.makeText(ChatActivity.this, connectingDevice.getName() + ":  " + readMessage,
-                            //Toast.LENGTH_SHORT).show();
                     mostrarMensaje(readMessage, false);
                     guardarMensajeRecibido(readMessage, 0);
                     break;
-
-                case MESSAGE_DEVICE_OBJECT:     // Si es mensaje del objeto del dispositivo
-                    connectingDevice = msg.getData().getParcelable(DEVICE_OBJECT);      // Se guarda los datos del dispositivo
+                case MESSAGE_DEVICE_OBJECT:
+                    connectingDevice = msg.getData().getParcelable(DEVICE_OBJECT);
                     Toast.makeText(getApplicationContext(), "Conectado a " + connectingDevice.getName(),
                             Toast.LENGTH_SHORT).show();
                     break;
@@ -192,7 +183,6 @@ public class ChatActivity extends AppCompatActivity {
 
 
     private void setStatus(int s) {
-        //Toast.makeText(this, s, Toast.LENGTH_SHORT).show();
         String texto = "";
         if (s == 1){
             texto = "Conectando...";
@@ -211,10 +201,9 @@ public class ChatActivity extends AppCompatActivity {
 
     private void connectToDevice(String MAC) {
         if (bluetoothAdapter == null) {
-            Log.i("Error", "Bluetooth not supported");
+            Log.i("Error", "Bluetooth no soportado");
         } else {
             BluetoothDevice dispositivo = bluetoothAdapter.getRemoteDevice(MAC);
-            //Toast.makeText(this, MAC, Toast.LENGTH_SHORT).show();
             chatController.connect(dispositivo);
         }
     }
@@ -222,7 +211,6 @@ public class ChatActivity extends AppCompatActivity {
     public boolean mostrarMensaje(String mensaje, boolean tipo){
         chatArrayAdapter.add(new ChatMessage(tipo, mensaje));
         textoMensaje.setText("");
-        //lado = !lado;
         return true;
     }
 
@@ -240,14 +228,11 @@ public class ChatActivity extends AppCompatActivity {
         }
     }
 
-    // Personalizacción de actividad
     public void configurarActividad(){
         i = getIntent();
         nombre_destino = i.getStringExtra("nombre_destino");
         direccion_destino = i.getStringExtra("direccion_destino");
         nombreDispositivo.setText(nombre_destino + " " + direccion_destino);
-        // Cambiar foto
-        // Obtener  mensajes de BD y listarlos
     }
 
 
