@@ -160,13 +160,13 @@ public class ChatActivity extends AppCompatActivity {
                     byte[] writeBuf = (byte[]) msg.obj;
                     String writeMessage = new String(writeBuf);
                     mostrarMensaje(writeMessage, true);
-                    guardarMensajeEnviado(writeMessage, 1);
+                    guardarMensajeEnviado(writeMessage);
                     break;
                 case MESSAGE_READ:
                     byte[] readBuf = (byte[]) msg.obj;
                     String readMessage = new String(readBuf, 0, msg.arg1);
                     mostrarMensaje(readMessage, false);
-                    guardarMensajeRecibido(readMessage, 0);
+                    guardarMensajeRecibido(readMessage);
                     break;
                 case MESSAGE_DEVICE_OBJECT:
                     connectingDevice = msg.getData().getParcelable(DEVICE_OBJECT);
@@ -218,7 +218,7 @@ public class ChatActivity extends AppCompatActivity {
     private void sendChatMessage(String mensaje){
         if (chatController.getState() != ChatController.STATE_CONNECTED) {
             Toast.makeText(this, "¡Connexión perdida! Se enviará luego", Toast.LENGTH_SHORT).show();
-            guardarMensajeNoEnviado(textoMensaje.getText().toString(), 1, 0);
+            guardarMensajeNoEnviado(textoMensaje.getText().toString());
             mostrarMensaje(textoMensaje.getText().toString(), true);
             return;
         }
@@ -237,30 +237,30 @@ public class ChatActivity extends AppCompatActivity {
     }
 
 
-    public void guardarMensajeEnviado(String msg, Integer esMio){
+    public void guardarMensajeEnviado(String msg){
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss.SSS");
         String fecha = simpleDateFormat.format(new Date());
         String id_chat = nombre_destino + " " + direccion_destino;
         entidad_mensaje = new Mensaje("null", id_chat, fecha, "texto", msg, 1, 0, 1,
-                direccion_destino, esMio);
+                direccion_destino, 1);
         MensajeDB.Insert(getApplicationContext(), entidad_mensaje);
     }
 
-    public void guardarMensajeNoEnviado(String msg, Integer esMio, Integer estado){
+    public void guardarMensajeNoEnviado(String msg){
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss.SSS");
         String fecha = simpleDateFormat.format(new Date());
         String id_chat = nombre_destino + " " + direccion_destino;
         entidad_mensaje = new Mensaje("null", id_chat, fecha, "texto", msg, 1, 0, 0,
-                direccion_destino, esMio);
+                direccion_destino, 1);
         MensajeDB.Insert(getApplicationContext(), entidad_mensaje);
     }
 
-    public void guardarMensajeRecibido(String msg, Integer esMio){
+    public void guardarMensajeRecibido(String msg){
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss.SSS");
         String fecha = simpleDateFormat.format(new Date());
         String id_chat = nombre_destino + " " + direccion_destino;
         entidad_mensaje = new Mensaje("null", id_chat, fecha, "texto", msg, 1, 0, 1,
-                "Sin definir", esMio);
+                "Sin definir",0);
         MensajeDB.Insert(getApplicationContext(), entidad_mensaje);
     }
 
