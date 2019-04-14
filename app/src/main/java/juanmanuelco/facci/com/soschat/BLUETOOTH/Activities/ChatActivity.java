@@ -103,7 +103,8 @@ public class ChatActivity extends AppCompatActivity {
         botonEnviar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
-                sendChatMessage(textoMensaje.getText().toString());
+                if (!textoMensaje.getText().toString().trim().isEmpty())
+                sendChatMessage(textoMensaje.getText().toString().trim());
             }
         });
 
