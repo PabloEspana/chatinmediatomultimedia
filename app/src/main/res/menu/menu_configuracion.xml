@@ -5,4 +5,16 @@
         android:title="@string/m_conf"
         android:orderInCategory="100"
         app:showAsAction="never" />
+    <item android:id="@+id/menu_idioma"
+        android:title="@string/idioma"
+        android:orderInCategory="100"
+        app:showAsAction="never" >
+        <menu>
+            <item android:id="@+id/sub_es"
+                android:title="@string/idioma_es" />
+            <item android:id="@+id/sub_us"
+                android:title="@string/idioma_us" />
+        </menu>
+        </item>
+
 </menu>

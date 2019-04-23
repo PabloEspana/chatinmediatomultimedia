@@ -13,6 +13,7 @@ import android.net.wifi.p2p.WifiP2pManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -24,6 +25,7 @@ import java.util.Locale;
 
 import juanmanuelco.facci.com.soschat.BLUETOOTH.MainActivityBT;
 import juanmanuelco.facci.com.soschat.BLUETOOTH.DB.MainDB;
+import android.view.Menu;
 
 
 import juanmanuelco.facci.com.soschat.DB.DB_SOSCHAT;
@@ -61,7 +63,7 @@ public class InicioActivity extends AppCompatActivity {
         sharedPref = this.getPreferences(Context.MODE_PRIVATE);
         ET_Main_Nickname.setText(sharedPref.getString("nickname", Dispositivo.getDeviceName()));
         db.finVidaMensaje(System.currentTimeMillis());
-        cambiarIdioma();
+        //cambiarIdioma();
     }
 
     public void bluetooth (View v){
@@ -101,32 +103,40 @@ public class InicioActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_configuracion, menu);
+        return true;
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         if (pDialog != null) pDialog.dismiss();
     }
-    
-    public void cambiarIdioma(){
-        Switch idioma = (Switch)findViewById(R.id.idioma);
-        idioma.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                if (isChecked){
-                    setLocale("en");
-                    locale = new Locale("en");
-                    config.locale = locale;
-                }else{
-                    setLocale("es");
-                    locale = new Locale("es");
-                    config.locale = locale;
-                }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.sub_es:
+                locale = new Locale("es");
+                config.locale =locale;
                 getResources().updateConfiguration(config, null);
                 Intent refresh = new Intent(InicioActivity.this, InicioActivity.class);
                 startActivity(refresh);
                 finish();
-            }
-        });
+                return true;
+            case R.id.sub_us:
+                locale = new Locale("en");
+                config.locale =locale;
+                getResources().updateConfiguration(config, null);
+                refresh = new Intent(InicioActivity.this, InicioActivity.class);
+                startActivity(refresh);
+                finish();
+                return true;
+                default:
+                    return super.onOptionsItemSelected(item);
 
+        }
     }
 
     public void setLocale(String idioma){

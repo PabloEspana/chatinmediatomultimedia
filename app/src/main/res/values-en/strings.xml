@@ -109,4 +109,6 @@
     <string name="NADD">User removed from the Database</string>
     <string name="TTL">Message life time (Hours)</string>
     <string name="GUARD">Configuration has been saved</string>
+    <string name="menu_conf">Configuration</string>
+    <string name="idioma">Languaje</string>
 </resources>

@@ -154,5 +154,7 @@
         <item>@string/idioma_us</item>
     </string-array>
     <string name="emergencia">EMERGENCIA</string>
+    <string name="menu_conf">Configuración</string>
+    <string name="idioma">Idioma</string>
 
 </resources>
