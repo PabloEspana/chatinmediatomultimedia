@@ -117,6 +117,14 @@
     <string name="mensaje_vacio">Por favor ingrese un mensaje no vacío</string>
     <string name="title_activity_borrar">Borrar</string>
     <string name="title_activity_testing">testing</string>
+    <string name="COPY_MESSAGE">Mensaje copiado en el portapapeles</string>
+    <string name="SEARCH_TOAST">Buscando...</string>
+    <string name="NO_SEARCH">No se ha podido iniciar la búsqueda</string>
+    <string name="ERROR_CONNECT">Error al conectarse con: </string>
+    <string name="DOWNLOAD_IMAGE_IN">Descargar imagen en: </string>
+    <string name="DOWNLOAD_FILE">Archivo descargado en: </string>
+    <string name="FORMAT_1">Formato 1</string>
+    <string name="FORMAT_2">Formato 2</string>
 
     <!-- Menu searches and reload -->
     <string name="search">Búsqueda</string>

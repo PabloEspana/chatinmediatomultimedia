@@ -111,4 +111,12 @@
     <string name="GUARD">Configuration has been saved</string>
     <string name="menu_conf">Configuration</string>
     <string name="idioma">Languaje</string>
+    <string name="COPY_MESSAGE">Message copied to the clipboard</string>
+    <string name="SEARCH_TOAST">Searching...</string>
+    <string name="NO_SEARCH">"The search could not be started "</string>
+    <string name="ERROR_CONNECT">"Error connecting with: "</string>
+    <string name="DOWNLOAD_IMAGE_IN">"Download image in: "</string>
+    <string name="DOWNLOAD_FILE">"File downloaded in: "</string>
+    <string name="FORMAT_1">Format 1</string>
+    <string name="FORMAT_2">Format 2</string>
 </resources>
