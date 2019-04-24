@@ -119,4 +119,11 @@
     <string name="DOWNLOAD_FILE">"File downloaded in: "</string>
     <string name="FORMAT_1">Format 1</string>
     <string name="FORMAT_2">Format 2</string>
+    <string name="BT_NO_DISP">Bluetooth not available</string>
+    <string name="CONNECTING">Connecting...</string>
+    <string name="CONNECTED">Connected</string>
+    <string name="WITHOUT_CONNECTION">Without connection</string>
+    <string name="BT_NOT_SUPPORT">Bluetooth not supported</string>
+    <string name="LOST_CONNECTION">Lost connection! It will be send later</string>
+    <string name="CONNECTED_TO">"Connected to: "</string>
 </resources>

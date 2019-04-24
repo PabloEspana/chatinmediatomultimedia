@@ -78,7 +78,7 @@ public class ChatActivity extends AppCompatActivity {
 
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (bluetoothAdapter == null) {
-            Toast.makeText(this, "Bluetooth no disponible!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.BT_NO_DISP , Toast.LENGTH_SHORT).show();
             finish();
         }
         findByIds();
@@ -170,7 +170,7 @@ public class ChatActivity extends AppCompatActivity {
                     break;
                 case MESSAGE_DEVICE_OBJECT:
                     connectingDevice = msg.getData().getParcelable(DEVICE_OBJECT);
-                    Toast.makeText(getApplicationContext(), "Conectado a " + connectingDevice.getName(),
+                    Toast.makeText(getApplicationContext(), R.string.CONNECTED_TO + connectingDevice.getName(),
                             Toast.LENGTH_SHORT).show();
                     break;
                 case MESSAGE_TOAST:
@@ -186,13 +186,13 @@ public class ChatActivity extends AppCompatActivity {
     private void setStatus(int s) {
         String texto = "";
         if (s == 1){
-            texto = "Conectando...";
+            texto = getString(R.string.CONNECTING);
             estadoConexion.setTextColor(Color.YELLOW);
         }else if (s == 2){
-            texto = "Conectado";
+            texto = getString(R.string.CONNECTED);
             estadoConexion.setTextColor(Color.GREEN);
         }else if (s == 3){
-            texto = "Sin conexión";
+            texto = getString(R.string.WITHOUT_CONNECTION);
             estadoConexion.setTextColor(Color.RED);
         }
         estadoConexion.setText(texto);
@@ -202,7 +202,7 @@ public class ChatActivity extends AppCompatActivity {
 
     private void connectToDevice(String MAC) {
         if (bluetoothAdapter == null) {
-            Log.i("Error", "Bluetooth no soportado");
+            Log.i(getString(R.string.ERROR), getString(R.string.BT_NOT_SUPPORT));
         } else {
             BluetoothDevice dispositivo = bluetoothAdapter.getRemoteDevice(MAC);
             chatController.connect(dispositivo);
@@ -217,7 +217,7 @@ public class ChatActivity extends AppCompatActivity {
 
     private void sendChatMessage(String mensaje){
         if (chatController.getState() != ChatController.STATE_CONNECTED) {
-            Toast.makeText(this, "¡Connexión perdida! Se enviará luego", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.LOST_CONNECTION, Toast.LENGTH_SHORT).show();
             guardarMensajeNoEnviado(textoMensaje.getText().toString());
             mostrarMensaje(textoMensaje.getText().toString(), true);
             return;

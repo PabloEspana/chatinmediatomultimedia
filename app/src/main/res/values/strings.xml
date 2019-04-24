@@ -164,5 +164,12 @@
     <string name="emergencia">EMERGENCIA</string>
     <string name="menu_conf">Configuración</string>
     <string name="idioma">Idioma</string>
+    <string name="BT_NO_DISP">Bluetooth no disponible</string>
+    <string name="CONNECTING">Conectando...</string>
+    <string name="CONNECTED">Conectado</string>
+    <string name="WITHOUT_CONNECTION">Sin conexión</string>
+    <string name="BT_NOT_SUPPORT">Bluetooth no soportado</string>
+    <string name="LOST_CONNECTION">¡Conexión perdida! Se enviará luego</string>
+    <string name="CONNECTED_TO">Conectado a: </string>
 
 </resources>
