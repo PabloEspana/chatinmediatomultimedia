@@ -171,5 +171,9 @@
     <string name="BT_NOT_SUPPORT">Bluetooth no soportado</string>
     <string name="LOST_CONNECTION">¡Conexión perdida! Se enviará luego</string>
     <string name="CONNECTED_TO">Conectado a: </string>
+    <string name="DEVICES_BT">Dispositivos</string>
+    <string name="CHATS_BT">Chats</string>
+    <string name="HISTORICAL_BT">Histórico</string>
+    <string name="SEND">Enviar</string>
 
 </resources>
