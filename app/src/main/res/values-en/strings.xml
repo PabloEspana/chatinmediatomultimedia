@@ -126,4 +126,8 @@
     <string name="BT_NOT_SUPPORT">Bluetooth not supported</string>
     <string name="LOST_CONNECTION">Lost connection! It will be send later</string>
     <string name="CONNECTED_TO">"Connected to: "</string>
+    <string name="DEVICES_BT">Devices</string>
+    <string name="CHATS_BT">Chats</string>
+    <string name="HISTORICAL_BT">Historical</string>
+    <string name="SEND">Send</string>
 </resources>

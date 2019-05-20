@@ -78,7 +78,7 @@
             android:layout_width="0dp"
             android:layout_height="fill_parent"
             android:layout_weight="1"
-            android:text="Enviar"
+            android:text="@string/SEND"
             android:textColor="@color/Texto_boton"
             android:background="@color/button_background"/>
 

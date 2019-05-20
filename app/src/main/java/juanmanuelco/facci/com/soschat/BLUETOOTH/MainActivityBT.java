@@ -41,9 +41,9 @@ public class MainActivityBT extends AppCompatActivity {
     // Este método configura el menú de la aplicación
     private void configurarViewPager(ViewPager viewPager){
         SectionsPageAdapter adapter = new SectionsPageAdapter(getSupportFragmentManager());
-        adapter.addFragment(new FragmentEmparejados(), "Dispositivos");
-        adapter.addFragment(new FragmentChats(), "Chats");
-        adapter.addFragment(new FragmentChats(), "Històrico");
+        adapter.addFragment(new FragmentEmparejados(), getString(R.string.DEVICES_BT));
+        adapter.addFragment(new FragmentChats(), getString(R.string.CHATS_BT));
+        adapter.addFragment(new FragmentChats(), getString(R.string.HISTORICAL_BT));
         viewPager.setAdapter(adapter);
     }
 
