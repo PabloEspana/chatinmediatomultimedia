@@ -29,8 +29,6 @@
     <string name="section_format">Hello World from section: %1$d</string>
 
 
-
-
     <!-- App and Activities -->
     <string name="title_activity_view_image">Ver imagen</string>
     <string name="title_activity_chat">Sala de chat</string>
@@ -157,7 +155,7 @@
     <string name="GUARD">Configuración ha sido guardada</string>
     <string name="idioma_es">Español</string>
     <string name="idioma_us">Inglés</string>
-    <string-array name="idiomas" >
+    <string-array name="idiomas">
         <item>@string/idioma_es</item>
         <item>@string/idioma_us</item>
     </string-array>

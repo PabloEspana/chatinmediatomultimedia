@@ -8,6 +8,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -151,7 +152,7 @@ public class ChatController {
 
     public void write(byte[] out, String tipo_mensaje) {
         tipo_envio = tipo_mensaje;
-
+        Log.i("prueba:", "Se ejecuta write");
         ReadWriteThread r;
         synchronized (this) {
             if (state != STATE_CONNECTED)

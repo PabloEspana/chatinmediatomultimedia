@@ -4,16 +4,13 @@ import android.app.Notification;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
-import android.database.Cursor;
 import android.database.DataSetObserver;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.Button;
@@ -23,17 +20,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
 import juanmanuelco.facci.com.soschat.BLUETOOTH.Controllers.ChatController;
-import juanmanuelco.facci.com.soschat.BLUETOOTH.DB.ChatDB;
 import juanmanuelco.facci.com.soschat.BLUETOOTH.DB.MensajeDB;
-import juanmanuelco.facci.com.soschat.BLUETOOTH.Entidades.Chat;
 import juanmanuelco.facci.com.soschat.BLUETOOTH.Entities.ChatMessage;
-import juanmanuelco.facci.com.soschat.Entidades.Item;
 import juanmanuelco.facci.com.soschat.R;
 import juanmanuelco.facci.com.soschat.BLUETOOTH.Adapters.ChatArrayAdapter;
 
@@ -297,7 +290,6 @@ public class ChatActivity extends AppCompatActivity {
                 }
             }
         }
-
     }
 
     public void findByIds(){

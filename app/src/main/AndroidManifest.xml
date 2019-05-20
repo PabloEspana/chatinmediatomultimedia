@@ -35,7 +35,8 @@
             android:name=".Servicios.MessageService"
             android:enabled="true" />
 
-        <activity android:name=".InicioActivity"
+        <activity
+            android:name=".InicioActivity"
             android:configChanges="locale|orientation">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -88,8 +89,10 @@
             android:name=".BLUETOOTH.MainActivityBT"
             android:label="SosChat Bluetooth"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".BLUETOOTH.Activities.ChatActivity"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
+            android:name=".BLUETOOTH.Activities.ChatActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".BLUETOOTH.Activities.VerDatosActivity"></activity>
     </application>
 
 </manifest>
