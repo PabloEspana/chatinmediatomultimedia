@@ -151,15 +151,18 @@ public class ChatActivity extends AppCompatActivity {
                     break;
                 case MESSAGE_WRITE:
                     byte[] writeBuf = (byte[]) msg.obj;
-                    String writeMessage = new String(writeBuf);
-                    mostrarMensaje(writeMessage, true);
-                    guardarMensajeEnviado(writeMessage);
+                    String msg_enviado = new String(writeBuf);
+                    mostrarMensaje(msg_enviado.substring(0, msg_enviado.length() - 17), true);
+                    guardarMensajeEnviado(msg_enviado.substring(0, msg_enviado.length() - 17));
                     break;
                 case MESSAGE_READ:
                     byte[] readBuf = (byte[]) msg.obj;
-                    String readMessage = new String(readBuf, 0, msg.arg1);
-                    mostrarMensaje(readMessage, false);
-                    guardarMensajeRecibido(readMessage);
+                    String msg_recibido = new String(readBuf, 0, msg.arg1);
+                    mostrarMensaje(msg_recibido.substring(0, msg_recibido.length() - 17), false);
+                    guardarMensajeRecibido(
+                            msg_recibido.substring(0, msg_recibido.length() - 17),
+                            connectingDevice.getAddress(),
+                            msg_recibido.substring(msg_recibido.length()-17, msg_recibido.length()));
                     break;
                 case MESSAGE_DEVICE_OBJECT:
                     connectingDevice = msg.getData().getParcelable(DEVICE_OBJECT);
@@ -209,13 +212,14 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private void sendChatMessage(String mensaje){
-        if (chatController.getState() != ChatController.STATE_CONNECTED) {
+        /*if (chatController.getState() != ChatController.STATE_CONNECTED) {
             Toast.makeText(this, R.string.LOST_CONNECTION, Toast.LENGTH_SHORT).show();
             guardarMensajeNoEnviado(textoMensaje.getText().toString());
             mostrarMensaje(textoMensaje.getText().toString(), true);
             return;
-        }
+        }*/
         if (mensaje.length() > 0) {
+            mensaje += direccion_destino;
             byte[] send = mensaje.getBytes();
             chatController.write(send, "texto");
             textoMensaje.setText("");
@@ -233,32 +237,33 @@ public class ChatActivity extends AppCompatActivity {
     public void guardarMensajeEnviado(String msg){
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss.SSS");
         String fecha = simpleDateFormat.format(new Date());
-        String id_chat = nombre_destino + " " + direccion_destino;
-        entidad_mensaje = new Mensaje("null", id_chat, fecha, "texto", msg, 1, 0, 1,
-                direccion_destino, 1);
+        //String id_chat = nombre_destino + " " + direccion_destino;
+        entidad_mensaje = new Mensaje("null", direccion_destino, fecha, "texto", msg, 1, 0, 1,
+                "Me", direccion_destino, 1);
         MensajeDB.Insert(getApplicationContext(), entidad_mensaje);
     }
 
     public void guardarMensajeNoEnviado(String msg){
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss.SSS");
         String fecha = simpleDateFormat.format(new Date());
-        String id_chat = nombre_destino + " " + direccion_destino;
-        entidad_mensaje = new Mensaje("null", id_chat, fecha, "texto", msg, 1, 0, 0,
-                direccion_destino, 1);
+        //String id_chat = nombre_destino + " " + direccion_destino;
+        entidad_mensaje = new Mensaje("null", direccion_destino, fecha, "texto", msg, 1, 0, 0,
+                "null", direccion_destino, 1);
         MensajeDB.Insert(getApplicationContext(), entidad_mensaje);
     }
 
-    public void guardarMensajeRecibido(String msg){
+    public void guardarMensajeRecibido(String msg, String origen, String destino){
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss.SSS");
         String fecha = simpleDateFormat.format(new Date());
-        String id_chat = nombre_destino + " " + direccion_destino;
-        entidad_mensaje = new Mensaje("null", id_chat, fecha, "texto", msg, 1, 0, 1,
-                "Sin definir",0);
+        //String id_chat = nombre_destino + " " + direccion_destino;
+        entidad_mensaje = new Mensaje("null", origen, fecha, "texto", msg, 1, 0, 1,
+                origen, destino, 0);
         MensajeDB.Insert(getApplicationContext(), entidad_mensaje);
     }
 
     public void mostrarConversacion(){
-        String id_chat = nombre_destino + " " + direccion_destino;
+        //String id_chat = nombre_destino + " " + direccion_destino;
+        String id_chat = direccion_destino;
         List<Mensaje> mensajes = MensajeDB.getAllMessages(getApplicationContext(), id_chat);
         Iterator<Mensaje> iterator = mensajes.iterator();
         while(iterator.hasNext()){
