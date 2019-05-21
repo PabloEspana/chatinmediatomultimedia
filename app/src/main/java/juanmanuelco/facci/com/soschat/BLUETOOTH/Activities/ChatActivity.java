@@ -212,12 +212,13 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private void sendChatMessage(String mensaje){
-        /*if (chatController.getState() != ChatController.STATE_CONNECTED) {
+        if (chatController.getState() != ChatController.STATE_CONNECTED) {
             Toast.makeText(this, R.string.LOST_CONNECTION, Toast.LENGTH_SHORT).show();
-            guardarMensajeNoEnviado(textoMensaje.getText().toString());
+            mensaje = textoMensaje.getText().toString();
+            guardarMensajeNoEnviado(mensaje, direccion_destino);
             mostrarMensaje(textoMensaje.getText().toString(), true);
             return;
-        }*/
+        }
         if (mensaje.length() > 0) {
             mensaje += direccion_destino;
             byte[] send = mensaje.getBytes();
@@ -243,12 +244,12 @@ public class ChatActivity extends AppCompatActivity {
         MensajeDB.Insert(getApplicationContext(), entidad_mensaje);
     }
 
-    public void guardarMensajeNoEnviado(String msg){
+    public void guardarMensajeNoEnviado(String msg, String destino){
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss.SSS");
         String fecha = simpleDateFormat.format(new Date());
         //String id_chat = nombre_destino + " " + direccion_destino;
-        entidad_mensaje = new Mensaje("null", direccion_destino, fecha, "texto", msg, 1, 0, 0,
-                "null", direccion_destino, 1);
+        entidad_mensaje = new Mensaje("null", destino, fecha, "texto", msg, 1, 0, 0,
+                "Me", destino, 1);
         MensajeDB.Insert(getApplicationContext(), entidad_mensaje);
     }
 
@@ -277,20 +278,24 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     public void reintentarEnviarMensajes(){
-        String id_chat = nombre_destino + " " + direccion_destino;
-        List<Mensaje> mensajes = MensajeDB.getAllNotSendMessages(getApplicationContext(), id_chat);
+        //String id_chat = nombre_destino + " " + direccion_destino;
+        //String id_chat = direccion_destino;
+        List<Mensaje> mensajes = MensajeDB.getAllNotSendMessages(getApplicationContext()); // mensajes no enviados
         Iterator<Mensaje> iterator = mensajes.iterator();
         while(iterator.hasNext()){
             Mensaje msg = iterator.next();
             if (chatController.getState() == ChatController.STATE_CONNECTED) {
-                if (msg.getContent().length() > 0) {
-                    byte[] send = msg.getContent().getBytes();
-                    try{
-                        MensajeDB.eliminarDuplicado(getApplicationContext(), msg.getID_MESSAGE());
-                        mostrarConversacion();
-                        chatController.write(send, "texto");
-                    }catch (Exception ex) {
-                        Log.e("Error al eliminar", ex.toString());
+                if (msg.getMAC_DESTINO().equals(direccion_destino)){ // reenvio normal
+                    if (msg.getContent().length() > 0) {
+                        String dato = msg.getContent() + msg.getMAC_DESTINO(); // linea demas
+                        byte[] send = dato.getBytes();
+                        try{
+                            MensajeDB.eliminarDuplicado(getApplicationContext(), msg.getID_MESSAGE());
+                            mostrarConversacion();
+                            chatController.write(send, "texto");
+                        }catch (Exception ex) {
+                            Log.e("Error al eliminar", ex.toString());
+                        }
                     }
                 }
             }

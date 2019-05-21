@@ -119,12 +119,13 @@ public class MensajeDB {
         }
     }
 
-    public static List<Mensaje> getAllNotSendMessages(Context context, String id_chat){
+    public static List<Mensaje> getAllNotSendMessages(Context context){
         List<Mensaje> list = new ArrayList<Mensaje>();
         try{
             MainDB database = new MainDB(context);
             SQLiteDatabase db = database.getWritableDatabase();
-            Cursor cursor = db.rawQuery("SELECT * FROM MensajeI WHERE ID_CHAT = ? AND ESTADO_ENVIO = 0 ORDER BY date(FECHA)", new String[] {id_chat});
+            //Cursor cursor = db.rawQuery("SELECT * FROM MensajeI WHERE ID_CHAT = ? AND ESTADO_ENVIO = 0 ORDER BY date(FECHA)", new String[] {id_chat});
+            Cursor cursor = db.rawQuery("SELECT * FROM MensajeI WHERE ESTADO_ENVIO = 0 ORDER BY date(FECHA)", null);
             while (cursor.moveToNext()) {
                 Mensaje mensaje = new Mensaje(
                         cursor.getString(0),
