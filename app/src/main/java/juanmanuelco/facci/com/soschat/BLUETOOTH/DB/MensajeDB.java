@@ -27,7 +27,8 @@ public class MensajeDB {
     public static final String TEMPO = "TEMPO";
     public static final String ELECTURA = "ESTADO_LECTURA";
     public static final String EENVIO = "ESTADO_ENVIO";
-    public static final String MAC = "MAC";
+    public static final String MAC_ORIGEN = "MAC_ORIGEN";
+    public static final String MAC_DESTINO= "MAC_DESTINO";
     public static final String ESMIO = "ESMIO";
 
     public MensajeDB(Context context) { this.database = new MainDB(context); }
@@ -44,7 +45,8 @@ public class MensajeDB {
                     TEMPO+ " integer not null, " +
                     ELECTURA+ " integer not null, " +
                     EENVIO+ " integer not null, " +
-                    MAC+ " text not null, " +
+                    MAC_ORIGEN+ " text not null, " +
+                    MAC_DESTINO+ " text not null, " +
                     ESMIO+ " integer not null, " +
                     "foreign key("+ID_CHAT+") references "+ChatDB.TABLE_NAME+"("+ChatDB.ID+") " +
                 ")";
@@ -65,7 +67,8 @@ public class MensajeDB {
             values.put(TEMPO, mensaje.getTime());
             values.put(ELECTURA, mensaje.EstaoLectura());
             values.put(EENVIO, mensaje.EstaoEnvio());
-            values.put(MAC, mensaje.getMAC());
+            values.put(MAC_ORIGEN, mensaje.getMAC_ORIGEN());
+            values.put(MAC_DESTINO, mensaje.getMAC_DESTINO());
             values.put(ESMIO, mensaje.EsMio());
             db.insert(TABLE_NAME,null,values);
 
@@ -101,7 +104,8 @@ public class MensajeDB {
                         cursor.getInt(6),
                         cursor.getInt(7),
                         cursor.getString(8),
-                        cursor.getInt(9));
+                        cursor.getString(9),
+                        cursor.getInt(10));
                 Log.i("Contenido", cursor.toString());
                 list.add(mensaje);
             }
@@ -132,7 +136,8 @@ public class MensajeDB {
                         cursor.getInt(6),
                         cursor.getInt(7),
                         cursor.getString(8),
-                        cursor.getInt(9));
+                        cursor.getString(9),
+                        cursor.getInt(10));
                 list.add(mensaje);
             }
             cursor.close();

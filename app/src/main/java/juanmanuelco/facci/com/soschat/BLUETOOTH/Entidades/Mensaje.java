@@ -4,10 +4,11 @@ import juanmanuelco.facci.com.soschat.BLUETOOTH.DB.ContactosDB;
 
 public class Mensaje {
     private Integer TEMPO, ELECTURA, EENVIO, ESMIO;
-    private String ID_MESSAGE, ID_CHAT, TIPO, FECHA, MAC, CONTENT;
+    private String ID_MESSAGE, ID_CHAT, TIPO, FECHA, MAC_ORIGEN, MAC_DESTINO,  CONTENT;
 
 
-    public Mensaje(String ID_MESSAGE, String ID_CHAT, String FECHA, String TIPO, String CONTENT, Integer TEMPO, Integer ELECTURA, Integer EENVIO, String MAC, Integer ESMIO) {
+    public Mensaje(String ID_MESSAGE, String ID_CHAT, String FECHA, String TIPO, String CONTENT,
+                   Integer TEMPO, Integer ELECTURA, Integer EENVIO, String MAC_ORIGEN, String MAC_DESTINO, Integer ESMIO) {
         this.ID_MESSAGE = ID_MESSAGE;
         this.ID_CHAT = ID_CHAT;
         this.FECHA = FECHA;
@@ -16,7 +17,8 @@ public class Mensaje {
         this.TEMPO = TEMPO;
         this.ELECTURA = ELECTURA;
         this.EENVIO = EENVIO;
-        this.MAC = MAC;
+        this.MAC_ORIGEN = MAC_ORIGEN;
+        this.MAC_DESTINO = MAC_DESTINO;
         this.ESMIO = ESMIO;
     }
 
@@ -24,7 +26,9 @@ public class Mensaje {
 
     public String getID_CHAT(){ return this.ID_CHAT; }
 
-    public String getMAC(){ return this.MAC; }
+    public String getMAC_ORIGEN(){ return this.MAC_ORIGEN; }
+
+    public String getMAC_DESTINO(){ return this.MAC_DESTINO; }
 
     public String getDate(){ return this.FECHA; }
 
