@@ -30,6 +30,8 @@ public class MensajeDB {
     public static final String MAC_ORIGEN = "MAC_ORIGEN";
     public static final String MAC_DESTINO= "MAC_DESTINO";
     public static final String ESMIO = "ESMIO";
+    public static final String SALTOS = "SALTOS";
+
 
     public MensajeDB(Context context) { this.database = new MainDB(context); }
 
@@ -48,6 +50,7 @@ public class MensajeDB {
                     MAC_ORIGEN+ " text not null, " +
                     MAC_DESTINO+ " text not null, " +
                     ESMIO+ " integer not null, " +
+                    SALTOS+ " integer not null, " +
                     "foreign key("+ID_CHAT+") references "+ChatDB.TABLE_NAME+"("+ChatDB.ID+") " +
                 ")";
 
@@ -70,6 +73,7 @@ public class MensajeDB {
             values.put(MAC_ORIGEN, mensaje.getMAC_ORIGEN());
             values.put(MAC_DESTINO, mensaje.getMAC_DESTINO());
             values.put(ESMIO, mensaje.EsMio());
+            values.put(SALTOS, mensaje.getSaltos());
             db.insert(TABLE_NAME,null,values);
 
             // Actualiza estado de chat a activo
@@ -105,7 +109,9 @@ public class MensajeDB {
                         cursor.getInt(7),
                         cursor.getString(8),
                         cursor.getString(9),
-                        cursor.getInt(10));
+                        cursor.getInt(10),
+                cursor.getInt(11))
+                ;
                 Log.i("Contenido", cursor.toString());
                 list.add(mensaje);
             }
@@ -138,7 +144,8 @@ public class MensajeDB {
                         cursor.getInt(7),
                         cursor.getString(8),
                         cursor.getString(9),
-                        cursor.getInt(10));
+                        cursor.getInt(10),
+                        cursor.getInt(11));
                 list.add(mensaje);
             }
             cursor.close();

@@ -19,6 +19,11 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
@@ -63,6 +68,8 @@ public class ChatActivity extends AppCompatActivity {
 
     Mensaje entidad_mensaje;
 
+    Object[] datos_msg;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,10 +77,13 @@ public class ChatActivity extends AppCompatActivity {
         setContentView(R.layout.bt_activity_chat);
 
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        String myMacAddress = android.provider.Settings.Secure.getString(getApplication().getContentResolver(), "bluetooth_address");
+        Toast.makeText(this, myMacAddress, Toast.LENGTH_SHORT).show();
         if (bluetoothAdapter == null) {
             Toast.makeText(this, R.string.BT_NO_DISP , Toast.LENGTH_SHORT).show();
             finish();
         }
+        //Toast.makeText(this, bluetoothAdapter.getAddress(), Toast.LENGTH_SHORT).show();
         findByIds();
         configurarActividad();
 
@@ -83,21 +93,17 @@ public class ChatActivity extends AppCompatActivity {
 
         mostrarConversacion();
 
-        /*textoMensaje.setOnKeyListener(new View.OnKeyListener() {
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
-                    return sendChatMessage();
-                }
-                return false;
-            }
-        });*/
-
         // Evento click al botón enviar
         botonEnviar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
-                if (!textoMensaje.getText().toString().trim().isEmpty())
-                sendChatMessage(textoMensaje.getText().toString().trim());
+                if (!textoMensaje.getText().toString().trim().isEmpty()) {
+                    try {
+                        sendChatMessage(textoMensaje.getText().toString().trim());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         });
 
@@ -113,7 +119,6 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
 
-
     }
 
     @Override
@@ -128,9 +133,7 @@ public class ChatActivity extends AppCompatActivity {
         }
     }
 
-
     private Handler handler = new Handler(new Handler.Callback() {
-
         @Override
         public boolean handleMessage(Message msg) {
             switch (msg.what) {
@@ -152,17 +155,21 @@ public class ChatActivity extends AppCompatActivity {
                 case MESSAGE_WRITE:
                     byte[] writeBuf = (byte[]) msg.obj;
                     String msg_enviado = new String(writeBuf);
-                    mostrarMensaje(msg_enviado.substring(0, msg_enviado.length() - 17), true);
-                    guardarMensajeEnviado(msg_enviado.substring(0, msg_enviado.length() - 17));
+                    mostrarMensaje(datos_msg[4].toString(), true);
+                    guardarMensajeEnviado(datos_msg);
                     break;
                 case MESSAGE_READ:
                     byte[] readBuf = (byte[]) msg.obj;
-                    String msg_recibido = new String(readBuf, 0, msg.arg1);
-                    mostrarMensaje(msg_recibido.substring(0, msg_recibido.length() - 17), false);
-                    guardarMensajeRecibido(
-                            msg_recibido.substring(0, msg_recibido.length() - 17),
-                            connectingDevice.getAddress(),
-                            msg_recibido.substring(msg_recibido.length()-17, msg_recibido.length()));
+                    try {
+                        Object[] datos_recbidos = deserialize(readBuf);
+                        String msg_recibido = datos_recbidos[4].toString();
+                        mostrarMensaje(msg_recibido, false);
+                        guardarMensajeRecibido(datos_recbidos);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } catch (ClassNotFoundException e) {
+                        e.printStackTrace();
+                    }
                     break;
                 case MESSAGE_DEVICE_OBJECT:
                     connectingDevice = msg.getData().getParcelable(DEVICE_OBJECT);
@@ -177,7 +184,6 @@ public class ChatActivity extends AppCompatActivity {
             return false;
         }
     });
-
 
     private void setStatus(int s) {
         String texto = "";
@@ -194,8 +200,6 @@ public class ChatActivity extends AppCompatActivity {
         estadoConexion.setText(texto);
     }
 
-
-
     private void connectToDevice(String MAC) {
         if (bluetoothAdapter == null) {
             Log.i(getString(R.string.ERROR), getString(R.string.BT_NOT_SUPPORT));
@@ -211,7 +215,7 @@ public class ChatActivity extends AppCompatActivity {
         return true;
     }
 
-    private void sendChatMessage(String mensaje){
+    private void sendChatMessage(String mensaje) throws IOException {
         if (chatController.getState() != ChatController.STATE_CONNECTED) {
             Toast.makeText(this, R.string.LOST_CONNECTION, Toast.LENGTH_SHORT).show();
             mensaje = textoMensaje.getText().toString();
@@ -220,12 +224,25 @@ public class ChatActivity extends AppCompatActivity {
             return;
         }
         if (mensaje.length() > 0) {
-            mensaje += direccion_destino;
-            byte[] send = mensaje.getBytes();
-            chatController.write(send, "texto");
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss.SSS");
+            String fecha = simpleDateFormat.format(new Date());
+            datos_msg = new Object[] {
+                    "null", // id_mensaje
+                    direccion_destino, // id_chat
+                    fecha,
+                    "texto", // tipo_mensaje
+                    mensaje, //
+                    1, 0, 1,
+                    "Me",
+                    direccion_destino,
+                    1, 1
+            };
+
+            chatController.write(serialize(datos_msg), "texto");
             textoMensaje.setText("");
         }
     }
+
 
     public void configurarActividad(){
         i = getIntent();
@@ -235,35 +252,41 @@ public class ChatActivity extends AppCompatActivity {
     }
 
 
-    public void guardarMensajeEnviado(String msg){
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss.SSS");
-        String fecha = simpleDateFormat.format(new Date());
-        //String id_chat = nombre_destino + " " + direccion_destino;
-        entidad_mensaje = new Mensaje("null", direccion_destino, fecha, "texto", msg, 1, 0, 1,
-                "Me", direccion_destino, 1);
+    public void guardarMensajeEnviado(Object[] msg){
+        entidad_mensaje = new Mensaje(msg[0].toString(), msg[1].toString(), msg[2].toString(), msg[3].toString(),
+                msg[4].toString(), (int) msg[5], (int) msg[6], (int) msg[7], msg[8].toString(), msg[9].toString(),
+                (int) msg[10], (int) msg[11] );
         MensajeDB.Insert(getApplicationContext(), entidad_mensaje);
     }
 
-    public void guardarMensajeNoEnviado(String msg, String destino){
+    public void guardarMensajeNoEnviado(String msg, String destino){ // reemplazar Me por Mi mac bluetooth
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss.SSS");
         String fecha = simpleDateFormat.format(new Date());
-        //String id_chat = nombre_destino + " " + direccion_destino;
         entidad_mensaje = new Mensaje("null", destino, fecha, "texto", msg, 1, 0, 0,
-                "Me", destino, 1);
+                "Me", destino, 1, 1);
         MensajeDB.Insert(getApplicationContext(), entidad_mensaje);
     }
 
-    public void guardarMensajeRecibido(String msg, String origen, String destino){
+    public void guardarMensajeRecibido(Object[] msg){
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss.SSS");
         String fecha = simpleDateFormat.format(new Date());
-        //String id_chat = nombre_destino + " " + direccion_destino;
-        entidad_mensaje = new Mensaje("null", origen, fecha, "texto", msg, 1, 0, 1,
-                origen, destino, 0);
+        entidad_mensaje = new Mensaje("null", msg[0].toString(), fecha, "texto", msg[0].toString(), 1, 0, 1,
+                msg[1].toString(), msg[2].toString(), 0, 1);
+        if ((int) msg[11] > 1){
+
+        }else{
+            msg[1] = connectingDevice.getAddress();
+            msg[8] = connectingDevice.getAddress();
+            msg[9] = "Me";
+        }
+        //msg[11] = (int) msg[11] + 1;
+        entidad_mensaje = new Mensaje(msg[0].toString(), msg[1].toString(), fecha, msg[3].toString(),
+                msg[4].toString(), (int) msg[5], (int) msg[6], (int) msg[7], msg[8].toString(), msg[9].toString(),
+                0, (int) msg[11] );
         MensajeDB.Insert(getApplicationContext(), entidad_mensaje);
     }
 
     public void mostrarConversacion(){
-        //String id_chat = nombre_destino + " " + direccion_destino;
         String id_chat = direccion_destino;
         List<Mensaje> mensajes = MensajeDB.getAllMessages(getApplicationContext(), id_chat);
         Iterator<Mensaje> iterator = mensajes.iterator();
@@ -278,15 +301,14 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     public void reintentarEnviarMensajes(){
-        //String id_chat = nombre_destino + " " + direccion_destino;
-        //String id_chat = direccion_destino;
         List<Mensaje> mensajes = MensajeDB.getAllNotSendMessages(getApplicationContext()); // mensajes no enviados
         Iterator<Mensaje> iterator = mensajes.iterator();
         while(iterator.hasNext()){
             Mensaje msg = iterator.next();
             if (chatController.getState() == ChatController.STATE_CONNECTED) {
-                if (msg.getMAC_DESTINO().equals(direccion_destino)){ // reenvio normal
-                    if (msg.getContent().length() > 0) {
+                //if ( msg.getMAC_DESTINO().equals(direccion_destino)){ // reenvio normal
+                if ( direccion_destino.equals(msg.getMAC_DESTINO().toString()) ){ // reenvio normal
+                        if (msg.getContent().length() > 0) {
                         String dato = msg.getContent() + msg.getMAC_DESTINO(); // linea demas
                         byte[] send = dato.getBytes();
                         try{
@@ -298,6 +320,7 @@ public class ChatActivity extends AppCompatActivity {
                         }
                     }
                 }
+                Toast.makeText(this, direccion_destino, Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -311,4 +334,19 @@ public class ChatActivity extends AppCompatActivity {
         color = (TextView) findViewById(R.id.color);
     }
 
+
+    // Métodos para convertir objeto a byte y viceversa
+
+    public static byte[] serialize(Object[] obj) throws IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ObjectOutputStream os = new ObjectOutputStream(out);
+        os.writeObject(obj);
+        return out.toByteArray();
+    }
+
+    public static Object[] deserialize(byte[] data) throws IOException, ClassNotFoundException {
+        ByteArrayInputStream in = new ByteArrayInputStream(data);
+        ObjectInputStream is = new ObjectInputStream(in);
+        return (Object[]) is.readObject();
+    }
 }
