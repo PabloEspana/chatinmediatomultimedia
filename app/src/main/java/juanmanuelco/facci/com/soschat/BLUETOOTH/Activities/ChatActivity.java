@@ -305,11 +305,17 @@ public class ChatActivity extends AppCompatActivity {
             if (chatController.getState() == ChatController.STATE_CONNECTED) {
                 if (msg.getContent().length() > 0) {
                     //Aqui va la condicion si salto es mayor a uno y coinciden mac
-                    if (msg.getMAC_DESTINO().equals(connectingDevice.getAddress()))
+                    if (msg.getMAC_DESTINO().equals(connectingDevice.getAddress())){
                         Toast.makeText(this, "Es para el dispositivo", Toast.LENGTH_SHORT).show();
                         datos_msg = new Object[] { msg.getID_MESSAGE(), msg.getID_CHAT(), msg.getDate(),
                             msg.getType(), msg.getContent(), msg.getTime(), msg.EstaoLectura(), 1,
                             msg.getMAC_ORIGEN(), msg.getMAC_DESTINO(), 1, (int) msg.getSaltos() + 1  };
+                    }else{
+                        Toast.makeText(this, "No es para el dispositivo", Toast.LENGTH_SHORT).show();
+                        datos_msg = new Object[] { msg.getID_MESSAGE(), msg.getID_CHAT(), msg.getDate(),
+                                msg.getType(), msg.getContent(), msg.getTime(), msg.EstaoLectura(), 0,
+                                msg.getMAC_ORIGEN(), msg.getMAC_DESTINO(), 1, (int) msg.getSaltos() + 1  };
+                    }
                     try{
                         MensajeDB.eliminarDuplicado(getApplicationContext(), msg.getID_MESSAGE());
                         mostrarConversacion();
