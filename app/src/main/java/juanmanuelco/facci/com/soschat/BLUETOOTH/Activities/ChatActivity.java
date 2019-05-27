@@ -154,9 +154,8 @@ public class ChatActivity extends AppCompatActivity {
                     break;
                 case MESSAGE_WRITE:
                     byte[] writeBuf = (byte[]) msg.obj;
-                    String msg_enviado = new String(writeBuf);
                     mostrarMensaje(datos_msg[4].toString(), true);
-                    guardarMensajeEnviado(datos_msg);
+                    guardarMensaje(datos_msg);
                     break;
                 case MESSAGE_READ:
                     byte[] readBuf = (byte[]) msg.obj;
@@ -216,16 +215,27 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private void sendChatMessage(String mensaje) throws IOException {
-        if (chatController.getState() != ChatController.STATE_CONNECTED) {
-            Toast.makeText(this, R.string.LOST_CONNECTION, Toast.LENGTH_SHORT).show();
-            mensaje = textoMensaje.getText().toString();
-            guardarMensajeNoEnviado(mensaje, direccion_destino);
-            mostrarMensaje(textoMensaje.getText().toString(), true);
-            return;
-        }
         if (mensaje.length() > 0) {
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss.SSS");
             String fecha = simpleDateFormat.format(new Date());
+            if (chatController.getState() != ChatController.STATE_CONNECTED) { // Si no hay conexión
+                Toast.makeText(this, R.string.LOST_CONNECTION, Toast.LENGTH_SHORT).show();
+                datos_msg = new Object[] {
+                        "null", // id_mensaje
+                        direccion_destino, // id_chat
+                        fecha,
+                        "texto", // tipo_mensaje
+                        mensaje, //
+                        1, 0, 0,
+                        "Me",
+                        direccion_destino,
+                        1, 0
+                };
+                guardarMensaje(datos_msg);
+                mostrarMensaje(datos_msg[4].toString(), true);
+                textoMensaje.setText("");
+                return;
+            }
             datos_msg = new Object[] {
                     "null", // id_mensaje
                     direccion_destino, // id_chat
@@ -237,7 +247,6 @@ public class ChatActivity extends AppCompatActivity {
                     direccion_destino,
                     1, 1
             };
-
             chatController.write(serialize(datos_msg), "texto");
             textoMensaje.setText("");
         }
@@ -252,32 +261,20 @@ public class ChatActivity extends AppCompatActivity {
     }
 
 
-    public void guardarMensajeEnviado(Object[] msg){
+    public void guardarMensaje(Object[] msg){ // Enviados y no enviados
         entidad_mensaje = new Mensaje(msg[0].toString(), msg[1].toString(), msg[2].toString(), msg[3].toString(),
                 msg[4].toString(), (int) msg[5], (int) msg[6], (int) msg[7], msg[8].toString(), msg[9].toString(),
                 (int) msg[10], (int) msg[11] );
         MensajeDB.Insert(getApplicationContext(), entidad_mensaje);
     }
 
-    public void guardarMensajeNoEnviado(String msg, String destino){ // reemplazar Me por Mi mac bluetooth
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss.SSS");
-        String fecha = simpleDateFormat.format(new Date());
-        entidad_mensaje = new Mensaje("null", destino, fecha, "texto", msg, 1, 0, 0,
-                "Me", destino, 1, 1);
-        MensajeDB.Insert(getApplicationContext(), entidad_mensaje);
-    }
-
     public void guardarMensajeRecibido(Object[] msg){
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss.SSS");
         String fecha = simpleDateFormat.format(new Date());
-        entidad_mensaje = new Mensaje("null", msg[0].toString(), fecha, "texto", msg[0].toString(), 1, 0, 1,
-                msg[1].toString(), msg[2].toString(), 0, 1);
-        if ((int) msg[11] > 1){
-
-        }else{
+        int estado_envio = 0;
+        if ((int) msg[11] == 1){
             msg[1] = connectingDevice.getAddress();
             msg[8] = connectingDevice.getAddress();
-            msg[9] = "Me";
         }
         //msg[11] = (int) msg[11] + 1;
         entidad_mensaje = new Mensaje(msg[0].toString(), msg[1].toString(), fecha, msg[3].toString(),
@@ -306,21 +303,21 @@ public class ChatActivity extends AppCompatActivity {
         while(iterator.hasNext()){
             Mensaje msg = iterator.next();
             if (chatController.getState() == ChatController.STATE_CONNECTED) {
-                //if ( msg.getMAC_DESTINO().equals(direccion_destino)){ // reenvio normal
-                if ( direccion_destino.equals(msg.getMAC_DESTINO().toString()) ){ // reenvio normal
-                        if (msg.getContent().length() > 0) {
-                        String dato = msg.getContent() + msg.getMAC_DESTINO(); // linea demas
-                        byte[] send = dato.getBytes();
-                        try{
-                            MensajeDB.eliminarDuplicado(getApplicationContext(), msg.getID_MESSAGE());
-                            mostrarConversacion();
-                            chatController.write(send, "texto");
-                        }catch (Exception ex) {
-                            Log.e("Error al eliminar", ex.toString());
-                        }
+                if (msg.getContent().length() > 0) {
+                    //Aqui va la condicion si salto es mayor a uno y coinciden mac
+                    if (msg.getMAC_DESTINO().equals(connectingDevice.getAddress()))
+                        Toast.makeText(this, "Es para el dispositivo", Toast.LENGTH_SHORT).show();
+                        datos_msg = new Object[] { msg.getID_MESSAGE(), msg.getID_CHAT(), msg.getDate(),
+                            msg.getType(), msg.getContent(), msg.getTime(), msg.EstaoLectura(), 1,
+                            msg.getMAC_ORIGEN(), msg.getMAC_DESTINO(), 1, (int) msg.getSaltos() + 1  };
+                    try{
+                        MensajeDB.eliminarDuplicado(getApplicationContext(), msg.getID_MESSAGE());
+                        mostrarConversacion();
+                        chatController.write(serialize(datos_msg), "texto");
+                    }catch (Exception ex) {
+                        Log.e("Error al eliminar", ex.toString());
                     }
                 }
-                Toast.makeText(this, direccion_destino, Toast.LENGTH_SHORT).show();
             }
         }
     }
