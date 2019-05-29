@@ -1,13 +1,17 @@
 package juanmanuelco.facci.com.soschat.BLUETOOTH.Activities;
 
 import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.content.Context;
 import android.content.Intent;
 import android.database.DataSetObserver;
 import android.graphics.Color;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -31,6 +35,7 @@ import java.util.List;
 
 import juanmanuelco.facci.com.soschat.BLUETOOTH.Controllers.ChatController;
 import juanmanuelco.facci.com.soschat.BLUETOOTH.DB.MensajeDB;
+import juanmanuelco.facci.com.soschat.BLUETOOTH.Entidades.Chat;
 import juanmanuelco.facci.com.soschat.BLUETOOTH.Entities.ChatMessage;
 import juanmanuelco.facci.com.soschat.R;
 import juanmanuelco.facci.com.soschat.BLUETOOTH.Adapters.ChatArrayAdapter;
@@ -162,6 +167,7 @@ public class ChatActivity extends AppCompatActivity {
                     try {
                         Object[] datos_recbidos = deserialize(readBuf);
                         String msg_recibido = datos_recbidos[4].toString();
+                        notificarMensaje(datos_recbidos);
                         mostrarMensaje(msg_recibido, false);
                         guardarMensajeRecibido(datos_recbidos);
                     } catch (IOException e) {
@@ -335,6 +341,35 @@ public class ChatActivity extends AppCompatActivity {
         nombreDispositivo = (TextView) findViewById(R.id.nombre);
         estadoConexion = (TextView) findViewById(R.id.estadoConexion);
         color = (TextView) findViewById(R.id.color);
+    }
+
+
+    public void notificarMensaje(Object[] datos_msg){
+        if ((int) datos_msg[7] == 1){
+
+            NotificationCompat.Builder mBuilder =
+                    new NotificationCompat.Builder(this);
+            //Create the intent that’ll fire when the user taps the notification//
+
+            Intent intent = new Intent(this, ChatActivity.class);
+            intent.putExtra("nombre_destino", "");
+            intent.putExtra("direccion_destino", datos_msg[8].toString());
+            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
+
+            mBuilder.setContentIntent(pendingIntent);
+
+            mBuilder.setSmallIcon(R.drawable.icon_notification);
+            mBuilder.setContentTitle("Nuevo Mensaje");
+            mBuilder.setContentText(datos_msg[4].toString());
+            mBuilder.setVibrate(new long[] {100, 250, 100, 500});
+            mBuilder.setAutoCancel(true);
+
+            NotificationManager mNotificationManager =
+
+                    (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+            mNotificationManager.notify(001, mBuilder.build());
+        }
     }
 
 
