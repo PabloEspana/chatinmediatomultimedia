@@ -82,13 +82,11 @@ public class ChatActivity extends AppCompatActivity {
         setContentView(R.layout.bt_activity_chat);
 
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        String myMacAddress = android.provider.Settings.Secure.getString(getApplication().getContentResolver(), "bluetooth_address");
-        Toast.makeText(this, myMacAddress, Toast.LENGTH_SHORT).show();
         if (bluetoothAdapter == null) {
             Toast.makeText(this, R.string.BT_NO_DISP , Toast.LENGTH_SHORT).show();
             finish();
         }
-        //Toast.makeText(this, bluetoothAdapter.getAddress(), Toast.LENGTH_SHORT).show();
+
         findByIds();
         configurarActividad();
 
@@ -242,7 +240,8 @@ public class ChatActivity extends AppCompatActivity {
                 textoMensaje.setText("");
                 return;
             }
-            datos_msg = new Object[] {
+
+            datos_msg = new Object[] {  // Si hay conexxiòn
                     "null", // id_mensaje
                     direccion_destino, // id_chat
                     fecha,
@@ -277,12 +276,10 @@ public class ChatActivity extends AppCompatActivity {
     public void guardarMensajeRecibido(Object[] msg){
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss.SSS");
         String fecha = simpleDateFormat.format(new Date());
-        int estado_envio = 0;
-        if ((int) msg[11] == 1){
-            msg[1] = connectingDevice.getAddress();
-            msg[8] = connectingDevice.getAddress();
+        if ((int) msg[11] == 1){ // Si es el primer salto o punto a punto se obtiene:
+            msg[1] = connectingDevice.getAddress(); // Id del chat
+            msg[8] = connectingDevice.getAddress(); // Direcciòn destino
         }
-        //msg[11] = (int) msg[11] + 1;
         entidad_mensaje = new Mensaje(msg[0].toString(), msg[1].toString(), fecha, msg[3].toString(),
                 msg[4].toString(), (int) msg[5], (int) msg[6], (int) msg[7], msg[8].toString(), msg[9].toString(),
                 0, (int) msg[11] );
@@ -308,26 +305,24 @@ public class ChatActivity extends AppCompatActivity {
         Iterator<Mensaje> iterator = mensajes.iterator();
         while(iterator.hasNext()){
             Mensaje msg = iterator.next();
-            if (chatController.getState() == ChatController.STATE_CONNECTED) {
+            if (chatController.getState() == ChatController.STATE_CONNECTED) { // siempre y cuando haya conexiòn con algùn dispositivo
                 if (msg.getContent().length() > 0) {
-                    //Aqui va la condicion si salto es mayor a uno y coinciden mac
+                    // Condicion si coinciden mac
                     if (msg.getMAC_DESTINO().equals(connectingDevice.getAddress())){
-                        Toast.makeText(this, "Es para el dispositivo", Toast.LENGTH_SHORT).show();
                         datos_msg = new Object[] { msg.getID_MESSAGE(), msg.getID_CHAT(), msg.getDate(),
                             msg.getType(), msg.getContent(), msg.getTime(), msg.EstaoLectura(), 1,
                             msg.getMAC_ORIGEN(), msg.getMAC_DESTINO(), 1, (int) msg.getSaltos() + 1  };
                     }else{
-                        Toast.makeText(this, "No es para el dispositivo", Toast.LENGTH_SHORT).show();
                         datos_msg = new Object[] { msg.getID_MESSAGE(), msg.getID_CHAT(), msg.getDate(),
                                 msg.getType(), msg.getContent(), msg.getTime(), msg.EstaoLectura(), 0,
                                 msg.getMAC_ORIGEN(), msg.getMAC_DESTINO(), 1, (int) msg.getSaltos() + 1  };
-                    }
+                     }
                     try{
                         MensajeDB.eliminarDuplicado(getApplicationContext(), msg.getID_MESSAGE());
                         mostrarConversacion();
                         chatController.write(serialize(datos_msg), "texto");
                     }catch (Exception ex) {
-                        Log.e("Error al eliminar", ex.toString());
+                        Log.e("Ha ocurrido un error", ex.toString());
                     }
                 }
             }

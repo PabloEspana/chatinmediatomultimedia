@@ -19,6 +19,7 @@ public class MensajeDB {
     private static MainDB database;
 
     public static final String TABLE_NAME = "MensajeI";
+
     public static final String ID_MENSAJE = "ID_MENSAJE";
     public static final String ID_CHAT = "ID_CHAT";
     public static final String FECHA = "FECHA";
