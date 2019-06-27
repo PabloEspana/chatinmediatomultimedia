@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,6 +17,8 @@ import java.io.OutputStream;
 import java.util.UUID;
 
 import juanmanuelco.facci.com.soschat.BLUETOOTH.Activities.ChatActivity;
+import juanmanuelco.facci.com.soschat.BLUETOOTH.MainActivityBT;
+import juanmanuelco.facci.com.soschat.R;
 
 public class ChatController {
 

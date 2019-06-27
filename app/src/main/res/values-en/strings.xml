@@ -130,4 +130,8 @@
     <string name="CHATS_BT">Chats</string>
     <string name="HISTORICAL_BT">Historical</string>
     <string name="SEND">Send</string>
+    <string name="GPS_LOCATION">GPS Location</string>
+    <string name="UPDATE_LOCATION">RELOAD</string>
+    <string name="LONGITUDE">Longitude</string>
+    <string name="LATITUDE">Latitude</string>
 </resources>
