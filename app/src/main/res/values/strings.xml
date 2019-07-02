@@ -173,5 +173,12 @@
     <string name="CHATS_BT">Chats</string>
     <string name="HISTORICAL_BT">Histórico</string>
     <string name="SEND">Enviar</string>
+    <string name="GPS_LOCATION">Ubicación GPS</string>
+    <string name="UPDATE_LOCATION">RECARGAR</string>
+    <string name="LONGITUDE">Longitud</string>
+    <string name="LATITUDE">Latitud</string>
+    <string name="CONNECTION_FAILED">No se puede conectar al dispositivo</string>
+    <string name="LOSTCONNECTION">Conexión perdida con el dispositivo</string>
+
 
 </resources>
