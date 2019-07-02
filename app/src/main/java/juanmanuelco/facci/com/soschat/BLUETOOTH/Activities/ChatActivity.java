@@ -170,7 +170,7 @@ public class ChatActivity extends AppCompatActivity {
                     try {
                         Object[] datos_recbidos = deserialize(readBuf);
                         String msg_recibido = datos_recbidos[4].toString();
-                        if((int) datos_recbidos[12] == 1){ // Si se debe mostrar
+                        if((int) datos_recbidos[12] == 1 && (datos_recbidos[8].equals(direccion_destino))){ // Si se debe mostrar, revisar bien
                             notificarMensaje(datos_recbidos);
                             mostrarMensaje(msg_recibido, false);
                         }
@@ -302,18 +302,18 @@ public class ChatActivity extends AppCompatActivity {
         Iterator<Mensaje> iterator = mensajes.iterator();
         while(iterator.hasNext()){
             Mensaje msg = iterator.next();
-            //if (msg.getMostrar() == 1){
+            if (msg.getMostrar() == 1){
                 if (msg.EsMio() == 1){
                     mostrarMensaje(msg.getContent(), true);
                 }else{
                     mostrarMensaje(msg.getContent(), false);
                 }
-            //}
+            }
         }
     }
 
     public void reintentarEnviarMensajes(){
-        /*List<Mensaje> mensajes = MensajeDB.getAllNotSendMessages(getApplicationContext()); // mensajes no enviados
+        List<Mensaje> mensajes = MensajeDB.getAllNotSendMessages(getApplicationContext()); // mensajes no enviados
         Iterator<Mensaje> iterator = mensajes.iterator();
         while(iterator.hasNext()){
             Mensaje msg = iterator.next();
@@ -321,16 +321,40 @@ public class ChatActivity extends AppCompatActivity {
                 if (msg.getContent().length() > 0) {
                     // Condicion si coinciden mac
                     if (msg.getMAC_DESTINO().equals(connectingDevice.getAddress())){
-                        datos_msg = new Object[] { msg.getID_MESSAGE(), msg.getID_CHAT(), msg.getDate(),
-                            msg.getType(), msg.getContent(), msg.getTime(), msg.EstaoLectura(), 1,
-                            msg.getMAC_ORIGEN(), msg.getMAC_DESTINO(), 1, (int) msg.getSaltos() + 1, 1  };
+                        datos_msg = new Object[] {
+                                msg.getID_MESSAGE(),        // ID_MENSAJE
+                                msg.getID_CHAT(),           // ID_CHAT
+                                msg.getDate(),              // FECHA
+                                msg.getType(),              // TIPO
+                                msg.getContent(),           // CONTENT
+                                msg.getTime(),              // TEMPO
+                                msg.EstaoLectura(),         // ESTADO_LECTURA
+                                1,                          // ESTADO_ENVIO
+                                msg.getMAC_ORIGEN(),        // MAC_ORIGEN
+                                msg.getMAC_DESTINO(),       // MAC_DESTINO
+                                0,                          // ESMIO
+                                (int) msg.getSaltos() + 1,  // SALTOS
+                                1                           // MOSTRAR
+                        };
                     }else{
-                        datos_msg = new Object[] { msg.getID_MESSAGE(), msg.getID_CHAT(), msg.getDate(),
-                                msg.getType(), msg.getContent(), msg.getTime(), msg.EstaoLectura(), 0,
-                                msg.getMAC_ORIGEN(), msg.getMAC_DESTINO(), 1, (int) msg.getSaltos() + 1, 0  };
+                        datos_msg = new Object[] {
+                                msg.getID_MESSAGE(),        // ID_MENSAJE
+                                msg.getID_CHAT(),           // ID_CHAT
+                                msg.getDate(),              // FECHA
+                                msg.getType(),              // TIPO
+                                msg.getContent(),           // CONTENT
+                                msg.getTime(),              // TEMPO
+                                msg.EstaoLectura(),         // ESTADO_LECTURA
+                                0,                          // ESTADO_ENVIO (para que se vuelva a reenviar)
+                                msg.getMAC_ORIGEN(),        // MAC_ORIGEN
+                                msg.getMAC_DESTINO(),       // MAC_DESTINO
+                                0,                          // ESMIO
+                                (int) msg.getSaltos() + 1,  // SALTOS
+                                0                           // MOSTRAR
+                        };
                      }
                     try{
-                        MensajeDB.eliminarDuplicado(getApplicationContext(), msg.getID_MESSAGE());
+                        //MensajeDB.eliminarDuplicado(getApplicationContext(), msg.getID_MESSAGE());
                         mostrarConversacion();
                         chatController.write(serialize(datos_msg), "texto");
                     }catch (Exception ex) {
@@ -338,7 +362,7 @@ public class ChatActivity extends AppCompatActivity {
                     }
                 }
             }
-        }*/
+        }
     }
 
     public void findByIds(){
