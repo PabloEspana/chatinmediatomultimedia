@@ -7,6 +7,9 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -33,6 +36,7 @@ public class FragmentEmparejados extends Fragment {
         cv = (CardView) vista.findViewById(R.id.cv);
         listarDispositivosCercanos();
         adaptarListado(vista);
+        setHasOptionsMenu(true);
         return vista;
     }
 
@@ -58,7 +62,23 @@ public class FragmentEmparejados extends Fragment {
         rv.setLayoutManager(llm);
     }
 
-    public void conectar(){
-        Toast.makeText(getActivity().getApplicationContext(), "Funcionando evento", Toast.LENGTH_SHORT).show();
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater menuInflater) {
+        menuInflater.inflate(R.menu.bt_menu_fragment1, menu);
+        super.onCreateOptionsMenu(menu, menuInflater);
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.reload:
+                Toast.makeText(getActivity(), "Refrescando", Toast.LENGTH_SHORT).show();
+                listarDispositivosCercanos();
+                adaptarListado(getView());
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
 }
