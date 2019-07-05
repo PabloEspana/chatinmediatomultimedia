@@ -6,14 +6,11 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.provider.BaseColumns;
 import android.util.Log;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import juanmanuelco.facci.com.soschat.BLUETOOTH.Entidades.Chat;
 import juanmanuelco.facci.com.soschat.BLUETOOTH.Entidades.Mensaje;
-import juanmanuelco.facci.com.soschat.BLUETOOTH.Entidades.Usuario;
 
 public class MensajeDB {
 
@@ -69,7 +66,6 @@ public class MensajeDB {
             database = new MainDB(context);
             SQLiteDatabase db = database.getWritableDatabase();
 
-            //Cursor cursor = db.rawQuery("SELECT * FROM MensajeI WHERE ID_CHAT = ? AND ESTADO_ENVIO = 0 ORDER BY date(FECHA)", new String[] {id_chat});
             Cursor cursor = db.rawQuery("SELECT * FROM MensajeI WHERE CONTENT = ? ORDER BY date(FECHA)", new String[] {mensaje.getContent()});
             if (cursor.getCount() > 0){
                 cursor.close();

@@ -1,7 +1,5 @@
 package juanmanuelco.facci.com.soschat.BLUETOOTH.Entidades;
 
-import juanmanuelco.facci.com.soschat.BLUETOOTH.DB.ContactosDB;
-
 public class Mensaje {
     private Integer TEMPO, ELECTURA, EENVIO, ESMIO, SALTOS, MOSTRAR;
     private String ID_MESSAGE, ID_CHAT, TIPO, FECHA, MAC_ORIGEN, MAC_DESTINO,  CONTENT;
