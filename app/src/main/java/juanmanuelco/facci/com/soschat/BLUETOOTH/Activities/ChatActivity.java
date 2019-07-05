@@ -1,6 +1,5 @@
 package juanmanuelco.facci.com.soschat.BLUETOOTH.Activities;
 
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.bluetooth.BluetoothAdapter;
@@ -14,7 +13,11 @@ import android.os.Message;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.Button;
@@ -35,7 +38,6 @@ import java.util.List;
 
 import juanmanuelco.facci.com.soschat.BLUETOOTH.Controllers.ChatController;
 import juanmanuelco.facci.com.soschat.BLUETOOTH.DB.MensajeDB;
-import juanmanuelco.facci.com.soschat.BLUETOOTH.Entidades.Chat;
 import juanmanuelco.facci.com.soschat.BLUETOOTH.Entities.ChatMessage;
 import juanmanuelco.facci.com.soschat.R;
 import juanmanuelco.facci.com.soschat.BLUETOOTH.Adapters.ChatArrayAdapter;
@@ -49,9 +51,10 @@ public class ChatActivity extends AppCompatActivity {
     private EditText edit;
     private ChatArrayAdapter chatArrayAdapter;
     private ListView listView;
-    private EditText textoMensaje; // texto a enviar
-    private Button botonEnviar;  // 
+    private EditText textoMensaje;
+    private Button botonEnviar;
     private boolean lado = false;
+    private Toolbar toolbar;
 
     public BluetoothAdapter bluetoothAdapter;  // adaptador bluetooth
 
@@ -80,6 +83,8 @@ public class ChatActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.bt_activity_chat);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (bluetoothAdapter == null) {
@@ -88,7 +93,7 @@ public class ChatActivity extends AppCompatActivity {
         }
 
         findByIds();
-        configurarActividad();
+        personalizarActividad();
 
         // Instancia clase chat adapter enviada a listado
         chatArrayAdapter = new ChatArrayAdapter(getApplicationContext(), R.layout.bt_element_right_msg);
@@ -96,13 +101,13 @@ public class ChatActivity extends AppCompatActivity {
 
         mostrarConversacion();
 
-        // Evento click al botón enviar
+        // Inicio de proceso de envìo de mensaje, pprimer mètodo a ejecutarse
         botonEnviar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
                 if (!textoMensaje.getText().toString().trim().isEmpty()) {
                     try {
-                        sendChatMessage(textoMensaje.getText().toString().trim());
+                        enviarMensaje(textoMensaje.getText().toString().trim());
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -132,7 +137,7 @@ public class ChatActivity extends AppCompatActivity {
             startActivityForResult(enableIntent, REQUEST_ENABLE_BLUETOOTH);
         } else {
             chatController = new ChatController(this, handler);
-            connectToDevice(direccion_destino);
+            coonectarDispositivo(direccion_destino);
         }
     }
 
@@ -143,30 +148,32 @@ public class ChatActivity extends AppCompatActivity {
                 case MESSAGE_STATE_CHANGE:  // Si es mensaje de cambio de estado
                     switch (msg.arg1) {
                         case ChatController.STATE_CONNECTED:  // Si es estado conectado  //connectingDevice.getName());
-                            setStatus(2);
+                            cambiarEstado(2);
                             reintentarEnviarMensajes();
                             break;
                         case ChatController.STATE_CONNECTING:
-                            setStatus(1);
+                            cambiarEstado(1);
                             break;
                         case ChatController.STATE_LISTEN:
                         case ChatController.STATE_NONE:
-                            setStatus(3);
+                            cambiarEstado(3);
                             break;
                     }
                     break;
                 case MESSAGE_WRITE:
                     byte[] writeBuf = (byte[]) msg.obj;
                     mostrarMensaje(datos_msg[4].toString(), true);
-                    guardarMensaje(datos_msg);
+                    // almacenarMensaje(datos_msg);
                     break;
                 case MESSAGE_READ:
                     byte[] readBuf = (byte[]) msg.obj;
                     try {
                         Object[] datos_recbidos = deserialize(readBuf);
                         String msg_recibido = datos_recbidos[4].toString();
-                        notificarMensaje(datos_recbidos);
-                        mostrarMensaje(msg_recibido, false);
+                        if((int) datos_recbidos[12] == 1 && (datos_recbidos[8].equals(direccion_destino))){ // Si se debe mostrar, revisar bien
+                            notificarMensaje(datos_recbidos);
+                            mostrarMensaje(msg_recibido, false);
+                        }
                         guardarMensajeRecibido(datos_recbidos);
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -188,7 +195,7 @@ public class ChatActivity extends AppCompatActivity {
         }
     });
 
-    private void setStatus(int s) {
+    private void cambiarEstado(int s) {
         String texto = "";
         if (s == 1){
             texto = getString(R.string.CONNECTING);
@@ -203,7 +210,7 @@ public class ChatActivity extends AppCompatActivity {
         estadoConexion.setText(texto);
     }
 
-    private void connectToDevice(String MAC) {
+    private void coonectarDispositivo(String MAC) {
         if (bluetoothAdapter == null) {
             Log.i(getString(R.string.ERROR), getString(R.string.BT_NOT_SUPPORT));
         } else {
@@ -218,71 +225,74 @@ public class ChatActivity extends AppCompatActivity {
         return true;
     }
 
-    private void sendChatMessage(String mensaje) throws IOException {
-        if (mensaje.length() > 0) {
+    private void enviarMensaje(String mensaje) throws IOException {
+        if (mensaje.length() > 0) { // Siempre y cuando no estè vacio
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss.SSS");
             String fecha = simpleDateFormat.format(new Date());
             if (chatController.getState() != ChatController.STATE_CONNECTED) { // Si no hay conexión
                 Toast.makeText(this, R.string.LOST_CONNECTION, Toast.LENGTH_SHORT).show();
                 datos_msg = new Object[] {
-                        "null", // id_mensaje
-                        direccion_destino, // id_chat
-                        fecha,
-                        "texto", // tipo_mensaje
-                        mensaje, //
-                        1, 0, 0,
-                        "Me",
-                        direccion_destino,
-                        1, 0
+                        "null",             // ID_MENSAJE
+                        direccion_destino,  // ID_CHAT
+                        fecha,              // FECHA
+                        "texto",            // TIPO
+                        mensaje,            // CONTENT
+                        1,                  // TEMPO
+                        0,                  // ESTADO_LECTURA
+                        0,                  // ESTADO_ENVIO
+                        "Me",               // MAC_ORIGEN  (no se puede obtener)
+                        direccion_destino,  // MAC_DESTINO
+                        1,                  // ESMIO
+                        0,                  // SALTOS
+                        1                   // MOSTRAR
                 };
-                guardarMensaje(datos_msg);
+                almacenarMensaje(datos_msg);
                 mostrarMensaje(datos_msg[4].toString(), true);
                 textoMensaje.setText("");
                 return;
             }
 
-            datos_msg = new Object[] {  // Si hay conexxiòn
-                    "null", // id_mensaje
-                    direccion_destino, // id_chat
-                    fecha,
-                    "texto", // tipo_mensaje
-                    mensaje, //
-                    1, 0, 1,
-                    "Me",
-                    direccion_destino,
-                    1, 1
+            // Si hay conexxiòn cambian ciertos paràmetros
+            datos_msg = new Object[] {
+                    "null",             // ID_MENSAJE
+                    direccion_destino,  // ID_CHAT
+                    fecha,              // FECHA
+                    "texto",            // TIPO
+                    mensaje,            // CONTENT
+                    1,                  // TEMPO
+                    0,                  // ESTADO_LECTURA
+                    1,                  // ESTADO_ENVIO
+                    "Me",               // MAC_ORIGEN  (no se puede obtener)
+                    direccion_destino,  // MAC_DESTINO
+                    1,                  // ESMIO
+                    1,                  // SALTOS
+                    1                   // MOSTRAR
             };
-            chatController.write(serialize(datos_msg), "texto");
+            almacenarMensaje(datos_msg);
+            chatController.write(serialize(datos_msg), "texto"); // Se ejecuta internamente y muestra el msg
             textoMensaje.setText("");
         }
     }
 
-
-    public void configurarActividad(){
-        i = getIntent();
-        nombre_destino = i.getStringExtra("nombre_destino");
-        direccion_destino = i.getStringExtra("direccion_destino");
-        nombreDispositivo.setText(nombre_destino + " " + direccion_destino);
-    }
-
-
-    public void guardarMensaje(Object[] msg){ // Enviados y no enviados
+    public void almacenarMensaje(Object[] msg){ // Enviados y no enviados
         entidad_mensaje = new Mensaje(msg[0].toString(), msg[1].toString(), msg[2].toString(), msg[3].toString(),
                 msg[4].toString(), (int) msg[5], (int) msg[6], (int) msg[7], msg[8].toString(), msg[9].toString(),
-                (int) msg[10], (int) msg[11] );
+                (int) msg[10], (int) msg[11], (int) msg[12] );
         MensajeDB.Insert(getApplicationContext(), entidad_mensaje);
     }
 
     public void guardarMensajeRecibido(Object[] msg){
+
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss.SSS");
         String fecha = simpleDateFormat.format(new Date());
+
         if ((int) msg[11] == 1){ // Si es el primer salto o punto a punto se obtiene:
             msg[1] = connectingDevice.getAddress(); // Id del chat
             msg[8] = connectingDevice.getAddress(); // Direcciòn destino
         }
         entidad_mensaje = new Mensaje(msg[0].toString(), msg[1].toString(), fecha, msg[3].toString(),
                 msg[4].toString(), (int) msg[5], (int) msg[6], (int) msg[7], msg[8].toString(), msg[9].toString(),
-                0, (int) msg[11] );
+                0, (int) msg[11], (int) msg[12] );
         MensajeDB.Insert(getApplicationContext(), entidad_mensaje);
     }
 
@@ -292,10 +302,12 @@ public class ChatActivity extends AppCompatActivity {
         Iterator<Mensaje> iterator = mensajes.iterator();
         while(iterator.hasNext()){
             Mensaje msg = iterator.next();
-            if (msg.EsMio() == 1){
-                mostrarMensaje(msg.getContent(), true);
-            }else{
-                mostrarMensaje(msg.getContent(), false);
+            if (msg.getMostrar() == 1){
+                if (msg.EsMio() == 1){
+                    mostrarMensaje(msg.getContent(), true);
+                }else{
+                    mostrarMensaje(msg.getContent(), false);
+                }
             }
         }
     }
@@ -309,16 +321,40 @@ public class ChatActivity extends AppCompatActivity {
                 if (msg.getContent().length() > 0) {
                     // Condicion si coinciden mac
                     if (msg.getMAC_DESTINO().equals(connectingDevice.getAddress())){
-                        datos_msg = new Object[] { msg.getID_MESSAGE(), msg.getID_CHAT(), msg.getDate(),
-                            msg.getType(), msg.getContent(), msg.getTime(), msg.EstaoLectura(), 1,
-                            msg.getMAC_ORIGEN(), msg.getMAC_DESTINO(), 1, (int) msg.getSaltos() + 1  };
+                        datos_msg = new Object[] {
+                                msg.getID_MESSAGE(),        // ID_MENSAJE
+                                msg.getID_CHAT(),           // ID_CHAT
+                                msg.getDate(),              // FECHA
+                                msg.getType(),              // TIPO
+                                msg.getContent(),           // CONTENT
+                                msg.getTime(),              // TEMPO
+                                msg.EstaoLectura(),         // ESTADO_LECTURA
+                                1,                          // ESTADO_ENVIO
+                                msg.getMAC_ORIGEN(),        // MAC_ORIGEN
+                                msg.getMAC_DESTINO(),       // MAC_DESTINO
+                                0,                          // ESMIO
+                                (int) msg.getSaltos() + 1,  // SALTOS
+                                1                           // MOSTRAR
+                        };
                     }else{
-                        datos_msg = new Object[] { msg.getID_MESSAGE(), msg.getID_CHAT(), msg.getDate(),
-                                msg.getType(), msg.getContent(), msg.getTime(), msg.EstaoLectura(), 0,
-                                msg.getMAC_ORIGEN(), msg.getMAC_DESTINO(), 1, (int) msg.getSaltos() + 1  };
+                        datos_msg = new Object[] {
+                                msg.getID_MESSAGE(),        // ID_MENSAJE
+                                msg.getID_CHAT(),           // ID_CHAT
+                                msg.getDate(),              // FECHA
+                                msg.getType(),              // TIPO
+                                msg.getContent(),           // CONTENT
+                                msg.getTime(),              // TEMPO
+                                msg.EstaoLectura(),         // ESTADO_LECTURA
+                                0,                          // ESTADO_ENVIO (para que se vuelva a reenviar)
+                                msg.getMAC_ORIGEN(),        // MAC_ORIGEN
+                                msg.getMAC_DESTINO(),       // MAC_DESTINO
+                                0,                          // ESMIO
+                                (int) msg.getSaltos() + 1,  // SALTOS
+                                0                           // MOSTRAR
+                        };
                      }
                     try{
-                        MensajeDB.eliminarDuplicado(getApplicationContext(), msg.getID_MESSAGE());
+                        //MensajeDB.eliminarDuplicado(getApplicationContext(), msg.getID_MESSAGE());
                         mostrarConversacion();
                         chatController.write(serialize(datos_msg), "texto");
                     }catch (Exception ex) {
@@ -338,13 +374,18 @@ public class ChatActivity extends AppCompatActivity {
         color = (TextView) findViewById(R.id.color);
     }
 
+    public void personalizarActividad(){
+        i = getIntent();
+        nombre_destino = i.getStringExtra("nombre_destino");
+        direccion_destino = i.getStringExtra("direccion_destino");
+        nombreDispositivo.setText(nombre_destino + " " + direccion_destino);
+    }
+
 
     public void notificarMensaje(Object[] datos_msg){
-        if ((int) datos_msg[7] == 1){
 
             NotificationCompat.Builder mBuilder =
                     new NotificationCompat.Builder(this);
-            //Create the intent that’ll fire when the user taps the notification//
 
             Intent intent = new Intent(this, ChatActivity.class);
             intent.putExtra("nombre_destino", "");
@@ -364,22 +405,44 @@ public class ChatActivity extends AppCompatActivity {
                     (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
             mNotificationManager.notify(001, mBuilder.build());
-        }
+
     }
 
 
     // Métodos para convertir objeto a byte y viceversa
-
     public static byte[] serialize(Object[] obj) throws IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ObjectOutputStream os = new ObjectOutputStream(out);
         os.writeObject(obj);
         return out.toByteArray();
     }
-
     public static Object[] deserialize(byte[] data) throws IOException, ClassNotFoundException {
         ByteArrayInputStream in = new ByteArrayInputStream(data);
         ObjectInputStream is = new ObjectInputStream(in);
         return (Object[]) is.readObject();
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.bt_menu_activity_chat, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.reconnect:
+                if (!bluetoothAdapter.isEnabled()) {
+                    Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                    startActivityForResult(enableIntent, REQUEST_ENABLE_BLUETOOTH);
+                } else {
+                    chatController = new ChatController(this, handler);
+                    coonectarDispositivo(direccion_destino);
+                }
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }

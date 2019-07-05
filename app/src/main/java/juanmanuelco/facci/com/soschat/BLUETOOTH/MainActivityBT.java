@@ -5,6 +5,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 
 import juanmanuelco.facci.com.soschat.BLUETOOTH.Adapters.SectionsPageAdapter;
 import juanmanuelco.facci.com.soschat.BLUETOOTH.Fragments.FragmentChats;
@@ -47,5 +48,4 @@ public class MainActivityBT extends AppCompatActivity {
         viewPager.setAdapter(adapter);
     }
 
-    // add onCreateOptionsMenu
 }
