@@ -162,16 +162,21 @@ public class ChatActivity extends AppCompatActivity {
                     break;
                 case MESSAGE_WRITE:
                     byte[] writeBuf = (byte[]) msg.obj;
-                    mostrarMensaje(datos_msg[4].toString(), true);
-                    // almacenarMensaje(datos_msg);
+                    //mostrarMensaje(datos_msg[4].toString(), true);
+                    if ((int) datos_msg[12] == 1){
+                        mostrarMensaje(datos_msg[4].toString(), true);
+                    }
                     break;
                 case MESSAGE_READ:
                     byte[] readBuf = (byte[]) msg.obj;
                     try {
-                        Object[] datos_recbidos = deserialize(readBuf);
+                        Object[] datos_recbidos = deserialize(readBuf); // se deserializa el objeto recibido
                         String msg_recibido = datos_recbidos[4].toString();
-                        if((int) datos_recbidos[12] == 1 && (datos_recbidos[8].equals(direccion_destino))){ // Si se debe mostrar, revisar bien
-                            notificarMensaje(datos_recbidos);
+
+                        //Toast.makeText(ChatActivity.this,  datos_recbidos[12].toString(), Toast.LENGTH_SHORT).show();
+                        int se_muestra = (int) datos_recbidos[12];
+                        if(se_muestra==1){ // // Si se debe mostrar
+                            //notificarMensaje(datos_recbidos);
                             mostrarMensaje(msg_recibido, false);
                         }
                         guardarMensajeRecibido(datos_recbidos);
@@ -189,7 +194,7 @@ public class ChatActivity extends AppCompatActivity {
                 case MESSAGE_TOAST:
                     Toast.makeText(getApplicationContext(), msg.getData().getString("toast"),
                             Toast.LENGTH_SHORT).show();
-                    break;
+                    break; 
             }
             return false;
         }
@@ -285,8 +290,8 @@ public class ChatActivity extends AppCompatActivity {
 
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss.SSS");
         String fecha = simpleDateFormat.format(new Date());
-
-        if ((int) msg[11] == 1){ // Si es el primer salto o punto a punto se obtiene:
+        // Solo si es el primer salto o punto a punto se obtiene:
+        if ((int) msg[11] == 1){
             msg[1] = connectingDevice.getAddress(); // Id del chat
             msg[8] = connectingDevice.getAddress(); // Direcciòn destino
         }
@@ -354,8 +359,7 @@ public class ChatActivity extends AppCompatActivity {
                         };
                      }
                     try{
-                        //MensajeDB.eliminarDuplicado(getApplicationContext(), msg.getID_MESSAGE());
-                        mostrarConversacion();
+                        //mostrarConversacion();
                         chatController.write(serialize(datos_msg), "texto");
                     }catch (Exception ex) {
                         Log.e("Ha ocurrido un error", ex.toString());

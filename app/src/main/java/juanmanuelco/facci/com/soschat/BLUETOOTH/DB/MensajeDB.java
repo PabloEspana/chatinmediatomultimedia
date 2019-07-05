@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.provider.BaseColumns;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,31 +63,44 @@ public class MensajeDB {
 
     public static boolean Insert(Context context, Mensaje mensaje){
         try{
+
+
+
             database = new MainDB(context);
             SQLiteDatabase db = database.getWritableDatabase();
-            ContentValues values = new ContentValues();
-            values.put(ID_MENSAJE, "msg-"+(int)(10000000 * Math.random()));
-            values.put(ID_CHAT, mensaje.getID_CHAT());
-            values.put(FECHA, mensaje.getDate());
-            values.put(TIPO, mensaje.getType());
-            values.put(CONTENT, mensaje.getContent());
-            values.put(TEMPO, mensaje.getTime());
-            values.put(ELECTURA, mensaje.EstaoLectura());
-            values.put(EENVIO, mensaje.EstaoEnvio());
-            values.put(MAC_ORIGEN, mensaje.getMAC_ORIGEN());
-            values.put(MAC_DESTINO, mensaje.getMAC_DESTINO());
-            values.put(ESMIO, mensaje.EsMio());
-            values.put(SALTOS, mensaje.getSaltos());
-            values.put(MOSTRAR, mensaje.getMostrar());
-            db.insert(TABLE_NAME,null,values);
 
-            // Actualiza estado de chat a activo
-            ContentValues value_update = new ContentValues();
-            value_update.put("ESTADO", 1);
-            db.update("Chat", value_update, "ID = ?",  new String[]{mensaje.getID_CHAT()});
+            //Cursor cursor = db.rawQuery("SELECT * FROM MensajeI WHERE ID_CHAT = ? AND ESTADO_ENVIO = 0 ORDER BY date(FECHA)", new String[] {id_chat});
+            Cursor cursor = db.rawQuery("SELECT * FROM MensajeI WHERE CONTENT = ? ORDER BY date(FECHA)", new String[] {mensaje.getContent()});
+            if (cursor.getCount() > 0){
+                cursor.close();
+                database.getReadableDatabase().close();
+                return false;
+            }else {
+                ContentValues values = new ContentValues();
+                values.put(ID_MENSAJE, "msg-"+(int)(10000000 * Math.random()));
+                values.put(ID_CHAT, mensaje.getID_CHAT());
+                values.put(FECHA, mensaje.getDate());
+                values.put(TIPO, mensaje.getType());
+                values.put(CONTENT, mensaje.getContent());
+                values.put(TEMPO, mensaje.getTime());
+                values.put(ELECTURA, mensaje.EstaoLectura());
+                values.put(EENVIO, mensaje.EstaoEnvio());
+                values.put(MAC_ORIGEN, mensaje.getMAC_ORIGEN());
+                values.put(MAC_DESTINO, mensaje.getMAC_DESTINO());
+                values.put(ESMIO, mensaje.EsMio());
+                values.put(SALTOS, mensaje.getSaltos());
+                values.put(MOSTRAR, mensaje.getMostrar());
+                db.insert(TABLE_NAME,null,values);
 
-            db.close();
-            return true;
+                // Actualiza estado de chat a activo
+                ContentValues value_update = new ContentValues();
+                value_update.put("ESTADO", 1);
+                db.update("Chat", value_update, "ID = ?",  new String[]{mensaje.getID_CHAT()});
+
+                db.close();
+                cursor.close();
+                return true;
+            }
         }
         catch (Exception ex){
             Log.e("Error", ex.toString());

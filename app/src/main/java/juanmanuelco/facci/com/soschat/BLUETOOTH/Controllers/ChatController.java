@@ -155,7 +155,6 @@ public class ChatController {
 
     public void write(byte[] out, String tipo_mensaje) {
         tipo_envio = tipo_mensaje;
-        Log.i("prueba:", "Se ejecuta write");
         ReadWriteThread r;
         synchronized (this) {
             if (state != STATE_CONNECTED)
