@@ -75,8 +75,8 @@
             android:textColor="@color/Texto_boton" />
 
         <RelativeLayout
-            android:layout_width="300dp"
-            android:layout_height="76dp"
+            android:layout_width="wrap_content"
+            android:layout_height="94dp"
             android:layout_marginLeft="12dp"
             android:layout_marginTop="12dp"
             android:layout_marginRight="12dp"
@@ -89,7 +89,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
-                android:layout_marginStart="30dp"
+                android:layout_marginStart="20dp"
                 android:layout_marginTop="0dp"
                 android:layout_weight="1"
                 android:text="@string/GPS_LOCATION"
@@ -143,13 +143,22 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentBottom="true"
-                android:layout_marginEnd="2dp"
-                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="-1dp"
+                android:layout_marginBottom="21dp"
                 android:background="@color/fondo_boton"
-                android:text="@string/UPDATE_LOCATION"
+                android:onClick="toogleGPSUpdates"
+                android:text="@string/RESUME"
                 android:textColor="@color/Texto_boton" />
 
         </RelativeLayout>
+
+        <View
+            android:id="@+id/separator"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:background="@color/blue"/>
 
     </LinearLayout>
 </RelativeLayout>

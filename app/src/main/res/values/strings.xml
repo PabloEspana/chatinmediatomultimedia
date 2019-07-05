@@ -179,6 +179,8 @@
     <string name="LATITUDE">Latitud</string>
     <string name="CONNECTION_FAILED">No se puede conectar al dispositivo</string>
     <string name="LOSTCONNECTION">Conexión perdida con el dispositivo</string>
+    <string name="RESUME">RESUMEN</string>
+    <string name="PAUSE">PAUSA</string>
 
 
 </resources>
