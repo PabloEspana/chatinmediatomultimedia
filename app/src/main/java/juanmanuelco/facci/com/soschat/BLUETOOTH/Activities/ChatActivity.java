@@ -77,6 +77,8 @@ public class ChatActivity extends AppCompatActivity {
 
     Object[] datos_msg;
 
+    int num_con;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,6 +101,8 @@ public class ChatActivity extends AppCompatActivity {
         listView.setAdapter(chatArrayAdapter);
 
         mostrarConversacion();
+
+        num_con = 0;
 
         // Inicio de proceso de envìo de mensaje, pprimer mètodo a ejecutarse
         botonEnviar.setOnClickListener(new View.OnClickListener() {
@@ -140,6 +144,8 @@ public class ChatActivity extends AppCompatActivity {
         }
     }
 
+
+
     private Handler handler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
@@ -148,7 +154,10 @@ public class ChatActivity extends AppCompatActivity {
                     switch (msg.arg1) {
                         case ChatController.STATE_CONNECTED:  // Si es estado conectado  //connectingDevice.getName());
                             cambiarEstado(2);
-                            reintentarEnviarMensajes();
+                            /*num_con++;
+                            if (num_con == 1){
+                                reintentarEnviarMensajes();
+                            }*/
                             break;
                         case ChatController.STATE_CONNECTING:
                             cambiarEstado(1);
@@ -160,23 +169,31 @@ public class ChatActivity extends AppCompatActivity {
                     }
                     break;
                 case MESSAGE_WRITE:
+                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm:ss.SSS");
+                    String tiempo = simpleDateFormat.format(new Date());
+
                     byte[] writeBuf = (byte[]) msg.obj;
-                    //mostrarMensaje(datos_msg[4].toString(), true);
-                    if ((int) datos_msg[12] == 1){
-                        mostrarMensaje(datos_msg[4].toString(), true);
+                    if ((int) datos_msg[12] == 1){ // si se muestra
+                        //mostrarMensaje(datos_msg[4].toString(), true);
+                        mostrarMensaje(datos_msg[4].toString() + "\n" + tiempo.toString(), true);
                     }
                     break;
                 case MESSAGE_READ:
+                    SimpleDateFormat simpleDateFormat2 = new SimpleDateFormat("HH:mm:ss.SSS");
+                    String tiempo2 = simpleDateFormat2.format(new Date());
+
                     byte[] readBuf = (byte[]) msg.obj;
                     try {
                         Object[] datos_recbidos = deserialize(readBuf); // se deserializa el objeto recibido
                         String msg_recibido = datos_recbidos[4].toString();
 
-                        //Toast.makeText(ChatActivity.this,  datos_recbidos[12].toString(), Toast.LENGTH_SHORT).show();
                         int se_muestra = (int) datos_recbidos[12];
+
                         if(se_muestra==1){ // // Si se debe mostrar
-                            //notificarMensaje(datos_recbidos);
-                            mostrarMensaje(msg_recibido, false);
+                            //notificarMensaje(datos_recbidos); no funciona en nyevas versiones
+
+                            //mostrarMensaje(msg_recibido, false);
+                            mostrarMensaje( msg_recibido + "\n" + tiempo2.toString(), false);
                         }
                         guardarMensajeRecibido(datos_recbidos);
                     } catch (IOException e) {
@@ -444,6 +461,48 @@ public class ChatActivity extends AppCompatActivity {
                     coonectarDispositivo(direccion_destino);
                 }
                 return true;
+
+            case R.id.text_1KB:
+                textoMensaje.setText("");
+                return true;
+
+            case R.id.text_32KB:
+                textoMensaje.setText("");
+                return true;
+
+            case R.id.text_64KB:
+                textoMensaje.setText("");
+                return true;
+
+            case R.id.text_120KB:
+                textoMensaje.setText("");
+                return true;
+
+            case R.id.text_256KB:
+                textoMensaje.setText("");
+                return true;
+
+            case R.id.text_512KB:
+                textoMensaje.setText("");
+                return true;
+
+            case R.id.text_1MB:
+                textoMensaje.setText("");
+                return true;
+
+            case R.id.text_2MB:
+                textoMensaje.setText("");
+                return true;
+
+            case R.id.text_5MB:
+                textoMensaje.setText("");
+                return true;
+
+            case R.id.text_10MB:
+                textoMensaje.setText("");
+                return true;
+
+
             default:
                 return super.onOptionsItemSelected(item);
         }

@@ -7,4 +7,53 @@
         android:title="@string/reload"
         android:icon="@drawable/action_reload"
         app:showAsAction="ifRoom" />
+
+
+    <item
+        android:id="@+id/escoger_imagen"
+        android:title="@string/send_video"
+        android:icon="@drawable/imagen"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/text_1KB"
+        android:title="1 KB"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/text_32KB"
+        android:title="32 KB"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/text_64KB"
+        android:title="64 KB"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/text_120KB"
+        android:title="120 KB"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/text_256KB"
+        android:title="256 KB"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/text_512KB"
+        android:title="512 KB"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/text_1MB"
+        android:title="1 MB"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/text_2MB"
+        android:title="2 MB"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/text_5MB"
+        android:title="5 MB"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/text_10MB"
+        android:title="10 MB"
+        app:showAsAction="ifRoom" />
 </menu>
