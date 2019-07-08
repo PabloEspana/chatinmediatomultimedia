@@ -154,10 +154,10 @@ public class ChatActivity extends AppCompatActivity {
                     switch (msg.arg1) {
                         case ChatController.STATE_CONNECTED:  // Si es estado conectado  //connectingDevice.getName());
                             cambiarEstado(2);
-                            /*num_con++;
+                            num_con++;
                             if (num_con == 1){
                                 reintentarEnviarMensajes();
-                            }*/
+                            }
                             break;
                         case ChatController.STATE_CONNECTING:
                             cambiarEstado(1);
@@ -174,8 +174,8 @@ public class ChatActivity extends AppCompatActivity {
 
                     byte[] writeBuf = (byte[]) msg.obj;
                     if ((int) datos_msg[12] == 1){ // si se muestra
-                        //mostrarMensaje(datos_msg[4].toString(), true);
-                        mostrarMensaje(datos_msg[4].toString() + "\n" + tiempo.toString(), true);
+                        mostrarMensaje(datos_msg[4].toString(), true);
+                        //mostrarMensaje(datos_msg[4].toString() + "\n" + tiempo.toString(), true);
                     }
                     break;
                 case MESSAGE_READ:
@@ -192,8 +192,8 @@ public class ChatActivity extends AppCompatActivity {
                         if(se_muestra==1){ // // Si se debe mostrar
                             //notificarMensaje(datos_recbidos); no funciona en nyevas versiones
 
-                            //mostrarMensaje(msg_recibido, false);
-                            mostrarMensaje( msg_recibido + "\n" + tiempo2.toString(), false);
+                            mostrarMensaje(msg_recibido, false);
+                            //mostrarMensaje( msg_recibido + "\n" + tiempo2.toString(), false);
                         }
                         guardarMensajeRecibido(datos_recbidos);
                     } catch (IOException e) {
