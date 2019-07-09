@@ -78,6 +78,7 @@ public class ChatActivity extends AppCompatActivity {
     Object[] datos_msg;
 
     int num_con;
+    String tipo_mensaje = "texto";
 
 
     @Override
@@ -110,6 +111,7 @@ public class ChatActivity extends AppCompatActivity {
             public void onClick(View arg0) {
                 if (!textoMensaje.getText().toString().trim().isEmpty()) {
                     try {
+                        tipo_mensaje = "texto";
                         enviarMensaje(textoMensaje.getText().toString().trim());
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -174,8 +176,7 @@ public class ChatActivity extends AppCompatActivity {
 
                     byte[] writeBuf = (byte[]) msg.obj;
                     if ((int) datos_msg[12] == 1){ // si se muestra
-                        mostrarMensaje(datos_msg[4].toString(), true);
-                        //mostrarMensaje(datos_msg[4].toString() + "\n" + tiempo.toString(), true);
+                        mostrarMensaje(datos_msg[4].toString(), true, datos_msg[3].toString());
                     }
                     break;
                 case MESSAGE_READ:
@@ -186,14 +187,8 @@ public class ChatActivity extends AppCompatActivity {
                     try {
                         Object[] datos_recbidos = deserialize(readBuf); // se deserializa el objeto recibido
                         String msg_recibido = datos_recbidos[4].toString();
-
-                        int se_muestra = (int) datos_recbidos[12];
-
-                        if(se_muestra==1){ // // Si se debe mostrar
-                            //notificarMensaje(datos_recbidos); no funciona en nyevas versiones
-
-                            mostrarMensaje(msg_recibido, false);
-                            //mostrarMensaje( msg_recibido + "\n" + tiempo2.toString(), false);
+                        if((int) datos_recbidos[12]==1){ // // Si se debe mostrar
+                            mostrarMensaje(msg_recibido, false, datos_recbidos[3].toString());
                         }
                         guardarMensajeRecibido(datos_recbidos);
                     } catch (IOException e) {
@@ -210,7 +205,7 @@ public class ChatActivity extends AppCompatActivity {
                 case MESSAGE_TOAST:
                     Toast.makeText(getApplicationContext(), msg.getData().getString("toast"),
                             Toast.LENGTH_SHORT).show();
-                    break; 
+                    break;
             }
             return false;
         }
@@ -240,8 +235,8 @@ public class ChatActivity extends AppCompatActivity {
         }
     }
 
-    public boolean mostrarMensaje(String mensaje, boolean tipo){
-        chatArrayAdapter.add(new ChatMessage(tipo, mensaje));
+    public boolean mostrarMensaje(String mensaje, boolean tipo, String tipo_mensaje){
+        chatArrayAdapter.add(new ChatMessage(tipo, mensaje, tipo_mensaje));
         textoMensaje.setText("");
         return true;
     }
@@ -256,7 +251,7 @@ public class ChatActivity extends AppCompatActivity {
                         "null",             // ID_MENSAJE
                         direccion_destino,  // ID_CHAT
                         fecha,              // FECHA
-                        "texto",            // TIPO
+                        tipo_mensaje,            // TIPO
                         mensaje,            // CONTENT
                         1,                  // TEMPO
                         0,                  // ESTADO_LECTURA
@@ -268,7 +263,7 @@ public class ChatActivity extends AppCompatActivity {
                         1                   // MOSTRAR
                 };
                 almacenarMensaje(datos_msg);
-                mostrarMensaje(datos_msg[4].toString(), true);
+                mostrarMensaje(datos_msg[4].toString(), true, datos_msg[3].toString());
                 textoMensaje.setText("");
                 return;
             }
@@ -278,7 +273,7 @@ public class ChatActivity extends AppCompatActivity {
                     "null",             // ID_MENSAJE
                     direccion_destino,  // ID_CHAT
                     fecha,              // FECHA
-                    "texto",            // TIPO
+                    tipo_mensaje,            // TIPO
                     mensaje,            // CONTENT
                     1,                  // TEMPO
                     0,                  // ESTADO_LECTURA
@@ -290,7 +285,7 @@ public class ChatActivity extends AppCompatActivity {
                     1                   // MOSTRAR
             };
             almacenarMensaje(datos_msg);
-            chatController.write(serialize(datos_msg), "texto"); // Se ejecuta internamente y muestra el msg
+            chatController.write(serialize(datos_msg)); // Se ejecuta internamente y muestra el msg
             textoMensaje.setText("");
         }
     }
@@ -325,9 +320,9 @@ public class ChatActivity extends AppCompatActivity {
             Mensaje msg = iterator.next();
             if (msg.getMostrar() == 1){
                 if (msg.EsMio() == 1){
-                    mostrarMensaje(msg.getContent(), true);
+                    mostrarMensaje(msg.getContent(), true, msg.getType());
                 }else{
-                    mostrarMensaje(msg.getContent(), false);
+                    mostrarMensaje(msg.getContent(), false, msg.getType());
                 }
             }
         }
@@ -373,10 +368,10 @@ public class ChatActivity extends AppCompatActivity {
                                 (int) msg.getSaltos() + 1,  // SALTOS
                                 0                           // MOSTRAR
                         };
-                     }
+                    }
                     try{
                         //mostrarConversacion();
-                        chatController.write(serialize(datos_msg), "texto");
+                        chatController.write(serialize(datos_msg));
                     }catch (Exception ex) {
                         Log.e("Ha ocurrido un error", ex.toString());
                     }
@@ -404,27 +399,27 @@ public class ChatActivity extends AppCompatActivity {
 
     public void notificarMensaje(Object[] datos_msg){
 
-            NotificationCompat.Builder mBuilder =
-                    new NotificationCompat.Builder(this);
+        NotificationCompat.Builder mBuilder =
+                new NotificationCompat.Builder(this);
 
-            Intent intent = new Intent(this, ChatActivity.class);
-            intent.putExtra("nombre_destino", "");
-            intent.putExtra("direccion_destino", datos_msg[8].toString());
-            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
+        Intent intent = new Intent(this, ChatActivity.class);
+        intent.putExtra("nombre_destino", "");
+        intent.putExtra("direccion_destino", datos_msg[8].toString());
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
 
-            mBuilder.setContentIntent(pendingIntent);
+        mBuilder.setContentIntent(pendingIntent);
 
-            mBuilder.setSmallIcon(R.drawable.icon_notification);
-            mBuilder.setContentTitle("Nuevo Mensaje");
-            mBuilder.setContentText(datos_msg[4].toString());
-            mBuilder.setVibrate(new long[] {100, 250, 100, 500});
-            mBuilder.setAutoCancel(true);
+        mBuilder.setSmallIcon(R.drawable.icon_notification);
+        mBuilder.setContentTitle("Nuevo Mensaje");
+        mBuilder.setContentText(datos_msg[4].toString());
+        mBuilder.setVibrate(new long[] {100, 250, 100, 500});
+        mBuilder.setAutoCancel(true);
 
-            NotificationManager mNotificationManager =
+        NotificationManager mNotificationManager =
 
-                    (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-            mNotificationManager.notify(001, mBuilder.build());
+        mNotificationManager.notify(001, mBuilder.build());
 
     }
 
