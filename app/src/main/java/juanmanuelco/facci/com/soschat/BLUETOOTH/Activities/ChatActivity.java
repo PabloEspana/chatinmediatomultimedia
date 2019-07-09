@@ -1,5 +1,6 @@
 package juanmanuelco.facci.com.soschat.BLUETOOTH.Activities;
 
+import android.app.Activity;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.bluetooth.BluetoothAdapter;
@@ -8,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.DataSetObserver;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.NotificationCompat;
@@ -78,6 +80,8 @@ public class ChatActivity extends AppCompatActivity {
     Object[] datos_msg;
 
     int num_con;
+
+    private static final int SELECT_PICTURE = 43; // código de resultado al escoger imagen
     String tipo_mensaje = "texto";
 
 
@@ -457,8 +461,12 @@ public class ChatActivity extends AppCompatActivity {
                 }
                 return true;
 
+            case R.id.escoger_imagen:
+                escogerImagen();
+                return true;
+
             case R.id.text_1KB:
-                textoMensaje.setText("");
+                    textoMensaje.setText("");
                 return true;
 
             case R.id.text_32KB:
@@ -502,4 +510,37 @@ public class ChatActivity extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
+
+    public void escogerImagen(){
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+            intent.setType("image/*");
+            startActivityForResult(Intent.createChooser(intent, "Seleccionar Imagen"), SELECT_PICTURE);
+        } else {
+            Intent intent = new Intent();
+            intent.setType("image/*");
+            intent.setAction(Intent.ACTION_GET_CONTENT);
+            startActivityForResult(Intent.createChooser(intent, "Seleccionar Imagen"), SELECT_PICTURE);
+        }
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case SELECT_PICTURE:
+                if (resultCode == Activity.RESULT_OK){
+                    if(data != null){
+                        tipo_mensaje = "imagen";
+                        try{
+                            mostrarMensaje(data.getData().toString(), true, "imagen");
+                        }catch (Exception e){
+                            Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }else {
+                    Toast.makeText(this, "Error al escoger imagen", Toast.LENGTH_SHORT).show();
+                }
+        }
+    }
+
 }
