@@ -23,7 +23,8 @@
         android:paddingRight="10dp"
         android:paddingTop="10dp"
         android:text="Sampleleft"
-        android:textColor="#000"
+        android:textColor="#424242"
+        android:fontFamily="sans-serif-bold"
 
 
         android:layout_marginLeft="40dp"/>

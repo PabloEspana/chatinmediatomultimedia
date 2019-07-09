@@ -18,5 +18,7 @@
         android:paddingRight="10dp"
         android:paddingTop="10dp"
         android:text="Sample"
-        android:textColor="#fff" />
+        android:textColor="#fff"
+        android:fontFamily="sans-serif-bold"
+        />
 </LinearLayout>

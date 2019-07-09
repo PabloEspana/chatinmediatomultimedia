@@ -11,7 +11,7 @@
 
     <item
         android:id="@+id/escoger_imagen"
-        android:title="@string/send_video"
+        android:title="Escoger imagen"
         android:icon="@drawable/imagen"
         app:showAsAction="ifRoom" />
 
