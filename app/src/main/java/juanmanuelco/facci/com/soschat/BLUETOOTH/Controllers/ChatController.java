@@ -35,7 +35,6 @@ public class ChatController {
     public static final int STATE_CONNECTING = 2;
     public static final int STATE_CONNECTED = 3;
 
-    String tipo_envio = "";
 
     public ChatController(Context context, Handler handler) {
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -153,15 +152,14 @@ public class ChatController {
     }
 
 
-    public void write(byte[] out, String tipo_mensaje) {
-        tipo_envio = tipo_mensaje;
+    public void write(byte[] out) {
         ReadWriteThread r;
         synchronized (this) {
             if (state != STATE_CONNECTED)
                 return;
             r = connectedThread;
         }
-        r.write(out, tipo_envio);
+        r.write(out);
     }
 
     private void connectionFailed() {
@@ -372,7 +370,7 @@ public class ChatController {
         }
 
         // write to OutputStream
-        public void write(byte[] buffer, String tipo_mensaje) {
+        public void write(byte[] buffer) {
             /*if (tipo_mensaje.equals("texto")){
                 try {
                     outputStream.write(buffer);
