@@ -8,14 +8,19 @@ import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.Intent;
 import android.database.DataSetObserver;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.MediaStore;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -36,6 +41,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import juanmanuelco.facci.com.soschat.BLUETOOTH.Controllers.ChatController;
 import juanmanuelco.facci.com.soschat.BLUETOOTH.DB.MensajeDB;
@@ -44,6 +50,7 @@ import juanmanuelco.facci.com.soschat.R;
 import juanmanuelco.facci.com.soschat.BLUETOOTH.Adapters.ChatArrayAdapter;
 
 import juanmanuelco.facci.com.soschat.BLUETOOTH.Entidades.Mensaje;
+
 
 
 public class ChatActivity extends AppCompatActivity {
@@ -150,8 +157,6 @@ public class ChatActivity extends AppCompatActivity {
         }
     }
 
-
-
     private Handler handler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
@@ -160,10 +165,10 @@ public class ChatActivity extends AppCompatActivity {
                     switch (msg.arg1) {
                         case ChatController.STATE_CONNECTED:  // Si es estado conectado  //connectingDevice.getName());
                             cambiarEstado(2);
-                            num_con++;
-                            if (num_con == 1){
+                            //num_con++;
+                            //if (num_con == 1){
                                 reintentarEnviarMensajes();
-                            }
+                            //}
                             break;
                         case ChatController.STATE_CONNECTING:
                             cambiarEstado(1);
@@ -175,13 +180,7 @@ public class ChatActivity extends AppCompatActivity {
                     }
                     break;
                 case MESSAGE_WRITE:
-                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm:ss.SSS");
-                    String tiempo = simpleDateFormat.format(new Date());
-
                     byte[] writeBuf = (byte[]) msg.obj;
-                    if ((int) datos_msg[12] == 1){ // si se muestra
-                        mostrarMensaje(datos_msg[4].toString(), true, datos_msg[3].toString());
-                    }
                     break;
                 case MESSAGE_READ:
                     SimpleDateFormat simpleDateFormat2 = new SimpleDateFormat("HH:mm:ss.SSS");
@@ -193,6 +192,7 @@ public class ChatActivity extends AppCompatActivity {
                         String msg_recibido = datos_recbidos[4].toString();
                         if((int) datos_recbidos[12]==1){ // // Si se debe mostrar
                             mostrarMensaje(msg_recibido, false, datos_recbidos[3].toString());
+                            //mostrarMensaje(msg_recibido + " \n " +tiempo2, false, datos_recbidos[3].toString());
                         }
                         guardarMensajeRecibido(datos_recbidos);
                     } catch (IOException e) {
@@ -255,7 +255,7 @@ public class ChatActivity extends AppCompatActivity {
                         "null",             // ID_MENSAJE
                         direccion_destino,  // ID_CHAT
                         fecha,              // FECHA
-                        tipo_mensaje,            // TIPO
+                        tipo_mensaje,       // TIPO
                         mensaje,            // CONTENT
                         1,                  // TEMPO
                         0,                  // ESTADO_LECTURA
@@ -266,8 +266,10 @@ public class ChatActivity extends AppCompatActivity {
                         0,                  // SALTOS
                         1                   // MOSTRAR
                 };
-                almacenarMensaje(datos_msg);
+
+                // Si no hay conexiòn se muestra y se almacena pero no se envìa
                 mostrarMensaje(datos_msg[4].toString(), true, datos_msg[3].toString());
+                almacenarMensaje(datos_msg);
                 textoMensaje.setText("");
                 return;
             }
@@ -277,7 +279,7 @@ public class ChatActivity extends AppCompatActivity {
                     "null",             // ID_MENSAJE
                     direccion_destino,  // ID_CHAT
                     fecha,              // FECHA
-                    tipo_mensaje,            // TIPO
+                    tipo_mensaje,       // TIPO
                     mensaje,            // CONTENT
                     1,                  // TEMPO
                     0,                  // ESTADO_LECTURA
@@ -288,8 +290,15 @@ public class ChatActivity extends AppCompatActivity {
                     1,                  // SALTOS
                     1                   // MOSTRAR
             };
+
+            // Si hay conexiòn se muestra, se almacena y se envìa
+            mostrarMensaje(datos_msg[4].toString(), true, datos_msg[3].toString());
             almacenarMensaje(datos_msg);
-            chatController.write(serialize(datos_msg)); // Se ejecuta internamente y muestra el msg
+            try{
+                chatController.write(serialize(datos_msg), tipo_mensaje); // Se ejecuta internamente y muestra el msg
+            }catch (Exception e){
+                Log.i("Error de envío", e.toString());
+            }
             textoMensaje.setText("");
         }
     }
@@ -302,7 +311,6 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     public void guardarMensajeRecibido(Object[] msg){
-
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss.SSS");
         String fecha = simpleDateFormat.format(new Date());
         // Solo si es el primer salto o punto a punto se obtiene:
@@ -374,8 +382,10 @@ public class ChatActivity extends AppCompatActivity {
                         };
                     }
                     try{
-                        //mostrarConversacion();
-                        chatController.write(serialize(datos_msg));
+                        /*if ((int) datos_msg[12] == 1){ // si se muestra
+                            mostrarMensaje(datos_msg[4].toString(), true, datos_msg[3].toString());
+                        }*/
+                        chatController.write(serialize(datos_msg), msg.getType());
                     }catch (Exception ex) {
                         Log.e("Ha ocurrido un error", ex.toString());
                     }
@@ -400,33 +410,23 @@ public class ChatActivity extends AppCompatActivity {
         nombreDispositivo.setText(nombre_destino + " " + direccion_destino);
     }
 
-
     public void notificarMensaje(Object[] datos_msg){
-
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this);
-
         Intent intent = new Intent(this, ChatActivity.class);
         intent.putExtra("nombre_destino", "");
         intent.putExtra("direccion_destino", datos_msg[8].toString());
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
-
         mBuilder.setContentIntent(pendingIntent);
-
         mBuilder.setSmallIcon(R.drawable.icon_notification);
         mBuilder.setContentTitle("Nuevo Mensaje");
         mBuilder.setContentText(datos_msg[4].toString());
         mBuilder.setVibrate(new long[] {100, 250, 100, 500});
         mBuilder.setAutoCancel(true);
-
         NotificationManager mNotificationManager =
-
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
         mNotificationManager.notify(001, mBuilder.build());
-
     }
-
 
     // Métodos para convertir objeto a byte y viceversa
     public static byte[] serialize(Object[] obj) throws IOException {
@@ -435,12 +435,12 @@ public class ChatActivity extends AppCompatActivity {
         os.writeObject(obj);
         return out.toByteArray();
     }
+
     public static Object[] deserialize(byte[] data) throws IOException, ClassNotFoundException {
         ByteArrayInputStream in = new ByteArrayInputStream(data);
         ObjectInputStream is = new ObjectInputStream(in);
         return (Object[]) is.readObject();
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -460,52 +460,39 @@ public class ChatActivity extends AppCompatActivity {
                     coonectarDispositivo(direccion_destino);
                 }
                 return true;
-
             case R.id.escoger_imagen:
                 escogerImagen();
                 return true;
-
             case R.id.text_1KB:
                     textoMensaje.setText("");
                 return true;
-
             case R.id.text_32KB:
                 textoMensaje.setText("");
                 return true;
-
             case R.id.text_64KB:
                 textoMensaje.setText("");
                 return true;
-
             case R.id.text_120KB:
                 textoMensaje.setText("");
                 return true;
-
             case R.id.text_256KB:
                 textoMensaje.setText("");
                 return true;
-
             case R.id.text_512KB:
                 textoMensaje.setText("");
                 return true;
-
             case R.id.text_1MB:
                 textoMensaje.setText("");
                 return true;
-
             case R.id.text_2MB:
                 textoMensaje.setText("");
                 return true;
-
             case R.id.text_5MB:
                 textoMensaje.setText("");
                 return true;
-
             case R.id.text_10MB:
                 textoMensaje.setText("");
                 return true;
-
-
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -532,9 +519,18 @@ public class ChatActivity extends AppCompatActivity {
                     if(data != null){
                         tipo_mensaje = "imagen";
                         try{
-                            mostrarMensaje(data.getData().toString(), true, "imagen");
+                            Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), data.getData());
+                            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                            bitmap.compress(Bitmap.CompressFormat.JPEG, 50, baos);
+                                //bitmap = Bitmap.createScaledBitmap(bitmap,  100 ,100, true);
+                            byte[] imageBytes = baos.toByteArray();
+                            String imageEncoded = Base64.encodeToString(imageBytes, Base64.DEFAULT);
+
+                            enviarMensaje(imageEncoded);
+
+                            baos.close();
                         }catch (Exception e){
-                            Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(this, "Error de imagen  "+ e.toString(), Toast.LENGTH_SHORT).show();
                         }
                     }
                 }else {
@@ -542,5 +538,4 @@ public class ChatActivity extends AppCompatActivity {
                 }
         }
     }
-
 }

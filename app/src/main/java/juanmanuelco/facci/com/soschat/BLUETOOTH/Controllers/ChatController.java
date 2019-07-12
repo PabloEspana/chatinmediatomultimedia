@@ -34,6 +34,7 @@ public class ChatController {
     public static final int STATE_LISTEN = 1;
     public static final int STATE_CONNECTING = 2;
     public static final int STATE_CONNECTED = 3;
+    public String type_send = "";
 
 
     public ChatController(Context context, Handler handler) {
@@ -152,7 +153,8 @@ public class ChatController {
     }
 
 
-    public void write(byte[] out) {
+    public void write(byte[] out, String type) {
+        type_send = type;
         ReadWriteThread r;
         synchronized (this) {
             if (state != STATE_CONNECTED)
@@ -372,22 +374,6 @@ public class ChatController {
 
         // write to OutputStream
         public void write(byte[] buffer) {
-            /*if (tipo_mensaje.equals("texto")){
-                try {
-                    outputStream.write(buffer);
-                    handler.obtainMessage(ChatActivity.MESSAGE_WRITE, -1, -1,
-                            buffer).sendToTarget();
-                } catch (IOException e) {
-                }
-            }
-            if (tipo_mensaje.equals("imagen")){
-                try {
-                    outputStream.write(buffer);
-                    outputStream.flush();
-                } catch (IOException e) {
-                }
-            }*/
-
             try {
                 outputStream.write(buffer);
                 handler.obtainMessage(ChatActivity.MESSAGE_WRITE, -1, -1,

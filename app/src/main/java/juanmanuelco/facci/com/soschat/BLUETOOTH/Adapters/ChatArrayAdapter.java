@@ -2,15 +2,20 @@ package juanmanuelco.facci.com.soschat.BLUETOOTH.Adapters;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.media.Image;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -63,16 +68,17 @@ public class ChatArrayAdapter extends ArrayAdapter<ChatMessage> {
             }else{
                 row = inflater.inflate(R.layout.bt_element_left_img_msg, parent, false);
             }
-            try {
-                imagen = (ImageView) row.findViewById(R.id.imgSelect);
-                Uri imgUri = Uri.parse(chatMessageObj.message);
-                bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), imgUri);
-                //bitmap = Bitmap.createScaledBitmap(bitmap,  600 ,600, true);
-                imagen.setImageBitmap(bitmap);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
 
+            imagen = (ImageView)row.findViewById(R.id.imgSelect);
+            byte[] decodedString = Base64.decode(chatMessageObj.message, Base64.DEFAULT);
+            Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+
+            try {
+                imagen.setImageBitmap(decodedByte);
+
+            }catch (Exception e){
+                Toast.makeText(context, e.toString(), Toast.LENGTH_SHORT).show();
+            }
         }
 
         return row;
