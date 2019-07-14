@@ -9,9 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.DataSetObserver;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
@@ -31,6 +29,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.os.Build;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -41,7 +40,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import juanmanuelco.facci.com.soschat.BLUETOOTH.Controllers.ChatController;
 import juanmanuelco.facci.com.soschat.BLUETOOTH.DB.MensajeDB;
@@ -191,8 +189,8 @@ public class ChatActivity extends AppCompatActivity {
                         Object[] datos_recbidos = deserialize(readBuf); // se deserializa el objeto recibido
                         String msg_recibido = datos_recbidos[4].toString();
                         if((int) datos_recbidos[12]==1){ // // Si se debe mostrar
-                            mostrarMensaje(msg_recibido, false, datos_recbidos[3].toString());
-                            //mostrarMensaje(msg_recibido + " \n " +tiempo2, false, datos_recbidos[3].toString());
+                            //mostrarMensaje(msg_recibido, false, datos_recbidos[3].toString());
+                            mostrarMensaje(msg_recibido + " \n " +tiempo2, false, datos_recbidos[3].toString());
                         }
                         guardarMensajeRecibido(datos_recbidos);
                     } catch (IOException e) {
@@ -268,7 +266,8 @@ public class ChatActivity extends AppCompatActivity {
                 };
 
                 // Si no hay conexiòn se muestra y se almacena pero no se envìa
-                mostrarMensaje(datos_msg[4].toString(), true, datos_msg[3].toString());
+                mostrarMensaje(datos_msg[4].toString() + " \n " + simpleDateFormat.format(new Date()) ,
+                        true, datos_msg[3].toString());
                 almacenarMensaje(datos_msg);
                 textoMensaje.setText("");
                 return;
@@ -292,7 +291,8 @@ public class ChatActivity extends AppCompatActivity {
             };
 
             // Si hay conexiòn se muestra, se almacena y se envìa
-            mostrarMensaje(datos_msg[4].toString(), true, datos_msg[3].toString());
+            mostrarMensaje(datos_msg[4].toString() + " \n " + simpleDateFormat.format(new Date()),
+                    true, datos_msg[3].toString());
             almacenarMensaje(datos_msg);
             try{
                 chatController.write(serialize(datos_msg), tipo_mensaje); // Se ejecuta internamente y muestra el msg
@@ -307,7 +307,7 @@ public class ChatActivity extends AppCompatActivity {
         entidad_mensaje = new Mensaje(msg[0].toString(), msg[1].toString(), msg[2].toString(), msg[3].toString(),
                 msg[4].toString(), (int) msg[5], (int) msg[6], (int) msg[7], msg[8].toString(), msg[9].toString(),
                 (int) msg[10], (int) msg[11], (int) msg[12] );
-        MensajeDB.Insert(getApplicationContext(), entidad_mensaje);
+        MensajeDB.Insert(this, entidad_mensaje);
     }
 
     public void guardarMensajeRecibido(Object[] msg){
@@ -321,12 +321,12 @@ public class ChatActivity extends AppCompatActivity {
         entidad_mensaje = new Mensaje(msg[0].toString(), msg[1].toString(), fecha, msg[3].toString(),
                 msg[4].toString(), (int) msg[5], (int) msg[6], (int) msg[7], msg[8].toString(), msg[9].toString(),
                 0, (int) msg[11], (int) msg[12] );
-        MensajeDB.Insert(getApplicationContext(), entidad_mensaje);
+        MensajeDB.Insert(this, entidad_mensaje);
     }
 
     public void mostrarConversacion(){
         String id_chat = direccion_destino;
-        List<Mensaje> mensajes = MensajeDB.getAllMessages(getApplicationContext(), id_chat);
+        List<Mensaje> mensajes = MensajeDB.getAllMessages(this, id_chat);
         Iterator<Mensaje> iterator = mensajes.iterator();
         while(iterator.hasNext()){
             Mensaje msg = iterator.next();
@@ -464,34 +464,24 @@ public class ChatActivity extends AppCompatActivity {
                 escogerImagen();
                 return true;
             case R.id.text_1KB:
-                    textoMensaje.setText("");
                 return true;
             case R.id.text_32KB:
-                textoMensaje.setText("");
                 return true;
             case R.id.text_64KB:
-                textoMensaje.setText("");
                 return true;
             case R.id.text_120KB:
-                textoMensaje.setText("");
                 return true;
             case R.id.text_256KB:
-                textoMensaje.setText("");
                 return true;
             case R.id.text_512KB:
-                textoMensaje.setText("");
                 return true;
             case R.id.text_1MB:
-                textoMensaje.setText("");
                 return true;
             case R.id.text_2MB:
-                textoMensaje.setText("");
                 return true;
             case R.id.text_5MB:
-                textoMensaje.setText("");
                 return true;
             case R.id.text_10MB:
-                textoMensaje.setText("");
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -499,16 +489,16 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     public void escogerImagen(){
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-            intent.addCategory(Intent.CATEGORY_OPENABLE);
-            intent.setType("image/*");
-            startActivityForResult(Intent.createChooser(intent, "Seleccionar Imagen"), SELECT_PICTURE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+            i.addCategory(Intent.CATEGORY_OPENABLE);
+            i.setType("image/*");
+            startActivityForResult(Intent.createChooser(i, "Seleccionar Imagen"), SELECT_PICTURE);
         } else {
-            Intent intent = new Intent();
-            intent.setType("image/*");
-            intent.setAction(Intent.ACTION_GET_CONTENT);
-            startActivityForResult(Intent.createChooser(intent, "Seleccionar Imagen"), SELECT_PICTURE);
+            Intent i = new Intent();
+            i.setType("image/*");
+            i.setAction(Intent.ACTION_GET_CONTENT);
+            startActivityForResult(Intent.createChooser(i, "Seleccionar Imagen"), SELECT_PICTURE);
         }
     }
 
@@ -537,5 +527,23 @@ public class ChatActivity extends AppCompatActivity {
                     Toast.makeText(this, "Error al escoger imagen", Toast.LENGTH_SHORT).show();
                 }
         }
+    }
+
+    public void GenerarCaracteres(int valor){
+        int contador = 0;
+        String letras = "ABCDEFGHIJKLMNÑOPQRSTUVWXYZ";
+        String cadena = "";
+        textoMensaje.setText("");
+
+        //for que genera la cadena segun el valor que le mandemos 32 o 64
+        for (int x = 0; x < valor; x++)
+        {
+            int caracter = (int) Math.floor(Math.random()*27); //Generamos la cadena
+            cadena = cadena + letras.charAt(caracter);
+        }
+
+        //enviamos la cadena
+        textoMensaje.setText(cadena);
+
     }
 }

@@ -315,7 +315,7 @@ public class ChatController {
 
 
         public void run() {
-            byte[] buffer = new byte[1024];
+            byte[] buffer = new byte[1048576];
             int bytes;
             // Keep listening to the InputStream
             while (true) {
