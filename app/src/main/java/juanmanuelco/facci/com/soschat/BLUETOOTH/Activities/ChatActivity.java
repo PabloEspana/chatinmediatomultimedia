@@ -391,13 +391,18 @@ public class ChatActivity extends AppCompatActivity {
                                 0                           // MOSTRAR
                         };
                     }
+
                     try{
-                        /*if ((int) datos_msg[12] == 1){ // si se muestra
-                            mostrarMensaje(datos_msg[4].toString(), true, datos_msg[3].toString());
-                        }*/
-                        chatController.write(serialize(datos_msg), msg.getType());
-                    }catch (Exception ex) {
-                        Log.e("Ha ocurrido un error", ex.toString());
+                        int subArraySize = 400;
+                        chatController.write( String.valueOf(serialize(datos_msg).length).getBytes() , msg.getType());
+                        for (int i=0; i<serialize(datos_msg).length; i+=subArraySize) {
+                            byte[] tempArray;
+                            tempArray = Arrays.copyOfRange(serialize(datos_msg), i,
+                                    Math.min(serialize(datos_msg).length, i+subArraySize));
+                            chatController.write(tempArray, msg.getType());
+                        }
+                    }catch (Exception e){
+                        Log.e("Ha ocurrido un error", e.toString());
                     }
                 }
             }

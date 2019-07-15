@@ -128,7 +128,7 @@
     <string name="CONNECTED_TO">"Connected to: "</string>
     <string name="DEVICES_BT">Devices</string>
     <string name="CHATS_BT">Chats</string>
-    <string name="HISTORICAL_BT">Historical</string>
+    <string name="GROUPS_BT">Grupos</string>
     <string name="SEND">Send</string>
     <string name="GPS_LOCATION">GPS Location</string>
     <string name="UPDATE_LOCATION">RELOAD</string>
@@ -138,4 +138,6 @@
     <string name="LOSTCONNECTION">Lost connection with the device</string>
     <string name="PAUSE">Pause</string>
     <string name="RESUME">Resume</string>
+    <string name="SOSCHAT_COMUNITY">SosChat Comunity</string>
+
 </resources>

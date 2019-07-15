@@ -7,9 +7,15 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import juanmanuelco.facci.com.soschat.BLUETOOTH.Adapters.SectionsPageAdapter;
+import juanmanuelco.facci.com.soschat.BLUETOOTH.DB.ChatDB;
+import juanmanuelco.facci.com.soschat.BLUETOOTH.Entidades.Chat;
 import juanmanuelco.facci.com.soschat.BLUETOOTH.Fragments.FragmentChats;
 import juanmanuelco.facci.com.soschat.BLUETOOTH.Fragments.FragmentEmparejados;
+import juanmanuelco.facci.com.soschat.BLUETOOTH.Fragments.FragmentGrupos;
 import juanmanuelco.facci.com.soschat.R;
 
 
@@ -37,6 +43,10 @@ public class MainActivityBT extends AppCompatActivity {
         // Configuracion de pestañas
         TabLayout tabs = (TabLayout) findViewById(R.id.tabs);
         tabs.setupWithViewPager(viewPager);
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
+        Chat comunidad = new Chat(getString(R.string.SOSCHAT_COMUNITY), simpleDateFormat.format(new Date()),1);
+        ChatDB.Insert(this, comunidad);
     }
 
     // Este método configura el menú de la aplicación
@@ -44,7 +54,7 @@ public class MainActivityBT extends AppCompatActivity {
         SectionsPageAdapter adapter = new SectionsPageAdapter(getSupportFragmentManager());
         adapter.addFragment(new FragmentEmparejados(), getString(R.string.DEVICES_BT));
         adapter.addFragment(new FragmentChats(), getString(R.string.CHATS_BT));
-        adapter.addFragment(new FragmentChats(), getString(R.string.HISTORICAL_BT));
+        adapter.addFragment(new FragmentGrupos(), getString(R.string.GROUPS_BT));
         viewPager.setAdapter(adapter);
     }
 
