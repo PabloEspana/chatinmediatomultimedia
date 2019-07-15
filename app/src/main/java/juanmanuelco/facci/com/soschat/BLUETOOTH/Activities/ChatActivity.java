@@ -37,6 +37,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -189,8 +190,8 @@ public class ChatActivity extends AppCompatActivity {
                         Object[] datos_recbidos = deserialize(readBuf); // se deserializa el objeto recibido
                         String msg_recibido = datos_recbidos[4].toString();
                         if((int) datos_recbidos[12]==1){ // // Si se debe mostrar
-                            //mostrarMensaje(msg_recibido, false, datos_recbidos[3].toString());
-                            mostrarMensaje(msg_recibido + " \n " +tiempo2, false, datos_recbidos[3].toString());
+                            mostrarMensaje(msg_recibido, false, datos_recbidos[3].toString());
+                            //mostrarMensaje(msg_recibido + " \n " +tiempo2, false, datos_recbidos[3].toString());
                         }
                         guardarMensajeRecibido(datos_recbidos);
                     } catch (IOException e) {
@@ -266,8 +267,9 @@ public class ChatActivity extends AppCompatActivity {
                 };
 
                 // Si no hay conexiòn se muestra y se almacena pero no se envìa
-                mostrarMensaje(datos_msg[4].toString() + " \n " + simpleDateFormat.format(new Date()) ,
-                        true, datos_msg[3].toString());
+                // mostrarMensaje(datos_msg[4].toString() + " \n " + simpleDateFormat.format(new Date()) ,
+                        // true, datos_msg[3].toString());
+                mostrarMensaje(datos_msg[4].toString(),true, datos_msg[3].toString());
                 almacenarMensaje(datos_msg);
                 textoMensaje.setText("");
                 return;
@@ -291,11 +293,19 @@ public class ChatActivity extends AppCompatActivity {
             };
 
             // Si hay conexiòn se muestra, se almacena y se envìa
-            mostrarMensaje(datos_msg[4].toString() + " \n " + simpleDateFormat.format(new Date()),
-                    true, datos_msg[3].toString());
+            //mostrarMensaje(datos_msg[4].toString() + " \n " + simpleDateFormat.format(new Date()),
+            //      true, datos_msg[3].toString());
+            mostrarMensaje(datos_msg[4].toString(), true, datos_msg[3].toString());
             almacenarMensaje(datos_msg);
             try{
-                chatController.write(serialize(datos_msg), tipo_mensaje); // Se ejecuta internamente y muestra el msg
+                int subArraySize = 400;
+                chatController.write( String.valueOf(serialize(datos_msg).length).getBytes() , tipo_mensaje);
+                for (int i=0; i<serialize(datos_msg).length; i+=subArraySize) {
+                    byte[] tempArray;
+                    tempArray = Arrays.copyOfRange(serialize(datos_msg), i,
+                            Math.min(serialize(datos_msg).length, i+subArraySize));
+                    chatController.write(tempArray, tipo_mensaje);
+                }
             }catch (Exception e){
                 Log.i("Error de envío", e.toString());
             }
@@ -512,13 +522,11 @@ public class ChatActivity extends AppCompatActivity {
                             Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), data.getData());
                             ByteArrayOutputStream baos = new ByteArrayOutputStream();
                             bitmap.compress(Bitmap.CompressFormat.JPEG, 50, baos);
-                                //bitmap = Bitmap.createScaledBitmap(bitmap,  100 ,100, true);
+                                bitmap = Bitmap.createScaledBitmap(bitmap,  100 ,100, true);
                             byte[] imageBytes = baos.toByteArray();
                             String imageEncoded = Base64.encodeToString(imageBytes, Base64.DEFAULT);
-
                             enviarMensaje(imageEncoded);
-
-                            baos.close();
+                            //baos.close();
                         }catch (Exception e){
                             Toast.makeText(this, "Error de imagen  "+ e.toString(), Toast.LENGTH_SHORT).show();
                         }

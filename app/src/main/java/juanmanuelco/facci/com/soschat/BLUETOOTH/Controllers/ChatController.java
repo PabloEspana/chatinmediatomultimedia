@@ -315,7 +315,7 @@ public class ChatController {
 
 
         public void run() {
-            byte[] buffer = new byte[1048576];
+            /*byte[] buffer = new byte[1024];
             int bytes;
             // Keep listening to the InputStream
             while (true) {
@@ -331,8 +331,9 @@ public class ChatController {
                     ChatController.this.start();
                     break;
                 }
-            }
-            /*byte[] buffer = null;
+            }*/
+
+            byte[] buffer = null;
             int numberOfBytes = 0;
             int index = 0;
             boolean flag = true;
@@ -359,7 +360,7 @@ public class ChatController {
                         System.arraycopy(data, 0, buffer, index, numbers);
                         index = index + numbers;
                         if (index == numberOfBytes){
-                            handler.obtainMessage(MainActivity.MESSAGE_READ, numberOfBytes, -1, buffer).sendToTarget();
+                            handler.obtainMessage(ChatActivity.MESSAGE_READ, numberOfBytes, -1, buffer).sendToTarget();
                             flag = true;
                         }
                     }catch (IOException e){
@@ -368,7 +369,7 @@ public class ChatController {
                         break;
                     }
                 }
-            }*/
+            }
 
         }
 
