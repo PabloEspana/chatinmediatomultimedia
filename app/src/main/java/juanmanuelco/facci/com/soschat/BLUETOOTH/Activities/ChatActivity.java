@@ -29,8 +29,6 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.os.Build;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -41,16 +39,12 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-
 import juanmanuelco.facci.com.soschat.BLUETOOTH.Controllers.ChatController;
 import juanmanuelco.facci.com.soschat.BLUETOOTH.DB.MensajeDB;
 import juanmanuelco.facci.com.soschat.BLUETOOTH.Entities.ChatMessage;
 import juanmanuelco.facci.com.soschat.R;
 import juanmanuelco.facci.com.soschat.BLUETOOTH.Adapters.ChatArrayAdapter;
-
 import juanmanuelco.facci.com.soschat.BLUETOOTH.Entidades.Mensaje;
-
-
 
 public class ChatActivity extends AppCompatActivity {
 
@@ -122,7 +116,7 @@ public class ChatActivity extends AppCompatActivity {
                 if (!textoMensaje.getText().toString().trim().isEmpty()) {
                     try {
                         tipo_mensaje = "texto";
-                        enviarMensaje(textoMensaje.getText().toString().trim());
+                        prepararMensaje(textoMensaje.getText().toString().trim());
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -191,7 +185,6 @@ public class ChatActivity extends AppCompatActivity {
                         String msg_recibido = datos_recbidos[4].toString();
                         if((int) datos_recbidos[12]==1){ // // Si se debe mostrar
                             mostrarMensaje(msg_recibido, false, datos_recbidos[3].toString());
-                            //mostrarMensaje(msg_recibido + " \n " +tiempo2, false, datos_recbidos[3].toString());
                         }
                         guardarMensajeRecibido(datos_recbidos);
                     } catch (IOException e) {
@@ -244,7 +237,7 @@ public class ChatActivity extends AppCompatActivity {
         return true;
     }
 
-    private void enviarMensaje(String mensaje) throws IOException {
+    private void prepararMensaje(String mensaje) throws IOException {
         if (mensaje.length() > 0) { // Siempre y cuando no estè vacio
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss.SSS");
             String fecha = simpleDateFormat.format(new Date());
@@ -293,22 +286,9 @@ public class ChatActivity extends AppCompatActivity {
             };
 
             // Si hay conexiòn se muestra, se almacena y se envìa
-            //mostrarMensaje(datos_msg[4].toString() + " \n " + simpleDateFormat.format(new Date()),
-            //      true, datos_msg[3].toString());
             mostrarMensaje(datos_msg[4].toString(), true, datos_msg[3].toString());
             almacenarMensaje(datos_msg);
-            try{
-                int subArraySize = 400;
-                chatController.write( String.valueOf(serialize(datos_msg).length).getBytes() , tipo_mensaje);
-                for (int i=0; i<serialize(datos_msg).length; i+=subArraySize) {
-                    byte[] tempArray;
-                    tempArray = Arrays.copyOfRange(serialize(datos_msg), i,
-                            Math.min(serialize(datos_msg).length, i+subArraySize));
-                    chatController.write(tempArray, tipo_mensaje);
-                }
-            }catch (Exception e){
-                Log.i("Error de envío", e.toString());
-            }
+            enviarMensaje(datos_msg);
             textoMensaje.setText("");
         }
     }
@@ -335,8 +315,7 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     public void mostrarConversacion(){
-        String id_chat = direccion_destino;
-        List<Mensaje> mensajes = MensajeDB.getAllMessages(this, id_chat);
+        List<Mensaje> mensajes = MensajeDB.getAllMessages(this, direccion_destino);
         Iterator<Mensaje> iterator = mensajes.iterator();
         while(iterator.hasNext()){
             Mensaje msg = iterator.next();
@@ -347,6 +326,20 @@ public class ChatActivity extends AppCompatActivity {
                     mostrarMensaje(msg.getContent(), false, msg.getType());
                 }
             }
+        }
+    }
+
+    public void enviarMensaje(Object[] datos_msg){
+        try{
+            int subArraySize = 400;
+            byte[] datos_convertidos = serialize(datos_msg); // Convert object to byte
+            chatController.write( String.valueOf(datos_convertidos.length).getBytes() );
+            for (int i=0; i<datos_convertidos.length; i+=subArraySize) {
+                byte[] tempArray = Arrays.copyOfRange(datos_convertidos, i, Math.min(datos_convertidos.length, i+subArraySize));
+                chatController.write(tempArray);
+            }
+        }catch (Exception e){
+            Log.i("Error de envío", e.toString());
         }
     }
 
@@ -391,19 +384,7 @@ public class ChatActivity extends AppCompatActivity {
                                 0                           // MOSTRAR
                         };
                     }
-
-                    try{
-                        int subArraySize = 400;
-                        chatController.write( String.valueOf(serialize(datos_msg).length).getBytes() , msg.getType());
-                        for (int i=0; i<serialize(datos_msg).length; i+=subArraySize) {
-                            byte[] tempArray;
-                            tempArray = Arrays.copyOfRange(serialize(datos_msg), i,
-                                    Math.min(serialize(datos_msg).length, i+subArraySize));
-                            chatController.write(tempArray, msg.getType());
-                        }
-                    }catch (Exception e){
-                        Log.e("Ha ocurrido un error", e.toString());
-                    }
+                    enviarMensaje(datos_msg);
                 }
             }
         }
@@ -526,12 +507,11 @@ public class ChatActivity extends AppCompatActivity {
                         try{
                             Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), data.getData());
                             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                            bitmap.compress(Bitmap.CompressFormat.JPEG, 50, baos);
-                                bitmap = Bitmap.createScaledBitmap(bitmap,  100 ,100, true);
+                            bitmap.compress(Bitmap.CompressFormat.JPEG, 20, baos);
                             byte[] imageBytes = baos.toByteArray();
                             String imageEncoded = Base64.encodeToString(imageBytes, Base64.DEFAULT);
-                            enviarMensaje(imageEncoded);
-                            //baos.close();
+                            prepararMensaje(imageEncoded);
+                            baos.close();
                         }catch (Exception e){
                             Toast.makeText(this, "Error de imagen  "+ e.toString(), Toast.LENGTH_SHORT).show();
                         }
@@ -543,20 +523,13 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     public void GenerarCaracteres(int valor){
-        int contador = 0;
         String letras = "ABCDEFGHIJKLMNÑOPQRSTUVWXYZ";
         String cadena = "";
         textoMensaje.setText("");
-
-        //for que genera la cadena segun el valor que le mandemos 32 o 64
-        for (int x = 0; x < valor; x++)
-        {
-            int caracter = (int) Math.floor(Math.random()*27); //Generamos la cadena
+        for (int x = 0; x < valor; x ++) {
+            int caracter = (int) Math.floor(Math.random() * 27); //Generamos la cadena
             cadena = cadena + letras.charAt(caracter);
         }
-
-        //enviamos la cadena
         textoMensaje.setText(cadena);
-
     }
 }

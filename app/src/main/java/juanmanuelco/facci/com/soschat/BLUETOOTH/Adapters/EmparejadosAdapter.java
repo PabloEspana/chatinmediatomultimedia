@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +14,6 @@ import android.widget.TextView;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import juanmanuelco.facci.com.soschat.BLUETOOTH.DB.MainDB;
 import juanmanuelco.facci.com.soschat.R;
 import juanmanuelco.facci.com.soschat.BLUETOOTH.Activities.ChatActivity;
 

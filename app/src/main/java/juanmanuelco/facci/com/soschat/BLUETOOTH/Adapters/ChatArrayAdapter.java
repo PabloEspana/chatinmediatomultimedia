@@ -15,7 +15,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -71,14 +74,10 @@ public class ChatArrayAdapter extends ArrayAdapter<ChatMessage> {
 
             imagen = (ImageView)row.findViewById(R.id.imgSelect);
             byte[] decodedString = Base64.decode(chatMessageObj.message, Base64.DEFAULT);
-            Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-
-            try {
-                imagen.setImageBitmap(decodedByte);
-
-            }catch (Exception e){
-                Toast.makeText(context, e.toString(), Toast.LENGTH_SHORT).show();
-            }
+            Glide.with(context)
+                    .asBitmap()
+                    .load(decodedString)
+                    .into(imagen);
         }
 
         return row;

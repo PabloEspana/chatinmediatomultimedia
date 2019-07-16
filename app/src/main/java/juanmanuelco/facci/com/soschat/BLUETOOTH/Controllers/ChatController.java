@@ -153,8 +153,7 @@ public class ChatController {
     }
 
 
-    public void write(byte[] out, String type) {
-        type_send = type;
+    public void write(byte[] out) {
         ReadWriteThread r;
         synchronized (this) {
             if (state != STATE_CONNECTED)
@@ -333,6 +332,8 @@ public class ChatController {
                 }
             }*/
 
+
+
             byte[] buffer = null;
             int numberOfBytes = 0;
             int index = 0;
@@ -350,7 +351,7 @@ public class ChatController {
 
                     } catch (IOException e) {
                         connectionLost();
-                        ChatController.this.start();
+                        //ChatController.this.start();
                         break;
                     }
                 }else {
@@ -365,7 +366,7 @@ public class ChatController {
                         }
                     }catch (IOException e){
                         connectionLost();
-                        ChatController.this.start();
+                        //ChatController.this.start();
                         break;
                     }
                 }
@@ -377,8 +378,9 @@ public class ChatController {
         public void write(byte[] buffer) {
             try {
                 outputStream.write(buffer);
-                handler.obtainMessage(ChatActivity.MESSAGE_WRITE, -1, -1,
-                        buffer).sendToTarget();
+                outputStream.flush();
+                /*handler.obtainMessage(ChatActivity.MESSAGE_WRITE, -1, -1,
+                        buffer).sendToTarget();*/
             } catch (IOException e) {
             }
         }

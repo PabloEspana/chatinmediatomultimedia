@@ -15,7 +15,7 @@
         android:background="@color/app_background" ></ListView>
 
     <LinearLayout
-        android:id="@id/writeZone"
+        android:id="@+id/writeZone"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_alignParentBottom="true"
