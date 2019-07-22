@@ -1,4 +1,4 @@
-package juanmanuelco.facci.com.soschat.BLUETOOTH.Controllers;
+package juanmanuelco.facci.com.soschat.BLUETOOTH.Services;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
-import android.widget.Toast;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,10 +16,8 @@ import java.io.OutputStream;
 import java.util.UUID;
 
 import juanmanuelco.facci.com.soschat.BLUETOOTH.Activities.ChatActivity;
-import juanmanuelco.facci.com.soschat.BLUETOOTH.MainActivityBT;
-import juanmanuelco.facci.com.soschat.R;
 
-public class ChatController {
+public class BluetoothService {
 
     private static final String APP_NAME = "BluetoothChatApp";
     private static final UUID MY_UUID = UUID.fromString("8ce255c0-200a-11e0-ac64-0800200c9a66");
@@ -37,7 +34,7 @@ public class ChatController {
     public String type_send = "";
 
 
-    public ChatController(Context context, Handler handler) {
+    public BluetoothService(Context context, Handler handler) {
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         state = STATE_NONE;
 
@@ -172,7 +169,7 @@ public class ChatController {
         handler.sendMessage(msg);
 
         // Start the service over to restart listening mode
-        ChatController.this.start();
+        BluetoothService.this.start();
     }
 
     private void connectionLost() {
@@ -183,7 +180,7 @@ public class ChatController {
         handler.sendMessage(msg);
 
         // Start the service over to restart listening mode
-        ChatController.this.start();
+        BluetoothService.this.start();
     }
 
 
@@ -212,7 +209,7 @@ public class ChatController {
 
                 // If a connection was accepted
                 if (socket != null) {
-                    synchronized (ChatController.this) {
+                    synchronized (BluetoothService.this) {
                         switch (state) {
                             case STATE_LISTEN:
                             case STATE_CONNECTING:
@@ -278,7 +275,7 @@ public class ChatController {
             }
 
             // Reset the ConnectThread because we're done
-            synchronized (ChatController.this) {
+            synchronized (BluetoothService.this) {
                 connectThread = null;
             }
 
@@ -331,7 +328,7 @@ public class ChatController {
                     } catch (IOException e) {
                         connectionLost();
                         // Start the service over to restart listening mode
-                        ChatController.this.start();
+                        BluetoothService.this.start();
                         break;
                     }
                 }
@@ -355,7 +352,7 @@ public class ChatController {
 
                         } catch (IOException e) {
                             connectionLost();
-                            //ChatController.this.start();
+                            //BluetoothService.this.start();
                             break;
                         }
                     }else {
@@ -371,7 +368,7 @@ public class ChatController {
                             }
                         }catch (IOException e){
                             connectionLost();
-                            //ChatController.this.start();
+                            //BluetoothService.this.start();
                             break;
                         }
                     }

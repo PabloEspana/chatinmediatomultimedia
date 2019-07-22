@@ -1,6 +1,6 @@
 package juanmanuelco.facci.com.soschat.BLUETOOTH.Activities;
 
-import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.bluetooth.BluetoothAdapter;
@@ -31,6 +31,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -39,12 +40,14 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import juanmanuelco.facci.com.soschat.BLUETOOTH.Controllers.ChatController;
+import juanmanuelco.facci.com.soschat.BLUETOOTH.Services.BluetoothService;
 import juanmanuelco.facci.com.soschat.BLUETOOTH.DB.MensajeDB;
 import juanmanuelco.facci.com.soschat.BLUETOOTH.Entities.ChatMessage;
 import juanmanuelco.facci.com.soschat.R;
 import juanmanuelco.facci.com.soschat.BLUETOOTH.Adapters.ChatArrayAdapter;
 import juanmanuelco.facci.com.soschat.BLUETOOTH.Entidades.Mensaje;
+
+import static juanmanuelco.facci.com.soschat.BLUETOOTH.Services.BluetoothService.*;
 
 public class ChatActivity extends AppCompatActivity {
 
@@ -72,7 +75,7 @@ public class ChatActivity extends AppCompatActivity {
     public static final String DEVICE_OBJECT = "device_name";
 
     private static final int REQUEST_ENABLE_BLUETOOTH = 1;
-    private ChatController chatController;
+    private BluetoothService bluetoothService;
     private BluetoothDevice connectingDevice;
 
     Mensaje entidad_mensaje;
@@ -94,7 +97,7 @@ public class ChatActivity extends AppCompatActivity {
 
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (bluetoothAdapter == null) {
-            Toast.makeText(this, R.string.BT_NO_DISP , Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.BT_NO_DISP, Toast.LENGTH_SHORT).show();
             finish();
         }
 
@@ -116,7 +119,7 @@ public class ChatActivity extends AppCompatActivity {
                 if (!textoMensaje.getText().toString().trim().isEmpty()) {
                     try {
                         tipo_mensaje = "texto";
-                        prepararMensaje(textoMensaje.getText().toString().trim());
+                        prepararObjMensaje(textoMensaje.getText().toString().trim());
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -145,7 +148,7 @@ public class ChatActivity extends AppCompatActivity {
             Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableIntent, REQUEST_ENABLE_BLUETOOTH);
         } else {
-            chatController = new ChatController(this, handler);
+            bluetoothService = new BluetoothService(this, handler);
             coonectarDispositivo(direccion_destino);
         }
     }
@@ -156,18 +159,15 @@ public class ChatActivity extends AppCompatActivity {
             switch (msg.what) {
                 case MESSAGE_STATE_CHANGE:  // Si es mensaje de cambio de estado
                     switch (msg.arg1) {
-                        case ChatController.STATE_CONNECTED:  // Si es estado conectado  //connectingDevice.getName());
+                        case STATE_CONNECTED:  // Si es estado conectado  //connectingDevice.getName());
                             cambiarEstado(2);
-                            //num_con++;
-                            //if (num_con == 1){
-                                reintentarEnviarMensajes();
-                            //}
+                            //reintentarEnviarMensajes();
                             break;
-                        case ChatController.STATE_CONNECTING:
+                        case STATE_CONNECTING:
                             cambiarEstado(1);
                             break;
-                        case ChatController.STATE_LISTEN:
-                        case ChatController.STATE_NONE:
+                        case STATE_LISTEN:
+                        case STATE_NONE:
                             cambiarEstado(3);
                             break;
                     }
@@ -183,7 +183,7 @@ public class ChatActivity extends AppCompatActivity {
                     try {
                         Object[] datos_recbidos = deserialize(readBuf); // se deserializa el objeto recibido
                         String msg_recibido = datos_recbidos[4].toString();
-                        if((int) datos_recbidos[12]==1){ // // Si se debe mostrar
+                        if ((int) datos_recbidos[12] == 1) { // // Si se debe mostrar
                             mostrarMensaje(msg_recibido, false, datos_recbidos[3].toString());
                         }
                         guardarMensajeRecibido(datos_recbidos);
@@ -209,13 +209,13 @@ public class ChatActivity extends AppCompatActivity {
 
     private void cambiarEstado(int s) {
         String texto = "";
-        if (s == 1){
+        if (s == 1) {
             texto = getString(R.string.CONNECTING);
             estadoConexion.setTextColor(Color.YELLOW);
-        }else if (s == 2){
+        } else if (s == 2) {
             texto = getString(R.string.CONNECTED);
             estadoConexion.setTextColor(Color.GREEN);
-        }else if (s == 3){
+        } else if (s == 3) {
             texto = getString(R.string.WITHOUT_CONNECTION);
             estadoConexion.setTextColor(Color.RED);
         }
@@ -227,23 +227,23 @@ public class ChatActivity extends AppCompatActivity {
             Log.i(getString(R.string.ERROR), getString(R.string.BT_NOT_SUPPORT));
         } else {
             BluetoothDevice dispositivo = bluetoothAdapter.getRemoteDevice(MAC);
-            chatController.connect(dispositivo);
+            bluetoothService.connect(dispositivo);
         }
     }
 
-    public boolean mostrarMensaje(String mensaje, boolean tipo, String tipo_mensaje){
+    public boolean mostrarMensaje(String mensaje, boolean tipo, String tipo_mensaje) {
         chatArrayAdapter.add(new ChatMessage(tipo, mensaje, tipo_mensaje));
         textoMensaje.setText("");
         return true;
     }
 
-    private void prepararMensaje(String mensaje) throws IOException {
+    private void prepararObjMensaje(String mensaje) throws IOException {
         if (mensaje.length() > 0) { // Siempre y cuando no estè vacio
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss.SSS");
             String fecha = simpleDateFormat.format(new Date());
-            if (chatController.getState() != ChatController.STATE_CONNECTED) { // Si no hay conexión
+            if (bluetoothService.getState() != STATE_CONNECTED) { // Si no hay conexión
                 Toast.makeText(this, R.string.LOST_CONNECTION, Toast.LENGTH_SHORT).show();
-                datos_msg = new Object[] {
+                datos_msg = new Object[]{
                         "null",             // ID_MENSAJE
                         direccion_destino,  // ID_CHAT
                         fecha,              // FECHA
@@ -256,20 +256,20 @@ public class ChatActivity extends AppCompatActivity {
                         direccion_destino,  // MAC_DESTINO
                         1,                  // ESMIO
                         0,                  // SALTOS
-                        1                   // MOSTRAR
+                        1,                   // MOSTRAR
                 };
 
                 // Si no hay conexiòn se muestra y se almacena pero no se envìa
                 // mostrarMensaje(datos_msg[4].toString() + " \n " + simpleDateFormat.format(new Date()) ,
-                        // true, datos_msg[3].toString());
-                mostrarMensaje(datos_msg[4].toString(),true, datos_msg[3].toString());
+                // true, datos_msg[3].toString());
+                mostrarMensaje(datos_msg[4].toString(), true, datos_msg[3].toString());
                 almacenarMensaje(datos_msg);
                 textoMensaje.setText("");
                 return;
             }
 
             // Si hay conexxiòn cambian ciertos paràmetros
-            datos_msg = new Object[] {
+            datos_msg = new Object[]{
                     "null",             // ID_MENSAJE
                     direccion_destino,  // ID_CHAT
                     fecha,              // FECHA
@@ -282,7 +282,7 @@ public class ChatActivity extends AppCompatActivity {
                     direccion_destino,  // MAC_DESTINO
                     1,                  // ESMIO
                     1,                  // SALTOS
-                    1                   // MOSTRAR
+                    1,                   // MOSTRAR
             };
 
             // Si hay conexiòn se muestra, se almacena y se envìa
@@ -293,66 +293,71 @@ public class ChatActivity extends AppCompatActivity {
         }
     }
 
-    public void almacenarMensaje(Object[] msg){ // Enviados y no enviados
+    public void almacenarMensaje(Object[] msg) { // Enviados y no enviados
         entidad_mensaje = new Mensaje(msg[0].toString(), msg[1].toString(), msg[2].toString(), msg[3].toString(),
                 msg[4].toString(), (int) msg[5], (int) msg[6], (int) msg[7], msg[8].toString(), msg[9].toString(),
-                (int) msg[10], (int) msg[11], (int) msg[12] );
+                (int) msg[10], (int) msg[11], (int) msg[12]);
         MensajeDB.Insert(this, entidad_mensaje);
     }
 
-    public void guardarMensajeRecibido(Object[] msg){
+    public void guardarMensajeRecibido(Object[] msg) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss.SSS");
         String fecha = simpleDateFormat.format(new Date());
         // Solo si es el primer salto o punto a punto se obtiene:
-        if ((int) msg[11] == 1){
+        if ((int) msg[11] == 1) {
             msg[1] = connectingDevice.getAddress(); // Id del chat
             msg[8] = connectingDevice.getAddress(); // Direcciòn destino
         }
         entidad_mensaje = new Mensaje(msg[0].toString(), msg[1].toString(), fecha, msg[3].toString(),
                 msg[4].toString(), (int) msg[5], (int) msg[6], (int) msg[7], msg[8].toString(), msg[9].toString(),
-                0, (int) msg[11], (int) msg[12] );
+                0, (int) msg[11], (int) msg[12]);
         MensajeDB.Insert(this, entidad_mensaje);
     }
 
-    public void mostrarConversacion(){
+    public void mostrarConversacion() {
         List<Mensaje> mensajes = MensajeDB.getAllMessages(this, direccion_destino);
         Iterator<Mensaje> iterator = mensajes.iterator();
-        while(iterator.hasNext()){
+        while (iterator.hasNext()) {
             Mensaje msg = iterator.next();
-            if (msg.getMostrar() == 1){
-                if (msg.EsMio() == 1){
+            if (msg.getMostrar() == 1) {
+                if (msg.EsMio() == 1) {
                     mostrarMensaje(msg.getContent(), true, msg.getType());
-                }else{
+                } else {
                     mostrarMensaje(msg.getContent(), false, msg.getType());
                 }
             }
         }
     }
 
-    public void enviarMensaje(Object[] datos_msg){
-        try{
-            int subArraySize = 400;
-            byte[] datos_convertidos = serialize(datos_msg); // Convert object to byte
-            chatController.write( String.valueOf(datos_convertidos.length).getBytes() );
-            for (int i=0; i<datos_convertidos.length; i+=subArraySize) {
-                byte[] tempArray = Arrays.copyOfRange(datos_convertidos, i, Math.min(datos_convertidos.length, i+subArraySize));
-                chatController.write(tempArray);
+    public void enviarMensaje(Object[] datos_msg) {
+
+        try {
+            byte[] bytes_completos = serialize(datos_msg);  // CONVERSION JSON A BYTE
+            int tamanoSubArray = 400;
+            bluetoothService.write(String.valueOf(bytes_completos.length).getBytes(), datos_msg[3].toString());
+            Toast.makeText(this, String.valueOf(bytes_completos.length).getBytes().toString(), Toast.LENGTH_SHORT).show();
+            for (int i = 0; i < bytes_completos.length; i += tamanoSubArray) {
+                byte[] tempArray;
+                tempArray = Arrays.copyOfRange(bytes_completos, i,
+                        Math.min(bytes_completos.length, i + tamanoSubArray));
+                bluetoothService.write(tempArray, datos_msg[3].toString());
             }
-        }catch (Exception e){
+            //coonectarDispositivo(direccion_destino);
+        } catch (Exception e) {
             Log.i("Error de envío", e.toString());
         }
     }
 
-    public void reintentarEnviarMensajes(){
+    public void reintentarEnviarMensajes() {
         List<Mensaje> mensajes = MensajeDB.getAllNotSendMessages(getApplicationContext()); // mensajes no enviados
         Iterator<Mensaje> iterator = mensajes.iterator();
-        while(iterator.hasNext()){
+        while (iterator.hasNext()) {
             Mensaje msg = iterator.next();
-            if (chatController.getState() == ChatController.STATE_CONNECTED) { // siempre y cuando haya conexiòn con algùn dispositivo
+            if (bluetoothService.getState() == STATE_CONNECTED) { // siempre y cuando haya conexiòn con algùn dispositivo
                 if (msg.getContent().length() > 0) {
                     // Condicion si coinciden mac
-                    if (msg.getMAC_DESTINO().equals(connectingDevice.getAddress())){
-                        datos_msg = new Object[] {
+                    if (msg.getMAC_DESTINO().equals(connectingDevice.getAddress())) {
+                        datos_msg = new Object[]{
                                 msg.getID_MESSAGE(),        // ID_MENSAJE
                                 msg.getID_CHAT(),           // ID_CHAT
                                 msg.getDate(),              // FECHA
@@ -365,10 +370,10 @@ public class ChatActivity extends AppCompatActivity {
                                 msg.getMAC_DESTINO(),       // MAC_DESTINO
                                 0,                          // ESMIO
                                 (int) msg.getSaltos() + 1,  // SALTOS
-                                1                           // MOSTRAR
+                                1,                           // MOSTRAR
                         };
-                    }else{
-                        datos_msg = new Object[] {
+                    } else {
+                        datos_msg = new Object[]{
                                 msg.getID_MESSAGE(),        // ID_MENSAJE
                                 msg.getID_CHAT(),           // ID_CHAT
                                 msg.getDate(),              // FECHA
@@ -381,7 +386,7 @@ public class ChatActivity extends AppCompatActivity {
                                 msg.getMAC_DESTINO(),       // MAC_DESTINO
                                 0,                          // ESMIO
                                 (int) msg.getSaltos() + 1,  // SALTOS
-                                0                           // MOSTRAR
+                                0,                           // MOSTRAR
                         };
                     }
                     enviarMensaje(datos_msg);
@@ -390,7 +395,7 @@ public class ChatActivity extends AppCompatActivity {
         }
     }
 
-    public void findByIds(){
+    public void findByIds() {
         botonEnviar = (Button) findViewById(R.id.btnSend);
         listView = (ListView) findViewById(R.id.listViewMsg);
         textoMensaje = (EditText) findViewById(R.id.txtMsg);
@@ -399,14 +404,14 @@ public class ChatActivity extends AppCompatActivity {
         color = (TextView) findViewById(R.id.color);
     }
 
-    public void personalizarActividad(){
+    public void personalizarActividad() {
         i = getIntent();
         nombre_destino = i.getStringExtra("nombre_destino");
         direccion_destino = i.getStringExtra("direccion_destino");
         nombreDispositivo.setText(nombre_destino + " " + direccion_destino);
     }
 
-    public void notificarMensaje(Object[] datos_msg){
+    public void notificarMensaje(Object[] datos_msg) {
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this);
         Intent intent = new Intent(this, ChatActivity.class);
@@ -417,26 +422,13 @@ public class ChatActivity extends AppCompatActivity {
         mBuilder.setSmallIcon(R.drawable.icon_notification);
         mBuilder.setContentTitle("Nuevo Mensaje");
         mBuilder.setContentText(datos_msg[4].toString());
-        mBuilder.setVibrate(new long[] {100, 250, 100, 500});
+        mBuilder.setVibrate(new long[]{100, 250, 100, 500});
         mBuilder.setAutoCancel(true);
         NotificationManager mNotificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         mNotificationManager.notify(001, mBuilder.build());
     }
 
-    // Métodos para convertir objeto a byte y viceversa
-    public static byte[] serialize(Object[] obj) throws IOException {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        ObjectOutputStream os = new ObjectOutputStream(out);
-        os.writeObject(obj);
-        return out.toByteArray();
-    }
-
-    public static Object[] deserialize(byte[] data) throws IOException, ClassNotFoundException {
-        ByteArrayInputStream in = new ByteArrayInputStream(data);
-        ObjectInputStream is = new ObjectInputStream(in);
-        return (Object[]) is.readObject();
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -446,13 +438,13 @@ public class ChatActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.reconnect:
                 if (!bluetoothAdapter.isEnabled()) {
                     Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                     startActivityForResult(enableIntent, REQUEST_ENABLE_BLUETOOTH);
                 } else {
-                    chatController = new ChatController(this, handler);
+                    bluetoothService = new BluetoothService(this, handler);
                     coonectarDispositivo(direccion_destino);
                 }
                 return true;
@@ -460,31 +452,14 @@ public class ChatActivity extends AppCompatActivity {
                 escogerImagen();
                 return true;
             case R.id.text_1KB:
-                return true;
-            case R.id.text_32KB:
-                return true;
-            case R.id.text_64KB:
-                return true;
-            case R.id.text_120KB:
-                return true;
-            case R.id.text_256KB:
-                return true;
-            case R.id.text_512KB:
-                return true;
-            case R.id.text_1MB:
-                return true;
-            case R.id.text_2MB:
-                return true;
-            case R.id.text_5MB:
-                return true;
-            case R.id.text_10MB:
+                ((ActivityManager) this.getSystemService(Context.ACTIVITY_SERVICE)).clearApplicationUserData();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
-    public void escogerImagen(){
+    public void escogerImagen() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT);
             i.addCategory(Intent.CATEGORY_OPENABLE);
@@ -501,35 +476,41 @@ public class ChatActivity extends AppCompatActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
             case SELECT_PICTURE:
-                if (resultCode == Activity.RESULT_OK){
-                    if(data != null){
+                if (resultCode == RESULT_OK) {
+                    if (data != null) {
+                        File archivo = new File(data.getData().getPath());
+                        Toast.makeText(this, "Tamaño en bytes: " + archivo.length(), Toast.LENGTH_SHORT).show();
                         tipo_mensaje = "imagen";
-                        try{
+                        try {
                             Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), data.getData());
                             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                            bitmap.compress(Bitmap.CompressFormat.JPEG, 20, baos);
+                            bitmap.compress(Bitmap.CompressFormat.JPEG, 15, baos);
                             byte[] imageBytes = baos.toByteArray();
                             String imageEncoded = Base64.encodeToString(imageBytes, Base64.DEFAULT);
-                            prepararMensaje(imageEncoded);
+                            prepararObjMensaje(imageEncoded);
                             baos.close();
-                        }catch (Exception e){
-                            Toast.makeText(this, "Error de imagen  "+ e.toString(), Toast.LENGTH_SHORT).show();
+                        } catch (Exception e) {
+                            Toast.makeText(this, "Error de imagen  " + e.toString(), Toast.LENGTH_SHORT).show();
                         }
                     }
-                }else {
+                } else {
                     Toast.makeText(this, "Error al escoger imagen", Toast.LENGTH_SHORT).show();
                 }
         }
     }
 
-    public void GenerarCaracteres(int valor){
-        String letras = "ABCDEFGHIJKLMNÑOPQRSTUVWXYZ";
-        String cadena = "";
-        textoMensaje.setText("");
-        for (int x = 0; x < valor; x ++) {
-            int caracter = (int) Math.floor(Math.random() * 27); //Generamos la cadena
-            cadena = cadena + letras.charAt(caracter);
-        }
-        textoMensaje.setText(cadena);
+    // Conversòn de objeto a byte
+    public static byte[] serialize(Object[] obj) throws IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ObjectOutputStream os = new ObjectOutputStream(out);
+        os.writeObject(obj);
+        return out.toByteArray();
+    }
+
+    // Conversòn de byte a objeto
+    public static Object[] deserialize(byte[] data) throws IOException, ClassNotFoundException {
+        ByteArrayInputStream in = new ByteArrayInputStream(data);
+        ObjectInputStream is = new ObjectInputStream(in);
+        return (Object[]) is.readObject();
     }
 }
