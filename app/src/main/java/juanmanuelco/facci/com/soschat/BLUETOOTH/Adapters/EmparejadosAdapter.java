@@ -77,7 +77,7 @@ public class EmparejadosAdapter extends RecyclerView.Adapter<EmparejadosAdapter.
     public void enviarDatosChat(String nombre_destino, String direccion_destino){
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
         String fecha = simpleDateFormat.format(new Date());
-        String id = nombre_destino+" "+direccion_destino;
+        String id = nombre_destino+direccion_destino;
         //String id = direccion_destino;
         int estado = 0;
         entidad_chat = new Chat(id, fecha, estado);

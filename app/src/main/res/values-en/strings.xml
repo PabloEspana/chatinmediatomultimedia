@@ -128,7 +128,7 @@
     <string name="CONNECTED_TO">"Connected to: "</string>
     <string name="DEVICES_BT">Devices</string>
     <string name="CHATS_BT">Chats</string>
-    <string name="GROUPS_BT">Grupos</string>
+    <string name="GROUPS_BT">Groups</string>
     <string name="SEND">Send</string>
     <string name="GPS_LOCATION">GPS Location</string>
     <string name="UPDATE_LOCATION">RELOAD</string>

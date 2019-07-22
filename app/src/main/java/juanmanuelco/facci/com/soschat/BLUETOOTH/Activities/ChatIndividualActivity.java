@@ -245,6 +245,7 @@ public class ChatIndividualActivity extends AppCompatActivity {
                 Toast.makeText(this, R.string.LOST_CONNECTION, Toast.LENGTH_SHORT).show();
                 datos_msg = new Object[]{
                         "null",             // ID_MENSAJE
+                        nombre_destino +
                         direccion_destino,  // ID_CHAT
                         fecha,              // FECHA
                         tipo_mensaje,       // TIPO
@@ -271,6 +272,7 @@ public class ChatIndividualActivity extends AppCompatActivity {
             // Si hay conexxiòn cambian ciertos paràmetros
             datos_msg = new Object[]{
                     "null",             // ID_MENSAJE
+                    nombre_destino +
                     direccion_destino,  // ID_CHAT
                     fecha,              // FECHA
                     tipo_mensaje,       // TIPO
@@ -305,7 +307,7 @@ public class ChatIndividualActivity extends AppCompatActivity {
         String fecha = simpleDateFormat.format(new Date());
         // Solo si es el primer salto o punto a punto se obtiene:
         if ((int) msg[11] == 1) {
-            msg[1] = connectingDevice.getAddress(); // Id del chat
+            msg[1] = connectingDevice.getName()+connectingDevice.getAddress(); // Id del chat
             msg[8] = connectingDevice.getAddress(); // Direcciòn destino
         }
         entidad_mensaje = new Mensaje(msg[0].toString(), msg[1].toString(), fecha, msg[3].toString(),
@@ -315,7 +317,7 @@ public class ChatIndividualActivity extends AppCompatActivity {
     }
 
     public void mostrarConversacion() {
-        List<Mensaje> mensajes = MensajeDB.getAllMessages(this, direccion_destino);
+        List<Mensaje> mensajes = MensajeDB.getAllMessages(this, nombre_destino+direccion_destino);
         Iterator<Mensaje> iterator = mensajes.iterator();
         while (iterator.hasNext()) {
             Mensaje msg = iterator.next();

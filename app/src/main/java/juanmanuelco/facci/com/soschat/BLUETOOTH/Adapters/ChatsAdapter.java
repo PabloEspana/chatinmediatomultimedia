@@ -45,10 +45,8 @@ public class ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.MyViewHolder
 
     @Override
     public void onBindViewHolder(ChatsAdapter.MyViewHolder holder, final int position) {
-        //final String nombre_destino =  mDataset[position].substring(0, mDataset[position].length() - 17);
-        //final String direccion_destino = mDataset[position].substring(mDataset[position].length() - 17, mDataset[position].length());
-        final String nombre_destino =  mDataset[position];
-        final String direccion_destino = mDataset[position];
+        final String nombre_destino =  mDataset[position].substring(0, mDataset[position].length() - 17);
+        final String direccion_destino = mDataset[position].substring(mDataset[position].length() - 17, mDataset[position].length());
         holder.nombre.setText(nombre_destino);
         holder.direccion.setText(direccion_destino);
         holder.mCardView.setOnClickListener(new View.OnClickListener() {
