@@ -47,7 +47,6 @@ public class ChatController {
     // Set the current state of the chat connection
     private synchronized void setState(int state) {
         this.state = state;
-
         handler.obtainMessage(ChatActivity.MESSAGE_STATE_CHANGE, state, -1).sendToTarget();
     }
 
@@ -153,7 +152,9 @@ public class ChatController {
     }
 
 
-    public void write(byte[] out) {
+    public void write(byte[] out, String type) {
+        type_send = type;
+        Log.i("tipo", type_send);
         ReadWriteThread r;
         synchronized (this) {
             if (state != STATE_CONNECTED)
@@ -186,7 +187,7 @@ public class ChatController {
     }
 
 
-    private class AcceptThread extends Thread{
+    private class AcceptThread extends Thread {
         private final BluetoothServerSocket serverSocket;
 
         public AcceptThread() {
@@ -243,7 +244,7 @@ public class ChatController {
 
     }
 
-    private class ConnectThread extends Thread{
+    private class ConnectThread extends Thread {
         private final BluetoothSocket socket;
         private final BluetoothDevice device;
 
@@ -257,6 +258,7 @@ public class ChatController {
             }
             socket = tmp;
         }
+
         public void run() {
             setName("ConnectThread");
 
@@ -292,7 +294,7 @@ public class ChatController {
         }
     }
 
-    private class ReadWriteThread extends Thread{
+    private class ReadWriteThread extends Thread {
         private final BluetoothSocket bluetoothSocket;
         private final InputStream inputStream;
         private final OutputStream outputStream;
@@ -314,25 +316,68 @@ public class ChatController {
 
 
         public void run() {
-            /*byte[] buffer = new byte[1024];
-            int bytes;
-            // Keep listening to the InputStream
-            while (true) {
-                try {
-                    // Read from the InputStream
-                    bytes = inputStream.read(buffer);
-                    // Send the obtained bytes to the UI Activity
-                    handler.obtainMessage(ChatActivity.MESSAGE_READ, bytes, -1,
-                            buffer).sendToTarget();
-                } catch (IOException e) {
-                    connectionLost();
-                    // Start the service over to restart listening mode
-                    ChatController.this.start();
-                    break;
+            /**/
+            /*if (type_send.equals("texto")){
+                byte[] buffer = new byte[1024];
+                int bytes;
+                // Keep listening to the InputStream
+                while (true) {
+                    try {
+                        // Read from the InputStream
+                        b,ytes = inputStream.read(buffer);
+                        // Send the obtained bytes to the UI Activity
+                        handler.obtainMessage(ChatActivity.MESSAGE_READ, bytes, -1, buffer)
+                                .sendToTarget();
+                    } catch (IOException e) {
+                        connectionLost();
+                        // Start the service over to restart listening mode
+                        ChatController.this.start();
+                        break;
+                    }
                 }
+            }
+
+            if (type_send.equals("imagen")){
+                byte[] buffer = null;
+                int numberOfBytes = 0;
+                int index = 0;
+                boolean flag = true;
+
+                while (true) {
+                    if (flag){
+                        try {
+                            byte[] temp = new byte[inputStream.available()];
+                            if (inputStream.read(temp)>0){
+                                numberOfBytes = Integer.parseInt(new String(temp, "UTF-8"));
+                                buffer = new byte[numberOfBytes];
+                                flag = false;
+                            }
+
+                        } catch (IOException e) {
+                            connectionLost();
+                            //ChatController.this.start();
+                            break;
+                        }
+                    }else {
+                        try{
+                            byte[] data = new byte[inputStream.available()];
+                            int numbers = inputStream.read(data);
+                            System.arraycopy(data, 0, buffer, index, numbers);
+                            index = index + numbers;
+                            if (index == numberOfBytes)
+                            {
+                                handler.obtainMessage(ChatActivity.MESSAGE_READ, numberOfBytes, -1, buffer).sendToTarget();
+                                flag = true;
+                            }
+                        }catch (IOException e){
+                            connectionLost();
+                            //ChatController.this.start();
+                            break;
+                        }
+                    }
+                }
+
             }*/
-
-
 
             byte[] buffer = null;
             int numberOfBytes = 0;
@@ -340,38 +385,36 @@ public class ChatController {
             boolean flag = true;
 
             while (true) {
-                if (flag){
+                if (flag) {
                     try {
                         byte[] temp = new byte[inputStream.available()];
-                        if (inputStream.read(temp)>0){
+                        if (inputStream.read(temp) > 0) {
                             numberOfBytes = Integer.parseInt(new String(temp, "UTF-8"));
                             buffer = new byte[numberOfBytes];
                             flag = false;
                         }
-
                     } catch (IOException e) {
                         connectionLost();
-                        //ChatController.this.start();
-                        break;
                     }
-                }else {
-                    try{
+                } else {
+                    try {
                         byte[] data = new byte[inputStream.available()];
                         int numbers = inputStream.read(data);
+
                         System.arraycopy(data, 0, buffer, index, numbers);
                         index = index + numbers;
-                        if (index == numberOfBytes){
+
+                        if (index == numberOfBytes) {
+                            Log.d("WWW", "run: " + String.valueOf(buffer));
                             handler.obtainMessage(ChatActivity.MESSAGE_READ, numberOfBytes, -1, buffer).sendToTarget();
                             flag = true;
                         }
-                    }catch (IOException e){
+                    } catch (IOException e) {
                         connectionLost();
-                        //ChatController.this.start();
                         break;
                     }
                 }
             }
-
         }
 
         // write to OutputStream
@@ -379,9 +422,11 @@ public class ChatController {
             try {
                 outputStream.write(buffer);
                 outputStream.flush();
-                /*handler.obtainMessage(ChatActivity.MESSAGE_WRITE, -1, -1,
-                        buffer).sendToTarget();*/
+                //handler.obtainMessage(ChatActivity.MESSAGE_WRITE, -1, -1,
+                //        buffer).sendToTarget();
             } catch (IOException e) {
+                Bundle bundle = new Bundle();
+                bundle.putString("toast", "Failed to write bytes \n" + e.toString());
             }
         }
 
