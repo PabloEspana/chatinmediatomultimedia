@@ -44,16 +44,16 @@ import juanmanuelco.facci.com.soschat.BLUETOOTH.Services.BluetoothService;
 import juanmanuelco.facci.com.soschat.BLUETOOTH.DB.MensajeDB;
 import juanmanuelco.facci.com.soschat.BLUETOOTH.Entities.ChatMessage;
 import juanmanuelco.facci.com.soschat.R;
-import juanmanuelco.facci.com.soschat.BLUETOOTH.Adapters.ChatArrayAdapter;
+import juanmanuelco.facci.com.soschat.BLUETOOTH.Adapters.MsgArrayAdapter;
 import juanmanuelco.facci.com.soschat.BLUETOOTH.Entidades.Mensaje;
 
 import static juanmanuelco.facci.com.soschat.BLUETOOTH.Services.BluetoothService.*;
 
-public class ChatActivity extends AppCompatActivity {
+public class ChatIndividualActivity extends AppCompatActivity {
 
     private TextView nombreDispositivo, estadoConexion, color;
     private EditText edit;
-    private ChatArrayAdapter chatArrayAdapter;
+    private MsgArrayAdapter msgArrayAdapter;
     private ListView listView;
     private EditText textoMensaje;
     private Button botonEnviar;
@@ -105,8 +105,8 @@ public class ChatActivity extends AppCompatActivity {
         personalizarActividad();
 
         // Instancia clase chat adapter enviada a listado
-        chatArrayAdapter = new ChatArrayAdapter(getApplicationContext(), R.layout.bt_element_right_msg);
-        listView.setAdapter(chatArrayAdapter);
+        msgArrayAdapter = new MsgArrayAdapter(getApplicationContext(), R.layout.bt_element_right_msg);
+        listView.setAdapter(msgArrayAdapter);
 
         mostrarConversacion();
 
@@ -128,14 +128,14 @@ public class ChatActivity extends AppCompatActivity {
         });
 
         listView.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
-        listView.setAdapter(chatArrayAdapter);
+        listView.setAdapter(msgArrayAdapter);
 
         //to scroll the list view to bottom on data change
-        chatArrayAdapter.registerDataSetObserver(new DataSetObserver() {
+        msgArrayAdapter.registerDataSetObserver(new DataSetObserver() {
             @Override
             public void onChanged() {
                 super.onChanged();
-                listView.setSelection(chatArrayAdapter.getCount() - 1);
+                listView.setSelection(msgArrayAdapter.getCount() - 1);
             }
         });
 
@@ -232,7 +232,7 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     public boolean mostrarMensaje(String mensaje, boolean tipo, String tipo_mensaje) {
-        chatArrayAdapter.add(new ChatMessage(tipo, mensaje, tipo_mensaje));
+        msgArrayAdapter.add(new ChatMessage(tipo, mensaje, tipo_mensaje));
         textoMensaje.setText("");
         return true;
     }
@@ -414,7 +414,7 @@ public class ChatActivity extends AppCompatActivity {
     public void notificarMensaje(Object[] datos_msg) {
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this);
-        Intent intent = new Intent(this, ChatActivity.class);
+        Intent intent = new Intent(this, ChatIndividualActivity.class);
         intent.putExtra("nombre_destino", "");
         intent.putExtra("direccion_destino", datos_msg[8].toString());
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);

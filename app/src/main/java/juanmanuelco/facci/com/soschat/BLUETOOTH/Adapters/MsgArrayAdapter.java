@@ -26,7 +26,7 @@ import java.util.List;
 import juanmanuelco.facci.com.soschat.BLUETOOTH.Entities.ChatMessage;
 import juanmanuelco.facci.com.soschat.R;
 
-public class ChatArrayAdapter extends ArrayAdapter<ChatMessage> {
+public class MsgArrayAdapter extends ArrayAdapter<ChatMessage> {
     private TextView chatText;
     private ImageView imagen;
     private List<ChatMessage> chatMessageList = new ArrayList<ChatMessage>();
@@ -40,7 +40,7 @@ public class ChatArrayAdapter extends ArrayAdapter<ChatMessage> {
         super.add(object);
     }
 
-    public ChatArrayAdapter(Context context, int textViewResourceId) {
+    public MsgArrayAdapter(Context context, int textViewResourceId) {
         super(context, textViewResourceId);
         this.context = context;
     }

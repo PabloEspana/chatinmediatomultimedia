@@ -11,7 +11,7 @@
         android:padding="16dp">
 
         <ImageView
-            android:id="@+id/person_photo"
+            android:id="@+id/person_photo2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
@@ -20,19 +20,20 @@
             android:src="@drawable/user2" />
 
         <TextView
-            android:id="@+id/name_tv"
+            android:id="@+id/name_tv2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
-            android:layout_toRightOf="@+id/person_photo"
+            android:layout_toRightOf="@+id/person_photo2"
             android:textSize="20dp" />
 
         <TextView
-            android:id="@+id/ip_tv"
+            android:id="@+id/ip_tv2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/name_tv"
-            android:layout_toRightOf="@+id/person_photo" />
+            android:layout_below="@+id/name_tv2"
+            android:layout_toRightOf="@+id/person_photo2" />
 
     </RelativeLayout>
+
 </android.support.v7.widget.CardView>

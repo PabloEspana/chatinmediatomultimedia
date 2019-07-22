@@ -10,7 +10,7 @@
         android:src="@drawable/user2"/>
 
 
-    <ImageView android:id="@+id/imgSelect"
+    <ImageView
         android:layout_width="180dp"
         android:layout_height="180dp"
         android:layout_gravity="left"
@@ -24,7 +24,6 @@
         android:paddingTop="10dp"
         android:text="Sampleleft"
         android:textColor="#000"
-        android:layout_marginLeft="40dp"
-        />
+        android:layout_marginLeft="40dp" />
 
 </RelativeLayout>

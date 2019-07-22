@@ -90,7 +90,7 @@
             android:label="SosChat Bluetooth"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".BLUETOOTH.Activities.ChatActivity"
+            android:name=".BLUETOOTH.Activities.ChatIndividualActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".BLUETOOTH.Activities.VerDatosActivity"></activity>
     </application>

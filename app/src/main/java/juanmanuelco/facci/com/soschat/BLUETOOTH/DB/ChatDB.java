@@ -92,7 +92,8 @@ public class ChatDB {
         try{
             MainDB database = new MainDB(context);
             SQLiteDatabase db = database.getWritableDatabase();
-            Cursor cursor = db.rawQuery("SELECT * FROM Chat WHERE ESTADO = 1", null);
+            Cursor cursor = db.rawQuery("SELECT * FROM Chat WHERE ESTADO = 1 AND ID != ?", new String[] {"Comunidad SosChat"});
+
             while (cursor.moveToNext()) {
                 Chat chats = new Chat(
                         cursor.getString(0),

@@ -8,7 +8,7 @@
     android:layout_height="match_parent"
     android:background="#efefef"
     android:orientation="vertical"
-    tools:context=".BLUETOOTH.Activities.ChatActivity">
+    tools:context=".BLUETOOTH.Activities.ChatIndividualActivity">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
