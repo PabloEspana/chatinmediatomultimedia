@@ -31,6 +31,9 @@
         android:roundIcon="@drawable/logo"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".BLUETOOTH.Activities.DispositivosCercanos"></activity>
+        <activity android:name=".BLUETOOTH.Activities.ChatGrupal" />
+
         <service
             android:name=".Servicios.MessageService"
             android:enabled="true" />
@@ -89,10 +92,6 @@
             android:name=".BLUETOOTH.MainActivityBT"
             android:label="SosChat Bluetooth"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".BLUETOOTH.Activities.ChatIndividualActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".BLUETOOTH.Activities.VerDatosActivity"></activity>
     </application>
 
 </manifest>

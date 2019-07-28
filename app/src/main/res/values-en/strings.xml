@@ -139,5 +139,7 @@
     <string name="PAUSE">Pause</string>
     <string name="RESUME">Resume</string>
     <string name="SOSCHAT_COMUNITY">SosChat Comunity</string>
+    <string name="DISCOVERED_DEVICES">Discovered Devices</string>
+
 
 </resources>

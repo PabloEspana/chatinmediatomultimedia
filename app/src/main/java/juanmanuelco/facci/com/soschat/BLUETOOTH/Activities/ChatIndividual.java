@@ -49,7 +49,7 @@ import juanmanuelco.facci.com.soschat.BLUETOOTH.Entidades.Mensaje;
 
 import static juanmanuelco.facci.com.soschat.BLUETOOTH.Services.BluetoothService.*;
 
-public class ChatIndividualActivity extends AppCompatActivity {
+public class ChatIndividual extends AppCompatActivity {
 
     private TextView nombreDispositivo, estadoConexion, color;
     private EditText edit;
@@ -91,9 +91,11 @@ public class ChatIndividualActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.bt_activity_chat);
+        setContentView(R.layout.bt_activity_chat_individual);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
 
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (bluetoothAdapter == null) {
@@ -151,6 +153,12 @@ public class ChatIndividualActivity extends AppCompatActivity {
             bluetoothService = new BluetoothService(this, handler);
             coonectarDispositivo(direccion_destino);
         }
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return false;
     }
 
     private Handler handler = new Handler(new Handler.Callback() {
@@ -410,13 +418,13 @@ public class ChatIndividualActivity extends AppCompatActivity {
         i = getIntent();
         nombre_destino = i.getStringExtra("nombre_destino");
         direccion_destino = i.getStringExtra("direccion_destino");
-        nombreDispositivo.setText(nombre_destino + " " + direccion_destino);
+        nombreDispositivo.setText(nombre_destino);
     }
 
     public void notificarMensaje(Object[] datos_msg) {
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this);
-        Intent intent = new Intent(this, ChatIndividualActivity.class);
+        Intent intent = new Intent(this, ChatIndividual.class);
         intent.putExtra("nombre_destino", "");
         intent.putExtra("direccion_destino", datos_msg[8].toString());
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);

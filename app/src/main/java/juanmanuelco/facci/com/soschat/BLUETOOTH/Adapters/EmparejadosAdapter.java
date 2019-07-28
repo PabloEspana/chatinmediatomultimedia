@@ -12,7 +12,7 @@ import android.widget.TextView;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import juanmanuelco.facci.com.soschat.BLUETOOTH.Activities.ChatIndividualActivity;
+import juanmanuelco.facci.com.soschat.BLUETOOTH.Activities.ChatIndividual;
 import juanmanuelco.facci.com.soschat.R;
 
 import juanmanuelco.facci.com.soschat.BLUETOOTH.Entidades.Chat;
@@ -60,7 +60,7 @@ public class EmparejadosAdapter extends RecyclerView.Adapter<EmparejadosAdapter.
         holder.mCardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent bt = new Intent(context, ChatIndividualActivity.class);
+                Intent bt = new Intent(context, ChatIndividual.class);
                 bt.putExtra("nombre_destino", nombre_destino);
                 bt.putExtra("direccion_destino", direccion_destino);
                 enviarDatosChat(nombre_destino, direccion_destino);

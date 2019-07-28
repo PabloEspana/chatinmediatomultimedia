@@ -15,7 +15,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.UUID;
 
-import juanmanuelco.facci.com.soschat.BLUETOOTH.Activities.ChatIndividualActivity;
+import juanmanuelco.facci.com.soschat.BLUETOOTH.Activities.ChatIndividual;
 
 public class BluetoothService {
 
@@ -44,7 +44,7 @@ public class BluetoothService {
     // Set the current state of the chat connection
     private synchronized void setState(int state) {
         this.state = state;
-        handler.obtainMessage(ChatIndividualActivity.MESSAGE_STATE_CHANGE, state, -1).sendToTarget();
+        handler.obtainMessage(ChatIndividual.MESSAGE_STATE_CHANGE, state, -1).sendToTarget();
     }
 
     // get current connection state
@@ -120,9 +120,9 @@ public class BluetoothService {
         connectedThread.start();
 
         // Send the name of the connected device back to the UI Activity
-        Message msg = handler.obtainMessage(ChatIndividualActivity.MESSAGE_DEVICE_OBJECT);
+        Message msg = handler.obtainMessage(ChatIndividual.MESSAGE_DEVICE_OBJECT);
         Bundle bundle = new Bundle();
-        bundle.putParcelable(ChatIndividualActivity.DEVICE_OBJECT, device);
+        bundle.putParcelable(ChatIndividual.DEVICE_OBJECT, device);
         msg.setData(bundle);
         handler.sendMessage(msg);
 
@@ -162,7 +162,7 @@ public class BluetoothService {
     }
 
     private void connectionFailed() {
-        Message msg = handler.obtainMessage(ChatIndividualActivity.MESSAGE_TOAST);
+        Message msg = handler.obtainMessage(ChatIndividual.MESSAGE_TOAST);
         Bundle bundle = new Bundle();
         bundle.putString("toast", "No se puede conectar al dispositivo");
         msg.setData(bundle);
@@ -173,7 +173,7 @@ public class BluetoothService {
     }
 
     private void connectionLost() {
-        Message msg = handler.obtainMessage(ChatIndividualActivity.MESSAGE_TOAST);
+        Message msg = handler.obtainMessage(ChatIndividual.MESSAGE_TOAST);
         Bundle bundle = new Bundle();
         bundle.putString("toast", "Conexión perdida con el dispositivo");
         msg.setData(bundle);
@@ -323,7 +323,7 @@ public class BluetoothService {
                         // Read from the InputStream
                         b,ytes = inputStream.read(buffer);
                         // Send the obtained bytes to the UI Activity
-                        handler.obtainMessage(ChatIndividualActivity.MESSAGE_READ, bytes, -1, buffer)
+                        handler.obtainMessage(ChatIndividual.MESSAGE_READ, bytes, -1, buffer)
                                 .sendToTarget();
                     } catch (IOException e) {
                         connectionLost();
@@ -363,7 +363,7 @@ public class BluetoothService {
                             index = index + numbers;
                             if (index == numberOfBytes)
                             {
-                                handler.obtainMessage(ChatIndividualActivity.MESSAGE_READ, numberOfBytes, -1, buffer).sendToTarget();
+                                handler.obtainMessage(ChatIndividual.MESSAGE_READ, numberOfBytes, -1, buffer).sendToTarget();
                                 flag = true;
                             }
                         }catch (IOException e){
@@ -403,7 +403,7 @@ public class BluetoothService {
 
                         if (index == numberOfBytes) {
                             Log.d("WWW", "run: " + String.valueOf(buffer));
-                            handler.obtainMessage(ChatIndividualActivity.MESSAGE_READ, numberOfBytes, -1, buffer).sendToTarget();
+                            handler.obtainMessage(ChatIndividual.MESSAGE_READ, numberOfBytes, -1, buffer).sendToTarget();
                             flag = true;
                         }
                     } catch (IOException e) {
@@ -419,7 +419,7 @@ public class BluetoothService {
             try {
                 outputStream.write(buffer);
                 outputStream.flush();
-                //handler.obtainMessage(ChatIndividualActivity.MESSAGE_WRITE, -1, -1,
+                //handler.obtainMessage(ChatIndividual.MESSAGE_WRITE, -1, -1,
                 //        buffer).sendToTarget();
             } catch (IOException e) {
                 Bundle bundle = new Bundle();

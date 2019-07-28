@@ -9,7 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import juanmanuelco.facci.com.soschat.BLUETOOTH.Activities.ChatIndividualActivity;
+import juanmanuelco.facci.com.soschat.BLUETOOTH.Activities.ChatIndividual;
 import juanmanuelco.facci.com.soschat.BLUETOOTH.Entidades.Chat;
 import juanmanuelco.facci.com.soschat.R;
 
@@ -52,7 +52,7 @@ public class ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.MyViewHolder
         holder.mCardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent bt = new Intent(context, ChatIndividualActivity.class);
+                Intent bt = new Intent(context, ChatIndividual.class);
                 bt.putExtra("nombre_destino", nombre_destino);
                 bt.putExtra("direccion_destino", direccion_destino);
                 context.startActivity(bt);

@@ -1,7 +1,9 @@
 package juanmanuelco.facci.com.soschat.BLUETOOTH.Fragments;
 
 import android.bluetooth.BluetoothDevice;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
@@ -16,6 +18,8 @@ import android.widget.Toast;
 
 import java.util.Set;
 
+import juanmanuelco.facci.com.soschat.BLUETOOTH.Activities.ChatIndividual;
+import juanmanuelco.facci.com.soschat.BLUETOOTH.Activities.DispositivosCercanos;
 import juanmanuelco.facci.com.soschat.BLUETOOTH.Adapters.EmparejadosAdapter;
 import juanmanuelco.facci.com.soschat.BLUETOOTH.BluetoothConnect;
 import juanmanuelco.facci.com.soschat.R;
@@ -28,12 +32,20 @@ public class FragmentEmparejados extends Fragment {
     Set<BluetoothDevice> Dispositivos; // set de dispositivos bluetooth
     String ListadoDispositivos[];
     int cont = 0;
+    FloatingActionButton agregar;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View vista = inflater.inflate(R.layout.bt_fragment_emparejados, container, false);
         cv = (CardView) vista.findViewById(R.id.cv);
+        agregar = (FloatingActionButton) vista.findViewById(R.id.agregar);
+        agregar.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), DispositivosCercanos.class);
+                startActivity(intent);
+            }
+        });
         listarDispositivosCercanos();
         adaptarListado(vista);
         setHasOptionsMenu(true);

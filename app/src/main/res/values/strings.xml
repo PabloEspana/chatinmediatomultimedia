@@ -182,5 +182,7 @@
     <string name="RESUME">RESUMEN</string>
     <string name="PAUSE">PAUSA</string>
     <string name="SOSCHAT_COMUNITY">Comunidad SosChat</string>
+    <string name="DISCOVERED_DEVICES">Dispositivos encontrados</string>
+
 
 </resources>

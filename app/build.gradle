@@ -4,7 +4,8 @@ android {
     compileSdkVersion 28
     defaultConfig {
         applicationId "juanmanuelco.facci.com.soschat"
-        minSdkVersion 22
+        minSdkVersion 24
+        ext.enableCrashlytics = false
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
@@ -15,6 +16,10 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        debug{
+            ext.enableCrashlytics = false
+            ext.alwaysUpdateBuildId = false
         }
     }
 
@@ -40,4 +45,3 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.9.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
 }
-
