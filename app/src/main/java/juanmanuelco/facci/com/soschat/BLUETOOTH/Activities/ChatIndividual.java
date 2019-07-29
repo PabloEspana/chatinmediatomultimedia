@@ -29,6 +29,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -40,6 +41,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+
 import juanmanuelco.facci.com.soschat.BLUETOOTH.Services.BluetoothService;
 import juanmanuelco.facci.com.soschat.BLUETOOTH.DB.MensajeDB;
 import juanmanuelco.facci.com.soschat.BLUETOOTH.Entities.ChatMessage;
@@ -254,7 +256,7 @@ public class ChatIndividual extends AppCompatActivity {
                 datos_msg = new Object[]{
                         "null",             // ID_MENSAJE
                         nombre_destino +
-                        direccion_destino,  // ID_CHAT
+                                direccion_destino,  // ID_CHAT
                         fecha,              // FECHA
                         tipo_mensaje,       // TIPO
                         mensaje,            // CONTENT
@@ -281,7 +283,7 @@ public class ChatIndividual extends AppCompatActivity {
             datos_msg = new Object[]{
                     "null",             // ID_MENSAJE
                     nombre_destino +
-                    direccion_destino,  // ID_CHAT
+                            direccion_destino,  // ID_CHAT
                     fecha,              // FECHA
                     tipo_mensaje,       // TIPO
                     mensaje,            // CONTENT
@@ -315,7 +317,7 @@ public class ChatIndividual extends AppCompatActivity {
         String fecha = simpleDateFormat.format(new Date());
         // Solo si es el primer salto o punto a punto se obtiene:
         if ((int) msg[11] == 1) {
-            msg[1] = connectingDevice.getName()+connectingDevice.getAddress(); // Id del chat
+            msg[1] = connectingDevice.getName() + connectingDevice.getAddress(); // Id del chat
             msg[8] = connectingDevice.getAddress(); // Direcciòn destino
         }
         entidad_mensaje = new Mensaje(msg[0].toString(), msg[1].toString(), fecha, msg[3].toString(),
@@ -325,7 +327,7 @@ public class ChatIndividual extends AppCompatActivity {
     }
 
     public void mostrarConversacion() {
-        List<Mensaje> mensajes = MensajeDB.getAllMessages(this, nombre_destino+direccion_destino);
+        List<Mensaje> mensajes = MensajeDB.getAllMessages(this, nombre_destino + direccion_destino);
         Iterator<Mensaje> iterator = mensajes.iterator();
         while (iterator.hasNext()) {
             Mensaje msg = iterator.next();
@@ -343,16 +345,24 @@ public class ChatIndividual extends AppCompatActivity {
 
         try {
             byte[] bytes_completos = serialize(datos_msg);  // CONVERSION JSON A BYTE
-            int tamanoSubArray = 400;
-            bluetoothService.write(String.valueOf(bytes_completos.length).getBytes(), datos_msg[3].toString());
-            Toast.makeText(this, String.valueOf(bytes_completos.length).getBytes().toString(), Toast.LENGTH_SHORT).show();
-            for (int i = 0; i < bytes_completos.length; i += tamanoSubArray) {
-                byte[] tempArray;
-                tempArray = Arrays.copyOfRange(bytes_completos, i,
-                        Math.min(bytes_completos.length, i + tamanoSubArray));
-                bluetoothService.write(tempArray, datos_msg[3].toString());
+
+            // Primero se envìa el tipo se mensaje
+            // bluetoothService.write(serialize(new Object[]{datos_msg[3].toString()}));
+
+            if (datos_msg[3].toString().equals("texto")) {
+                // Se envía el contenido
+                bluetoothService.write(bytes_completos);
+            } else if (datos_msg[3].toString().equals("imagen")) {
+                // Se envía primero el tamaño y luego el contenido
+                int tamanoSubArray = 400;
+                bluetoothService.write(String.valueOf(bytes_completos.length).getBytes());
+                for (int i = 0; i < bytes_completos.length; i += tamanoSubArray) {
+                    byte[] tempArray;
+                    tempArray = Arrays.copyOfRange(bytes_completos, i,
+                            Math.min(bytes_completos.length, i + tamanoSubArray));
+                    bluetoothService.write(tempArray);
+                }
             }
-            //coonectarDispositivo(direccion_destino);
         } catch (Exception e) {
             Log.i("Error de envío", e.toString());
         }

@@ -92,6 +92,10 @@
             android:name=".BLUETOOTH.MainActivityBT"
             android:label="SosChat Bluetooth"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".BLUETOOTH.Activities.ChatIndividual"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".BLUETOOTH.Activities.VerDatosActivity"></activity>
     </application>
 
 </manifest>
