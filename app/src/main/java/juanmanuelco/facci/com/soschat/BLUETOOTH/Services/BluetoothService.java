@@ -315,27 +315,54 @@ public class BluetoothService {
             outputStream = tmpOut;
         }
 
-
-        public void run() {
-
+        public void run(){
             byte[] buffer = new byte[1024];
             int bytes;
-            String tipo_msg;
-            Boolean primer_envio = true;
-
             // Keep listening to the InputStream
             while (true) {
                 try {
-
                     // Read from the InputStream
                     bytes = inputStream.read(buffer);
                     // Send the obtained bytes to the UI Activity
-                    handler.obtainMessage(ChatIndividual.MESSAGE_READ, bytes, -1,
-                            buffer).sendToTarget();
-
+                    handler.obtainMessage(ChatIndividual.MESSAGE_READ, bytes, -1, buffer)
+                            .sendToTarget();
                 } catch (IOException e) {
                     connectionLost();
                     // Start the service over to restart listening mode
+                    BluetoothService.this.start();
+                    break;
+                }
+            }
+
+        /*public void run() {
+
+            byte[] buffer = null;
+            int numberOfBytes = 0;
+            int index = 0;
+            boolean flag = true;
+
+            while (true) {
+                try {
+                    if (flag) {
+                        byte[] temp = new byte[inputStream.available()];
+                        if (inputStream.read(temp) > 0) {
+                            numberOfBytes = Integer.parseInt(new String(temp, "UTF-8"));
+                            buffer = new byte[numberOfBytes];
+                            flag = false;
+                        }
+                    } else {
+                        byte[] data = new byte[inputStream.available()];
+                        int numbers = inputStream.read(data);
+                        System.arraycopy(data, 0, buffer, index, numbers);
+                        index = index + numbers;
+                        if (index == numberOfBytes) {
+                            handler.obtainMessage(ChatIndividual.MESSAGE_READ, numberOfBytes, -1, buffer).sendToTarget();
+                            flag = true;
+                        }
+
+                    }
+                } catch (IOException e) {
+                    connectionLost();
                     BluetoothService.this.start();
                     break;
                 }
@@ -507,9 +534,9 @@ public class BluetoothService {
         public void write(byte[] buffer) {
             try {
                 outputStream.write(buffer);
-                //outputStream.flush();
-                handler.obtainMessage(ChatIndividual.MESSAGE_WRITE, -1, -1,
-                        buffer).sendToTarget();
+                outputStream.flush();
+                //handler.obtainMessage(ChatIndividual.MESSAGE_WRITE, -1, -1,
+                //      buffer).sendToTarget();
             } catch (IOException e) {
                 Bundle bundle = new Bundle();
                 bundle.putString("toast", "Failed to write bytes \n" + e.toString());

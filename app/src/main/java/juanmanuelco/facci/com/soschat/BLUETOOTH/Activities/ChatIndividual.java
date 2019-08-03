@@ -89,6 +89,8 @@ public class ChatIndividual extends AppCompatActivity {
     private static final int SELECT_PICTURE = 43; // código de resultado al escoger imagen
     String tipo_mensaje = "texto";
 
+    private StringBuffer stringBuffer;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -154,6 +156,7 @@ public class ChatIndividual extends AppCompatActivity {
         } else {
             bluetoothService = new BluetoothService(this, handler);
             coonectarDispositivo(direccion_destino);
+            stringBuffer = new StringBuffer("");
         }
     }
 
@@ -171,7 +174,7 @@ public class ChatIndividual extends AppCompatActivity {
                     switch (msg.arg1) {
                         case STATE_CONNECTED:  // Si es estado conectado  //connectingDevice.getName());
                             cambiarEstado(2);
-                            //reintentarEnviarMensajes();
+                            reintentarEnviarMensajes();
                             break;
                         case STATE_CONNECTING:
                             cambiarEstado(1);
@@ -343,27 +346,39 @@ public class ChatIndividual extends AppCompatActivity {
 
     public void enviarMensaje(Object[] datos_msg) {
 
-        try {
-            byte[] bytes_completos = serialize(datos_msg);  // CONVERSION JSON A BYTE
-
-            // Primero se envìa el tipo se mensaje
-            // bluetoothService.write(serialize(new Object[]{datos_msg[3].toString()}));
-
-            if (datos_msg[3].toString().equals("texto")) {
-                // Se envía el contenido
-                bluetoothService.write(bytes_completos);
-            } else if (datos_msg[3].toString().equals("imagen")) {
-                // Se envía primero el tamaño y luego el contenido
+        /*try {
+            byte[] bytes_obj = serialize(datos_msg);  // CONVERSION JSON A BYTE
+            //bluetoothService.write(serialize(new Object[]{datos_msg[3].toString()}));
+            //Toast.makeText(this, bytes.length, Toast.LENGTH_SHORT).show();
+            //if (datos_msg[3].toString().equals("texto")) {
+            //    bluetoothService.write(bytes);
+            //} else if (datos_msg[3].toString().equals("imagen")) {
                 int tamanoSubArray = 400;
-                bluetoothService.write(String.valueOf(bytes_completos.length).getBytes());
-                for (int i = 0; i < bytes_completos.length; i += tamanoSubArray) {
+                bluetoothService.write(String.valueOf(bytes_obj.length).getBytes());
+                for (int i = 0; i < bytes_obj.length; i += tamanoSubArray) {
                     byte[] tempArray;
-                    tempArray = Arrays.copyOfRange(bytes_completos, i,
-                            Math.min(bytes_completos.length, i + tamanoSubArray));
+                    tempArray = Arrays.copyOfRange(bytes_obj, i,
+                            Math.min(bytes_obj.length, i + tamanoSubArray));
                     bluetoothService.write(tempArray);
                 }
-            }
+                stringBuffer.setLength(0);
+            //}
+
         } catch (Exception e) {
+            Log.i("Error de envío", e.toString());
+        }*/
+        try{
+            /*int subArraySize = 400;
+            bluetoothService.write( String.valueOf(serialize(datos_msg).length).getBytes() );
+            for (int i=0; i<serialize(datos_msg).length; i+=subArraySize) {
+                byte[] tempArray;
+                tempArray = Arrays.copyOfRange(serialize(datos_msg), i,
+                        Math.min(serialize(datos_msg).length, i+subArraySize));
+                bluetoothService.write(tempArray);
+            }*/
+            bluetoothService.write(serialize(datos_msg));
+            stringBuffer.setLength(0);
+        }catch (Exception e){
             Log.i("Error de envío", e.toString());
         }
     }
